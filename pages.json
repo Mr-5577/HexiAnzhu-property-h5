@@ -1,0 +1,360 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页,
+
+		{
+			"path": "pages/main/index/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom",
+				"backgroundColorTop": "#fff"
+			}
+		}, {
+			"path": "pages/user/repair-order/repair-order",
+			"style": {
+				"navigationBarTitleText": "我的工单"
+			}
+		}, {
+			"path": "pages/user/repair-order/detail",
+			"style": {
+				"navigationBarTitleText": "我的工单"
+			}
+		}, {
+			"path": "pages/user/repair-order/evaluate",
+			"style": {
+				"navigationBarTitleText": "评价"
+			}
+		},
+		{
+			"path": "pages/main/housekeeper/housekeeper",
+			"style": {
+				"navigationBarTitleText": "我的管家",
+				"app-plus": {
+					"bounce": "none", //关闭窗口回弹效果
+					"titleNView": {
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"fontSize": "16px",
+								"width": "80px",
+								"color": "#ec4040",
+								"type": "menu"
+							}
+						]
+					}
+				}
+			}
+		}, {
+			"path": "pages/main/housekeeper/add-review",
+			"style": {
+				"navigationBarTitleText": "评价管家",
+				"app-plus": {
+					"bounce": "none", //关闭窗口回弹效果
+					"titleNView": {
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"text": "提交", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
+								"fontSize": "14px",
+								"width": "80px",
+								"color": "#ec4040"
+							}
+						]
+					}
+				}
+			}
+		}, {
+			"path": "pages/payment/payment",
+			"style": {
+				"navigationBarTitleText": "去支付"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/main/maintenance/maintenance",
+			"style": {
+				"navigationBarTitleText": "报事报修"
+			}
+		}, {
+			"path": "pages/main/maintenance/complaint",
+			"style": {
+				"navigationBarTitleText": "投诉建议"
+			}
+		}, {
+			"path": "pages/main/maintenance/add-person",
+			"style": {
+				"navigationBarTitleText": "添加联系人",
+				"app-plus": {
+					"bounce": "none", //关闭窗口回弹效果
+					"titleNView": {
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"text": "保存", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
+								"fontSize": "14px",
+								"width": "80px",
+								"color": "#ec4040"
+							}
+						]
+					}
+				}
+			}
+		}, {
+			"path": "pages/main/est-pay/bill-detail",
+			"style": {
+				"navigationBarTitleText": "账单详情"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/bill-type-detail",
+			"style": {
+				"navigationBarTitleText": "详情"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/more-bill",
+			"style": {
+				"navigationBarTitleText": "物业账单"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/charge-explain",
+			"style": {
+				"navigationBarTitleText": "充值说明"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/charge-records",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/charge-money",
+			"style": {
+				"navigationBarTitleText": "充值"
+			}
+		}, {
+			"path": "pages/main/est-pay/est-pay",
+			"style": {
+				"navigationBarTitleText": "缴费明细"
+			}
+		}, {
+			"path": "pages/main/est-pay/pre-pay",
+			"style": {
+				"navigationBarTitleText": "物业缴费"
+			}
+		},
+		{
+			"path": "pages/shopping/shopping",
+			"style": {
+				"navigationBarTitleText": "商城"
+			}
+		}, {
+			"path": "pages/community/community",
+			"style": {
+				"navigationBarTitleText": "社区"
+			}
+		}, {
+			"path": "pages/reg/bound-house/bound-house",
+			"style": {
+				"navigationBarTitleText": "绑定房产信息"
+			}
+		}, {
+			"path": "pages/reg/bound-house/add-tower",
+			"style": {
+				"navigationBarTitleText": "选择楼栋"
+			}
+		},
+		{
+			"path": "pages/reg/bound-house/add-project",
+			"style": {
+				"navigationBarTitleText": "选择楼盘"
+			}
+		},
+		{
+			"path": "pages/reg/bound-house/add-unit",
+			"style": {
+				"navigationBarTitleText": "选择单元"
+			}
+		}, {
+			"path": "pages/reg/bound-house/add-room",
+			"style": {
+				"navigationBarTitleText": "选择房号"
+			}
+		}, {
+			"path": "pages/message/message",
+			"style": {
+				"navigationBarTitleText": "消息中心"
+			}
+		}, {
+			"path": "pages/main/notice/notice",
+			"style": {
+				"navigationBarTitleText": "通知公告"
+			}
+		},
+		{
+			"path": "pages/main/notice/detail",
+			"style": {
+				"navigationBarTitleText": "通知公告详情"
+			}
+		}, {
+			"path": "pages/main/call/call",
+			"style": {
+				"navigationBarTitleText": "联系物业"
+			}
+		},
+		{
+			"path": "pages/user/center/center",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		}, {
+			"path": "pages/user/my-house/my-house",
+			"style": {
+				"navigationBarTitleText": "我的房产",
+				"app-plus": {
+					"bounce": "none", //关闭窗口回弹效果
+					"titleNView": {
+						"buttons": [ //原生标题栏按钮配置,
+							{
+								"text": "添加房屋", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
+								"fontSize": "12px",
+								"width": "80px",
+								"color": "#ec4040"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/reg/bound-house/add-city",
+			"style": {
+				"navigationBarTitleText": "选择城市"
+			}
+		},
+		{
+			"path": "pages/main/est-pay/choose-type",
+			"style": {
+				"navigationBarTitleText": "我要缴费"
+			}
+		}, {
+			"path": "pages/main/est-pay/to-pay",
+			"style": {
+				"navigationBarTitleText": "立即缴费"
+			}
+		}, {
+			"path": "pages/main/car/car-to-pay",
+			"style": {
+				"navigationBarTitleText": "车位立即缴费"
+			}
+		}, {
+			"path": "pages/main/car/car-pay",
+			"style": {
+				"navigationBarTitleText": "车辆缴费"
+			}
+		}, {
+			"path": "pages/main/car/car-pre-pay",
+			"style": {
+				"navigationBarTitleText": "车辆预缴费用"
+			}
+		}, {
+			"path": "pages/user/order/order",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"onReachBottomDistance": 50
+			}
+		}, {
+			"path": "pages/user/order/detail",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		}, {
+			"path": "pages/user/my-car/my-car",
+			"style": {
+				"navigationBarTitleText": "我的车辆"
+			}
+		}, {
+			"path": "pages/user/about/about",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}
+		}, {
+			"path": "pages/user/user-agreement/user-agreement",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		}, {
+			"path": "pages/user/service-explain/service-explain",
+			"style": {
+				"navigationBarTitleText": "服务说明"
+			}
+		}
+
+		, {
+			"path": "pages/main/appointment/appointment",
+			"style": {
+				"navigationBarTitleText": "访客预约"
+			}
+		}, 
+		{
+			"path": "pages/main/appointment/project-select",
+			"style": {
+				"navigationBarTitleText": "地址选择"
+			}
+		},{
+			"path": "pages/main/electronic_invoice/electronic_invoice",
+			"style": {
+				"navigationBarTitleText": "电子发票"
+			}
+		}, {
+			"path": "pages/main/electronic_invoice/detail",
+			"style": {
+				"navigationBarTitleText": "电子发票"
+			}
+		}, {
+			"path": "pages/main/est-pay/est-oweAndpre-pay/est-oweAndpre-pay",
+			"style": {}
+		},
+		{
+			"path": "pages/main/car/est-car-oweAndpre-pay",
+			"style": {}
+		}
+	],
+	"tabBar": {
+		"color": "#7a7e83",
+		"borderStyle": "white",
+		"selectedColor": "#ec4040",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/main/index/index",
+				"text": "首页",
+				"iconPath": "static/images/index.png",
+				"selectedIconPath": "static/images/index-selected.png"
+			},
+			// {
+			// 	"pagePath": "pages/shopping/shopping",
+			// 	"text": "生活",
+			// 	"iconPath": "static/img/icon/shopping.png",
+			// 	"selectedIconPath": "static/img/icon/shopping-active.png"
+			// }, 
+			{
+				"pagePath": "pages/user/center/center",
+				"text": "我的",
+				"iconPath": "static/images/mine.png",
+				"selectedIconPath": "static/images/mine-selected.png"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF",
+		"navigationBarTitleText": "幸福和喜",
+		"backgroundColorTop": "#fff",
+		"backgroundColorBottom": "#fff"
+	}
+}
