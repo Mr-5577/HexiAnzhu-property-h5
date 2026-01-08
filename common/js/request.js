@@ -79,7 +79,7 @@ function successState(res, data) {
 							uni.redirectTo({
 								url: '/pages/login/login'
 							})
-						} 
+						}
 					}
 				})
 				return;
@@ -104,7 +104,7 @@ function successState(res, data) {
 							uni.redirectTo({
 								url: '/pages/login/login'
 							})
-						} 
+						}
 					}
 				})
 				return;
@@ -226,40 +226,41 @@ function accessToken(data) {
 
 let requests = {}
 requests.post = (url, data) => {
-	
+
 	//公用loginToken
 	let objData = {};
-	if(!store.state.login_token){
+	if (!store.state.login_token) {
 		objData = data;
-	}else{
+	} else {
 		let loginToken = {
 			login_token: store.state.login_token
 		}
-		
-	    objData = Object.assign(data, loginToken);
+
+		objData = Object.assign(data, loginToken);
 	}
 	let access_token = accessToken(objData);
-	
-	
-	
+
+
+
 	let promise = new Promise(function(resolve, reject) {
-		uniRequest.post(url + '?access_token=' + access_token, objData).then((res) => {
-			
-			setTimeout(res =>{
-				uni.hideLoading();
-			},1500)
-			successState(res)
-			if (res.data.code === 1) {
-				resolve(res.data)
-			}
-		}).catch((response) => {
-			
-			setTimeout(res =>{
-				uni.hideLoading();
-			},1500)
-			errorState(response)
-			reject(response)
-		});
+		uniRequest.post(url + '?access_token=' + access_token + '&XDEBUG_SESSION=XDEBUG_SESSION', objData)
+			.then((res) => {
+
+				setTimeout(res => {
+					uni.hideLoading();
+				}, 1500)
+				successState(res)
+				if (res.data.code === 1) {
+					resolve(res.data)
+				}
+			}).catch((response) => {
+
+				setTimeout(res => {
+					uni.hideLoading();
+				}, 1500)
+				errorState(response)
+				reject(response)
+			});
 	})
 	return promise
 }

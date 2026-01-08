@@ -112,6 +112,9 @@ export default {
 			uni.showLoading({
 				title: '正在获取验证码'
 			});
+			// this.$api.test(res => {
+			// 	console.log('测试接口',res)
+			// })
 			this.$api.sendSms(data, res => {
 				console.log("res: " + JSON.stringify(res));
 				uni.showToast({

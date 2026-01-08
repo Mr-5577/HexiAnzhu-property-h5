@@ -2,6 +2,10 @@ import store from '@/store/index.js';
 import uniRequest from './request.js';
 
 let apis = {}
+//  测试
+ apis.test = (callback) => {
+	uniRequest.post('/api/test').then(callback)
+ }
 //登录
  apis.logins = (data, callback) => {
 	uniRequest.post('/api/login', data).then(callback)
