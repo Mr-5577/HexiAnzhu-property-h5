@@ -264,7 +264,7 @@ requests.post = (url, data) => {
 	let access_token = accessToken(objData);
 
 	let promise = new Promise(function(resolve, reject) {
-		uniRequest.post(url + '?access_token=' + access_token, objData).then((res) => {
+		uniRequest.post(url + '?access_token=' + access_token + '&XDEBUG_SESSION=XDEBUG_SESSION', objData).then((res) => {
 
 			setTimeout(res => {
 				uni.hideLoading();
