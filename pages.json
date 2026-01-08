@@ -6,8 +6,7 @@
 			"style": {
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false,
-				"navigationStyle": "custom",
-				"backgroundColorTop": "#fff"
+				"navigationStyle": "custom"
 			}
 		}, {
 			"path": "pages/user/repair-order/repair-order",
@@ -36,7 +35,7 @@
 							{
 								"fontSize": "16px",
 								"width": "80px",
-								"color": "#ec4040",
+								"color": "#ff8c13",
 								"type": "menu"
 							}
 						]
@@ -55,7 +54,7 @@
 								"text": "提交", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
 								"fontSize": "14px",
 								"width": "80px",
-								"color": "#ec4040"
+								"color": "#ff8c13"
 							}
 						]
 					}
@@ -95,7 +94,7 @@
 								"text": "保存", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
 								"fontSize": "14px",
 								"width": "80px",
-								"color": "#ec4040"
+								"color": "#DB9444"
 							}
 						]
 					}
@@ -139,7 +138,7 @@
 		}, {
 			"path": "pages/main/est-pay/est-pay",
 			"style": {
-				"navigationBarTitleText": "缴费明细"
+				"navigationBarTitleText": "物业缴费"
 			}
 		}, {
 			"path": "pages/main/est-pay/pre-pay",
@@ -200,6 +199,18 @@
 			"style": {
 				"navigationBarTitleText": "通知公告详情"
 			}
+		},
+		{
+			"path": "pages/main/appointment/appointment",
+			"style": {
+				"navigationBarTitleText": "访客预约"
+			}
+		},
+		{
+			"path": "pages/main/appointment/project-select",
+			"style": {
+				"navigationBarTitleText": "地址更改"
+			}
 		}, {
 			"path": "pages/main/call/call",
 			"style": {
@@ -209,7 +220,8 @@
 		{
 			"path": "pages/user/center/center",
 			"style": {
-				"navigationBarTitleText": "个人中心"
+				"navigationBarTitleText": "个人中心",
+				"navigationBarBackgroundColor": "#f9f9f9"
 			}
 		}, {
 			"path": "pages/user/my-house/my-house",
@@ -223,7 +235,7 @@
 								"text": "添加房屋", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
 								"fontSize": "12px",
 								"width": "80px",
-								"color": "#ec4040"
+								"color": "#DB9444"
 							}
 						]
 					}
@@ -234,6 +246,12 @@
 			"path": "pages/reg/bound-house/add-city",
 			"style": {
 				"navigationBarTitleText": "选择城市"
+			}
+		},
+		{
+			"path": "pages/author/author",
+			"style": {
+				"navigationBarTitleText": "和喜慧管家"
 			}
 		},
 		{
@@ -273,6 +291,11 @@
 				"navigationBarTitleText": "订单详情"
 			}
 		}, {
+			"path": "pages/h5/receipt",
+			"style": {
+				"navigationBarTitleText": "收据详情"
+			}
+		}, {
 			"path": "pages/user/my-car/my-car",
 			"style": {
 				"navigationBarTitleText": "我的车辆"
@@ -295,17 +318,13 @@
 		}
 
 		, {
-			"path": "pages/main/appointment/appointment",
+			"path": "pages/main/my-key/my-key",
 			"style": {
-				"navigationBarTitleText": "访客预约"
+				"navigationBarTitleText": "我的钥匙"
 			}
-		}, 
-		{
-			"path": "pages/main/appointment/project-select",
-			"style": {
-				"navigationBarTitleText": "地址选择"
-			}
-		},{
+		}
+
+		, {
 			"path": "pages/main/electronic_invoice/electronic_invoice",
 			"style": {
 				"navigationBarTitleText": "电子发票"
@@ -322,18 +341,37 @@
 		{
 			"path": "pages/main/car/est-car-oweAndpre-pay",
 			"style": {}
+		}, {
+			"path": "pages/main/akeyhall/akeyhall",
+			"style": {
+				"navigationBarTitleText": "一键呼梯",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/main/akeyhall/success",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/activity-rule/activity-rule",
+			"style": {
+				"navigationBarTitleText": "优惠详情",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	],
 	"tabBar": {
 		"color": "#7a7e83",
-		"borderStyle": "white",
-		"selectedColor": "#ec4040",
+		"selectedColor": "#ffcc66",
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/main/index/index",
 				"text": "首页",
-				"iconPath": "static/images/index.png",
-				"selectedIconPath": "static/images/index-selected.png"
+				"iconPath": "static/img/icon/home.png",
+				"selectedIconPath": "static/img/icon/home-active.png"
 			},
 			// {
 			// 	"pagePath": "pages/shopping/shopping",
@@ -344,8 +382,8 @@
 			{
 				"pagePath": "pages/user/center/center",
 				"text": "我的",
-				"iconPath": "static/images/mine.png",
-				"selectedIconPath": "static/images/mine-selected.png"
+				"iconPath": "static/img/icon/user.png",
+				"selectedIconPath": "static/img/icon/user-active.png"
 			}
 		]
 	},
@@ -353,8 +391,8 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FFFFFF",
-		"navigationBarTitleText": "幸福和喜",
-		"backgroundColorTop": "#fff",
-		"backgroundColorBottom": "#fff"
+		"navigationBarTitleText": "和喜·慧生活",
+		"backgroundColorTop": "#f9f9f9",
+		"backgroundColorBottom": "#f9f9f9"
 	}
 }

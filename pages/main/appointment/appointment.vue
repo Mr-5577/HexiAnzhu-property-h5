@@ -64,7 +64,7 @@
 			 * @param {Object} date 日期数据
 			 */
 			changeDatetimePicker(date) {
-				console.log('选择的日期时间数据：', date)
+				console.log('选择的日期时间数据：', date);
 			},
 			
 			// 跳转地址更改页面
@@ -148,7 +148,7 @@
 	.btn-content {
 		padding: 0 24rpx 100rpx;
 		.my-btn {
-			background-color: #ec3e3e;
+			background-color: #ffcf5a;
 			color: #fff;
 			font-size: 28rpx;
 			line-height: 40rpx;
@@ -159,9 +159,6 @@
 		}
 		.my-btn:after {
 			display: none;
-		}
-		.my-btn:active {
-			opacity: 0.6;
 		}
 	}
 }

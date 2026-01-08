@@ -7,10 +7,15 @@
 				<rich-text class="text" :nodes="item.content"></rich-text>
 			</view>
 			<view class="bot">
-				<!-- <text class="jituan">和喜安筑物业有限公司</text> -->
+				<!-- <text class="jituan">阳光大地物业集团</text> -->
 				<text class="time">{{ item.ctime }}</text>
 			</view>
 		</view>
+<!-- 		<view class="empty" v-if="list.length == 0">
+			<image src="/static/images/inform-mask.png" mode=""></image>
+			<view class="tip">当前社区暂无公告通知</view>
+			<button class="btn" plain @click="toMyhouse">更换社区</button>
+		</view> -->
 		<view class="uni-empty" v-if="list.length === 0">暂无通知公告数据</view>
 	</view>
 </template>
@@ -43,6 +48,10 @@ export default {
 					}
 				});
 			});
+		},
+		// 跳转我的房产页面
+		toMyhouse() {
+			this.$Router.push({ name: 'my-house'});
 		}
 	},
 	onLoad() {
@@ -51,13 +60,42 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 #notice {
 	min-height: 100vh;
 	background-color: #fafafa;
 	padding: 30upx 24upx;
 	box-sizing: border-box;
 }
+	.empty {
+		text-align: center;
+		image {
+			width: 250upx;
+			height: 220upx;
+			margin-top: 250upx;
+		}
+		.tip {
+			font-size: 32upx;
+			line-height: 44upx;
+			color: #ccc;
+			margin-top: 20upx;
+			text-align: center;
+		}
+		.btn {
+			font-size: 28upx;
+			color: #fff;
+			line-height: 40upx;
+			padding: 10upx 44upx!important;
+			background-color: #ffcf5a;
+			border-radius: 4upx;
+			margin-top: 60upx;
+			display: inline-block;
+			border: none!important;
+		}
+		.btn:active {
+			opacity: 0.8;
+		}
+	}
 .notice-item {
 	background-color: #fff;
 	box-shadow: 0 0 8upx rgba(0, 0, 0, 0.05);
@@ -67,11 +105,11 @@ export default {
 	margin-bottom: 30upx;
 }
 .notice-item image {
-	width: 70upx;
-	height: 64upx;
+	width: 40upx;
+	height: 34upx;
 	position: absolute;
-	top: 28upx;
-	left: 20upx;
+	top: 36upx;
+	left: 32upx;
 }
 .notice-item .title {
 	font-size: 30upx;

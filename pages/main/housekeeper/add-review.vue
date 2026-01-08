@@ -171,8 +171,8 @@ export default {
 					display: inline-block;
 					font-size: 26upx;
 					line-height: 36upx;
-					color: #ec3e3e;
-					background-color: rgba(236,62,62, 0.1);
+					color: #ffcf5a;
+					background-color: #fcf6e5;
 					padding: 4upx 20upx;
 					border-radius: 4upx;
 					vertical-align: middle;
@@ -212,9 +212,9 @@ export default {
 		}
 		.lab-item.active {
 			padding: 8upx 38upx;
-			border: 1px solid #ec3e3e;
-			color: #ec3e3e;
-			background-color: rgba(236,62,62, 0.1);
+			border: 1px solid #ffcf5a;
+			color: #ffcf5a;
+			background-color: #fcf6e5;
 		}
 	}
 	.other {
@@ -251,12 +251,9 @@ export default {
 			line-height: 40upx;
 			color: #fff;
 			padding: 24upx;
-			background-color: #ec3e3e;
+			background-color: #ffcf5a;
 			border-radius: 6upx;
 			text-align: center;
-		}
-		.btn:active {
-			opacity: 0.6;
 		}
 	}
 }

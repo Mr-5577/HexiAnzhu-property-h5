@@ -26,6 +26,7 @@ export default {
 			type: 1,
 			ymonth: this.$uitls.yearMonth(),
 			id: '',
+			resType: '',
 		};
 	},
 
@@ -107,7 +108,8 @@ export default {
 		},
 		getCarBill() {
 			let data = {
-				carid: this.id
+				carid: this.id,
+				resourcesmodel_type: this.resType ? this.resType : ''
 			};
 			this.list = [];
 			this.$api.carMonthBillList(data, res => {
@@ -146,6 +148,7 @@ export default {
 		 */
 		// this.getNowMonthOrder();
 		if (this.type === 1) {
+			this.resType = datas.resType
 			uni.setNavigationBarTitle({
 				title: '车辆账单'
 			});
@@ -182,7 +185,7 @@ export default {
 				}
 				.money {
 					flex: 1;
-					color: #ec4040;
+					color: #ffcf5a;
 					font-size: 32upx;
 					line-height: 44upx;
 					text-align: center;

@@ -1,0 +1,44 @@
+.more-bill {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: #FAFAFA;
+}
+.more-bill .bill-wrapper {
+  padding: 30rpx 24rpx;
+}
+.more-bill .bill-wrapper > .bill-item {
+  box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  padding: 60rpx 30rpx;
+  margin-bottom: 30rpx;
+  border-radius: 10rpx;
+}
+.more-bill .bill-wrapper > .bill-item .info {
+  display: flex;
+}
+.more-bill .bill-wrapper > .bill-item .info .month {
+  font-size: 30rpx;
+  line-height: 44rpx;
+  color: #333;
+}
+.more-bill .bill-wrapper > .bill-item .info .money {
+  flex: 1;
+  color: #ffcf5a;
+  font-size: 32rpx;
+  line-height: 44rpx;
+  text-align: center;
+}
+.more-bill .bill-wrapper > .bill-item .info .money .unit {
+  color: #999;
+  font-size: 24rpx;
+}
+.more-bill .bill-wrapper > .bill-item .info .status1 {
+  font-size: 30rpx;
+  line-height: 44rpx;
+  color: #ccc;
+}
+.more-bill .bill-wrapper > .bill-item .info .status2 {
+  font-size: 30rpx;
+  line-height: 44rpx;
+  color: #333;
+}

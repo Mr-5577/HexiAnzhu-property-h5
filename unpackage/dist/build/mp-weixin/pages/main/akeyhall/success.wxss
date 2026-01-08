@@ -1,0 +1,1 @@
+page{background-color:#fff}page .img{height:76px;width:66px}page .text-blod{font-weight:700;font-size:16px}page .fixed{width:100%;position:fixed;bottom:20rpx;left:0}page .foot-btn{background-color:#ffab5d;color:#fff;border:none;margin:20rpx;width:100%;font-size:28rpx;height:88rpx;line-height:88rpx}

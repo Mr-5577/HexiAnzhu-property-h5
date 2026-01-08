@@ -6,22 +6,18 @@ page {
 	font-size: 24upx;
 	color: #007aff;
 }
-.profily,
-.profily_header {
-	border-radius: 8px;
-}
+
 .center {
 	height: 100%;
+	min-height: 100vh;
 }
 .center_top {
-	height: 150upx;
+	height: 18%;
 	background-size: cover;
 }
 
 .center_box_bg {
-	background: #f9f9f9;
 	position: relative;
-	/* bottom: 100upx; */
 }
 .mask {
 	background: rgba(0, 0, 0, 0.4);
@@ -41,7 +37,7 @@ page {
 .base {
 	display: flex;
 	align-items: center;
-	padding: 0 20upx 20upx;
+	padding: 20upx;
 	position: relative;
 	vertical-align: middle;
 }
@@ -65,8 +61,8 @@ page {
 	position: absolute;
 	height: 40upx;
 	width: 40upx;
-	right: 20upx;
-	top: 15upx;
+	right: 50upx;
+	top: 35upx;
 }
 .profily_header {
 	height: 120upx;
@@ -78,13 +74,12 @@ page {
 .order_status {
 	display: flex;
 	justify-content: space-between;
-	margin-top: 35upx;
+	margin: 50upx 20upx;
+	background-color: #fff;
+	padding: 36upx 30upx;
+	border-radius: 10upx;
 }
 
-.baiban {
-	background-color: #FAFAFA;
-	height: 300upx;
-}
 .status {
 	width: 140upx;
 	font-size: 24upx;
@@ -92,45 +87,63 @@ page {
 	letter-spacing: 0.5px;
 	display: flex;
 	flex-direction: column;
-	color: #666;
 }
 .icon {
-	width: 90upx;
-	height: 90upx;
+	width: 60upx;
+	height: 60upx;
 	margin: 0 auto;
 	margin-bottom: 5px;
 }
 .center_menu {
 	width: 100%;
 	display: inline-block;
-	padding-top: 50upx;
-	background-color: #FAFAFA;
 }
 .menu_item {
 	font-size: 28upx;
 	letter-spacing: 1px;
-	padding: 34upx 5%;
-	background:  #FAFAFA;
+	padding: 14px 5%;
 	overflow: hidden;
 	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	position: relative;
-	border-bottom: 1px solid #efefef;
 }
 
 .menu_item text:nth-of-type(1) {
-	margin-left: 10px;
+	margin-left: 30upx;
 }
 .menu_item image {
-	width: 40upx;
-	height: 40upx;
+	width: 46upx;
+	height: 46upx;
+}
+.menu_item .icon {
+	position: absolute;
+	top: 28upx;
+	right: 30upx;
+}
+.menu_item .icon .uni-icons {
+	color: #ccc!important;
 }
 .uni-empty{
-	padding-top: 60upx;
+	padding-top: 50upx;
 	width: 100%;
 	bottom: 0upx;
-	background-color: #FAFAFA;
+	background-color: #f9f9f9;
 	font-size: 24upx;
-	color: #606060;
+	color: #999;
+	vertical-align: middle;
+}
+.uni-empty .text1,
+.uni-empty .text2 {
+	display: inline-block;
+	width: 60upx;
+	height: 2upx;
+	background-color: #e6e6e6;
+	vertical-align: middle;
+}
+.uni-empty .text1 {
+	margin-right: 20upx;
+}
+.uni-empty .text2 {
+	margin-left: 20upx;
 }

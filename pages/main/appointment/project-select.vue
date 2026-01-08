@@ -4,7 +4,7 @@
 			<view @click="selecteAds(item)" :class="['address-item', item.checked ? 'active' : '']" v-for="item in addressList" :key='item.id'>
 				<view class="p-name">{{item.name}}</view>
 				<view class="code">{{item.code}}</view>
-				<view class="radio"><radio color="#ec3e3e" :value="item.id" :checked="item.checked" /></view>
+				<view class="radio"><radio color="#ffcf5a" :value="item.id" :checked="item.checked" /></view>
 			</view>
 		</radio-group>
 		
@@ -134,11 +134,11 @@ export default {
 	}
 
 	.address-item.active {
-		background-color: rgba(236,62,62, 0.1);
-		border: 1px solid #ec3e3e;
+		background-color: rgba(255,207,90,0.05);
+		border: 1px solid #ffcf5a;
 		.p-name,
 		.code {
-			color: #ec3e3e;
+			color: #ffcf5a;
 		}
 	}
 	
@@ -151,7 +151,7 @@ export default {
 		padding: 40rpx 24rpx 100rpx;
 		background-color: #fafafa;
 		.my-btn {
-			background-color: #ec3e3e;
+			background-color: #ffcf5a;
 			color: #fff;
 			font-size: 28rpx;
 			line-height: 40rpx;
@@ -160,9 +160,6 @@ export default {
 		}
 		.my-btn:after {
 			display: none;
-		}
-		.my-btn:active {
-			opacity: 0.6;
 		}
 	}
 }

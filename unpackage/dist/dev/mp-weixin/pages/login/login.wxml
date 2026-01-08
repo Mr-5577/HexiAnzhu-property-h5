@@ -1,0 +1,1 @@
+<view class="content"><view class="btn-wrapper"><view class="forget-btn"><button class="wx-btn" type="primary" disabled="{{!allowLogin}}" open-type="getPhoneNumber" data-event-opts="{{[['getphonenumber',[['getphonenumber',['$event']]]]]}}" bindgetphonenumber="__e"><label class="text _span">用户快速登录</label></button></view></view></view>

@@ -1,0 +1,9 @@
+
+page {
+	background: #ffffff;
+}
+.content {
+	margin: 40rpx;
+	color: #898989;
+}
+

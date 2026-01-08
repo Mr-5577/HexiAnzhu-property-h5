@@ -11,7 +11,7 @@
 			</view>
 		</view>
 		<!-- #ifdef MP-WEIXIN -->
-		<view class="uni-margin-top-150"><button type="primary" class="btn" @click="register">添加联系人</button></view>
+		<view class="uni-margin-top-150"><button class="btn" plain @click="register">添加联系人</button></view>
 		<!-- #endif -->
 	</view>
 </template>
@@ -76,9 +76,6 @@ export default {
 </script>
 
 <style>
-page {
-	background-color: #FAFAFA;
-}
 .content {
 	padding: 30upx 24upx;
 }
@@ -100,9 +97,17 @@ page {
 	padding-bottom: 30upx;
 }
 .btn {
-	background-color: #ec4040 !important;
+	width: 100%;
+	height: 90upx;
+	line-height: 90upx;
+	border-radius: 8upx;
+	color: #ffffff!important;
+	margin-left: 0;
+	background-color: #ffcf5a!important;
+	border: none !important;
 	font-size: 30upx;
-	line-height: 40upx;
-	padding: 24upx 0;
+}
+.btn:active {
+	opacity: 0.8;
 }
 </style>

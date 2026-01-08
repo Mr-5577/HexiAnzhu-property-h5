@@ -9,13 +9,15 @@
 }
 
 .jf-btn {
-	background-color: rgba(236, 64, 64, 0.1);
-	color: #ec3e3e;
-	border: 1px solid #ec3e3e;
+	color: #ffcf5a;
+	border: 1px solid #ffcf5a;
 	padding: 16upx 40upx;
 	border-radius: 72upx;
 	font-size: 28upx;
 	line-height: 40upx;
+}
+.jf-btn:active {
+	opacity: 0.6;
 }
 
 .icon-wra {
@@ -72,7 +74,7 @@
 }
 
 .more-bill {
-	color: #ec3e3e;
+	color: #ffcf5a;
 	margin-top: 10upx;
 }
 
@@ -106,8 +108,11 @@
 
 .pay-cost {
 	background: #ffead7;
-	border: 1upx solid #ec3e3e;
-	color: #ec3e3e;
+	border: 1upx solid #ffcf5a;
+	color: #ffcf5a;
 	border-radius: 10upx;
 	padding: 5upx 20upx 5upx;
+}
+.tip {
+	padding-bottom: 30upx;
 }

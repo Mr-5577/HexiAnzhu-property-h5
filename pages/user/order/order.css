@@ -41,7 +41,7 @@
 
 .cancel_order {
 	height: 160upx;
-	background: #ec4040;
+	background: #ffcf5a;
 	color: #FFFFFF;
 	text-align: center;
 	line-height: 160upx;
@@ -88,7 +88,7 @@
 }
 
 .group-btn .removeM {
-	background-color: #ff3b32;
+	background-color: #ffcf5a;
 }
 
 .icon-circle {
@@ -129,7 +129,7 @@
 	margin-bottom: 20upx;
 }
 .list-r .money {
-	color: #ec4040;
+	color: #ffcf5a;
 	font-size: 32upx;
 	line-height: 50upx;
 }

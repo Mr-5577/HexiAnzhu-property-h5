@@ -1,0 +1,42 @@
+
+.li-toast.data-v-64da7be4 {
+	position: fixed;
+	top: 40px;
+	height: 100rpx;
+	width: 100%;
+	color: #ff0000;
+	background: #ffffff;
+	line-height: 100rpx;
+	text-align: center;
+	-webkit-animation: fadeInDown-data-v-64da7be4 0.6s both;
+	        animation: fadeInDown-data-v-64da7be4 0.6s both;
+	z-index: 999;
+}
+.fade_Down.data-v-64da7be4 {
+}
+/*动画从上到下*/
+@-webkit-keyframes fadeInDown-data-v-64da7be4 {
+from {
+		opacity: 0;
+		-webkit-transform: translate(0, -100px);
+		transform: stranslate(0, -100px);
+}
+to {
+		opacity: 1;
+		-webkit-transform: translate(0, 10px);
+		transform: stranslate(0, 10px);
+}
+}
+@keyframes fadeInDown-data-v-64da7be4 {
+from {
+		opacity: 0;
+		-webkit-transform: translate(0, -100px);
+		transform: stranslate(0, -100px);
+}
+to {
+		opacity: 1;
+		-webkit-transform: translate(0, 10px);
+		transform: stranslate(0, 10px);
+}
+}
+

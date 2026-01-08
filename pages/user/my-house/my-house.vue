@@ -2,14 +2,18 @@
 	<view id="my-house">
 		<view class="uni-empty" v-if="!hasBoundHouse">请先添加房产</view>
 		<view class="house-list">
-			<uni-swipe-action class="swipe-action" :options="options2" v-for="(item, index) in lists" :key="index" @click.stop="bindClick(item)">
-			<view @click="selectRoom(item)" :class="['address-item', item.roomid === currentHouse.roomid ? 'active' : '']">
-				<view class="p-name">{{ item.villageaddr }}—{{ item.villagename }}</view>
-				<view class="code">{{ item.roomnum }}</view>
-				<view class="radio">
-					<radio color="#ec4040" :value="item.id" :checked="item.roomid === currentHouse.roomid" />
+			<uni-swipe-action
+				:class="['swipe-action', item.roomid === currentHouse.roomid ? 'active' : '']"
+				:options="options2"
+				v-for="(item, index) in lists"
+				:key="index"
+				@click.stop="bindClick(item)"
+			>
+				<view @click="selectRoom(item)" class="address-item">
+					<view class="p-name">{{ item.villageaddr }}—{{ item.villagename }}</view>
+					<view class="code">{{ item.roomnum }}</view>
+					<view class="radio"><radio color="#ffcf5a" :value="item.id" :checked="item.roomid === currentHouse.roomid" /></view>
 				</view>
-			</view>
 			</uni-swipe-action>
 		</view>
 
@@ -32,7 +36,7 @@ export default {
 				{
 					text: '解绑房产',
 					style: {
-						backgroundColor: '#ec4040'
+						backgroundColor: '#ffcf5a'
 					}
 				}
 			],
@@ -41,7 +45,7 @@ export default {
 			// 当前选中的房产数据
 			currentHouse: '',
 			// 按钮是否禁用
-			btnForbidden: false,
+			btnForbidden: false
 		};
 	},
 	onShow() {
@@ -56,23 +60,27 @@ export default {
 			});
 		},
 		getData() {
-			let data = {};
+			let data = {
+				village_id: this.currentHouse.vid ? this.currentHouse.vid : this.currentHouse.vvid ? this.currentHouse.vvid : 0
+			};
 			this.$api.userCenter(data, res => {
 				this.$store.commit('setMyHouse', res.data);
 			});
 		},
+
 		// 房产解绑
 		bindClick(item) {
 			let _this = this;
 			let data = {
-				roomid: item.roomid
+				roomid: item.roomid,
+				village_id: item.vid
 			};
 			// 解绑房产为当前登录房产
 			if (item.roomid === this.oldHouse.roomid) {
 				uni.showToast({
 					icon: 'none',
 					title: '解绑房产为当前登录房产，禁止解绑！'
-				})
+				});
 				return false;
 			}
 			//解绑房产
@@ -81,7 +89,7 @@ export default {
 					icon: 'none',
 					title: '成功解绑房产',
 					success() {
-						if (_this.currentHouse.roomid === item.roomid ) {
+						if (_this.currentHouse.roomid === item.roomid) {
 							_this.currentHouse = _this.oldHouse;
 						}
 						_this.getData();
@@ -89,12 +97,14 @@ export default {
 				});
 			});
 		},
+
 		// 选择房产处理
 		selectRoom(item) {
 			if (item.roomid != this.currentHouse.roomid) {
 				this.currentHouse = item;
 			}
 		},
+
 		// 切换房源
 		changeRoom() {
 			let _this = this;
@@ -107,7 +117,8 @@ export default {
 			}
 			this.btnForbidden = true;
 			let data = {
-				roomid: this.currentHouse.roomid
+				roomid: this.currentHouse.roomid,
+				village_id: this.currentHouse.vid
 			};
 			//切换房产
 			this.$api.changeRoom(data, res => {
@@ -123,7 +134,7 @@ export default {
 							uni.navigateBack({
 								delta: 1
 							});
-						}, 600)
+						}, 600);
 					}
 				});
 			});
@@ -165,16 +176,24 @@ export default {
 
 .uni-swipe_content {
 	margin-top: 30upx;
-	border-radius: 10upx;
-}
-
-.address-item {
-	border-radius: 10rpx;
 	box-shadow: 0 0 rgba(0, 0, 0, 0.05);
-	background-color: #fff;
+	border-radius: 10rpx;
+}
+.swipe-action.active .address-item {
+	background-color: #fcf6e5;
+	border: 1px solid #ffcf5a;
+}
+.swipe-action.active .p-name,
+.swipe-action.active .code {
+	color: #ffcf5a;
+}
+.address-item {
 	padding: 28rpx;
 	position: relative;
 	border: 1px solid #fff;
+	background-color: #fff;
+	border-radius: 10upx;
+	overflow: hidden;
 }
 .address-item .p-name {
 	font-size: 32rpx;
@@ -205,15 +224,6 @@ export default {
 	height: 36rpx;
 	margin-right: 0;
 }
-
-.address-item.active {
-	background-color: rgba(236,62,62, 0.05);
-	border: 1px solid #ec4040;
-}
-.address-item.active .p-name,
-.address-item.active .code {
-	color: #ec4040;
-}
 .btn-content {
 	position: fixed;
 	bottom: 0;
@@ -226,46 +236,28 @@ export default {
 	display: flex;
 }
 .my-btn1,
-.my-btn1[aria-disabled="true"],
 .my-btn2 {
 	flex: 1;
-	background-color: #ec4040!important;
-	color: #fff!important;
+	background-color: #ffcf5a !important;
+	color: #fff !important;
 	font-size: 28rpx;
 	line-height: 40rpx;
 	padding: 24rpx 0;
 	border-radius: 6rpx;
+	border: none !important;
 }
-.my-btn1,
-.my-btn1[aria-disabled="true"] {
-	border: none!important;
-}
-.my-btn2,
-.my-btn2[aria-disabled="true"]{
+.my-btn2 {
 	margin-left: 30upx;
-	background-color: #fff!important;
-	color: #ec4040!important;
-	border-color: #ec4040!important;
+	background-color: #fff !important;
+	color: #ffcf5a !important;
+	border: 1px solid #ffcf5a !important;
+}
+.my-btn1:after,
+.my-btn2:after {
+	display: none;
 }
 .my-btn1:active,
 .my-btn2:active {
-	opacity: 0.6;
-}
-.my-btn:after {
-	display: none;
-}
-
-.add-house {
-	position: fixed;
-	bottom: 200upx;
-	right: 100upx;
-	height: 140upx;
-	width: 140upx;
-	text-align: center;
-	line-height: 140upx;
-	border-radius: 50%;
-	color: #ffffff;
-	background: rgba(236,62,62, 0.5);
-	z-index: 999;
+	opacity: 0.8;
 }
 </style>

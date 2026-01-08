@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "报事报修",
+  "usingComponents": {
+    "w-picker": "/components/w-picker/w-picker",
+    "image-drag-sort": "/components/image-drag-sort/index",
+    "cat-label": "/components/cat-label/cat-label",
+    "li-mask": "/components/li-mask/li-mask"
+  }
+}

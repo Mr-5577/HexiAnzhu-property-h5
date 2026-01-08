@@ -2,10 +2,10 @@
 	<view >
 		<view class="bill-detail-head uni-flex-center">
 			<view class="">
-				<view class="uni-font-40" style="color: #ec4040;">
+				<view class="uni-font-40" style="color: #ffcf5a;">
 					{{billDetail.wg.ymonth}}月账单
 				</view>
-				<view class="uni-text-center" style="color: #ec4040;">
+				<view class="uni-text-center" style="color: #ffcf5a;">
 					<text v-if="dealMoney == 0">已缴清</text>
 					<text v-else>未缴清</text>
 				</view>

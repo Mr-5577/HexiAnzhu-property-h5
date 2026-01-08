@@ -285,9 +285,9 @@ export default {
 	padding: 2upx;
 	border-radius: 50%;
 	font-weight: 700;
-	color: #ed7130;
+	color: #ffcf5a;
 	position: absolute;
-	border: 1upx solid #ed7130;
+	border: 1upx solid #ffcf5a;
 	border-radius: 50%;
 }
 .icon-rights {
@@ -298,8 +298,8 @@ export default {
 	padding: 2upx;
 	border-radius: 50%;
 	font-weight: 700;
-	color: #ed7130;
-	border: 1upx solid #ed7130;
+	color: #ffcf5a;
+	border: 1upx solid #ffcf5a;
 	border-radius: 50%;
 }
 .pay {
@@ -329,8 +329,8 @@ export default {
 }
 .pay-cost {
 	background: #ffead7;
-	border: 1upx solid #ff913b;
-	color: #ff913b;
+	border: 1upx solid #ffcf5a;
+	color: #ffcf5a;
 	border-radius: 10upx;
 	padding: 5upx 20upx 5upx;
 }

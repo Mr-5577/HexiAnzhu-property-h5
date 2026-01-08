@@ -17,7 +17,7 @@
 			></textarea>
 		</view>
 		<view class="btn-wrapper">
-			<button type="warn" class="my-btn" @click="sub">提交评价</button>
+			<button plain class="my-btn" @click="sub">提交评价</button>
 		</view>
 	</view>
 </template>
@@ -75,6 +75,7 @@ export default {
 				content: text,
 				success: res => {
 					if (res.confirm) {
+						console.log('用户点击确定');
 						let data = {
 							point: stars,
 							id: this.id,
@@ -136,10 +137,14 @@ page {
 	box-sizing: border-box;
 }
 .my-btn {
-	color: #fff;
+	color: #fff!important;
 	font-size: 28upx;
 	line-height: 40upx;
 	padding: 24upx 0;
-	background-color: #ec4040;
+	background-color: #ffcf5a!important;
+	border: none!important;
+}
+.my-btn:active {
+	opacity: 0.8;
 }
 </style>

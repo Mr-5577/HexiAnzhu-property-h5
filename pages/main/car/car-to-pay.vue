@@ -52,7 +52,8 @@ export default {
 	methods: {
 		getCarMaterials(){
 			let data ={
-				carid:this.carData.id
+				carid:this.carData.id,
+				resourcesmodel_type: this.carData.resourcesmodel_type ? this.carData.resourcesmodel_type : ''
 			}
 			this.$api.getCarMaterial(data,res =>{
 				this.$store.commit('setCarData',res.data);

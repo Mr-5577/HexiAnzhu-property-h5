@@ -9,7 +9,7 @@
             return {
                 webviewStyles: {
                     progress: {
-                        color: '#FF3333'
+                        color: '#ffcf5a'
                     }
                 },
 				invoiceUrl:''

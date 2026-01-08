@@ -1,0 +1,14 @@
+
+.li-mask.data-v-032d4a7e {
+	position: fixed;
+	top: 0px;
+	height: 100%;
+	width: 100%;
+	color: #007AFF;
+	background: rgba(255,255,255,0.9);
+	line-height: 400rpx;
+	text-align: center;
+	z-index: 999;
+}
+
+

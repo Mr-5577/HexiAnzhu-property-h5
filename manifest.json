@@ -1,9 +1,9 @@
 {
-    "name" : "幸福和喜",
-    "appid" : "__UNI__773F3A4",
-    "description" : "和喜物业成立于2019年，公司秉承“幸福生活服务者”的服务理念，实现高速跨越式发展，目前已入驻全国11座城市，服务项目19个。",
-    "versionName" : "",
-    "versionCode" : "",
+    "name" : "和喜·慧生活",
+    "appid" : "__UNI__B30B310",
+    "description" : "智慧美好生活从这里开启",
+    "versionName" : "1.4.2",
+    "versionCode" : 142,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -67,6 +67,28 @@
                     }
                 },
                 "idfa" : false
+            },
+            /* SDK配置 */
+            "sdkConfigs" : {
+                "payment" : {
+                    "weixin" : {
+                        "appid" : "wx208724eedb83ffb4",
+                        "UniversalLinks" : "https://api.yangguangzhiye.cn/ulink/"
+                    },
+                    "alipay" : {}
+                },
+                "oauth" : {
+                    "weixin" : {
+                        "appid" : "wx208724eedb83ffb4",
+                        "appsecret" : "c791feb71d3f2a95a18f0c7369bb4d31",
+                        "UniversalLinks" : "https://api.yangguangzhiye.cn/ulink/"
+                    }
+                },
+                "push" : {
+                    "unipush" : {}
+                },
+                "statics" : {},
+                "ad" : {}
             },
             "icons" : {
                 "android" : {
@@ -133,8 +155,7 @@
         "setting" : {
             "urlCheck" : true,
             "minified" : true,
-            "postcss" : true,
-            "es6" : true
+            "es6" : false
         },
         "usingComponents" : true
     },

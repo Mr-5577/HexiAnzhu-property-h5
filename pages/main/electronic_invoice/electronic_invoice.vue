@@ -1,5 +1,10 @@
 <template>
 	<view class="invoice">
+		<!-- 		<view class="empty" v-if="record.length == 0">
+			<image src="/static/images/fa-mask.png" mode=""></image>
+			<view class="tip">当前房产暂无发票记录</view>
+			<button class="btn" plain @click="toMyhouse">更换房产</button>
+		</view> -->
 		<view class="uni-empty" v-if="record.length == 0">{{ moreData }}</view>
 		<view class="car-wrapper" v-else>
 			<view class="car-item" v-for="(item, index) in record" :key="index">
@@ -16,9 +21,7 @@
 						<text class="name">创建日期：</text>
 						<text class="value">{{ timestampTime(item.createtime) }}</text>
 					</view>
-					<view class="btn-wrapper" @click="showInvoice(item)">
-						<image src="/static/images/load.png" mode="aspectFit"></image>
-					</view>
+					<view class="btn-wrapper" @click="showInvoice(item)"><image src="/static/images/load.png" mode="aspectFit"></image></view>
 				</view>
 			</view>
 		</view>
@@ -44,6 +47,7 @@ export default {
 		}
 	},
 	methods: {
+		// 获取发票数据
 		getInvoice() {
 			let data = {
 				page: this.page,
@@ -61,9 +65,13 @@ export default {
 				this.page = parseInt(res.data.page);
 			});
 		},
+
+		// 日期格式化
 		timestampTime(time) {
 			return this.$uitls.timestampToTime(time);
 		},
+
+		// 下载发票
 		showInvoice(item) {
 			if (!item.filepath) {
 				uni.showToast({
@@ -100,9 +108,7 @@ export default {
 								uni.showModal({
 									title: '提示',
 									content: '请到物业前台打印发票',
-									success: function(resp) {
-										
-									}
+									success: function(resp) {}
 								});
 							}
 						});
@@ -112,12 +118,15 @@ export default {
 					uni.showModal({
 						title: '提示',
 						content: '请到物业前台打印发票',
-						success: function(resp) {
-							
-						}
+						success: function(resp) {}
 					});
 				}
 			});
+		},
+
+		// 跳转我的房产页面
+		toMyhouse() {
+			this.$Router.push({ name: 'my-house' });
 		}
 	},
 	onLoad() {
@@ -132,6 +141,35 @@ export default {
 	box-sizing: border-box;
 	background-color: #fafafa;
 	padding: 30upx 24upx;
+	.empty {
+		text-align: center;
+		image {
+			width: 250upx;
+			height: 220upx;
+			margin-top: 250upx;
+		}
+		.tip {
+			font-size: 32upx;
+			line-height: 44upx;
+			color: #ccc;
+			margin-top: 20upx;
+			text-align: center;
+		}
+		.btn {
+			font-size: 28upx;
+			color: #fff;
+			line-height: 40upx;
+			padding: 10upx 44upx !important;
+			background-color: #ffcf5a;
+			border-radius: 4upx;
+			margin-top: 60upx;
+			display: inline-block;
+			border: none !important;
+		}
+		.btn:active {
+			opacity: 0.8;
+		}
+	}
 	.car-wrapper {
 		.car-item {
 			padding: 30upx;

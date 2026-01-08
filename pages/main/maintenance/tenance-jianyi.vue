@@ -15,8 +15,8 @@
 				<image-drag-sort @imageUpload="imageUploadComplaint" :picNum="3"></image-drag-sort>
 				<radio-group @change="radioChange" style="display: flex;margin: 20upx;">
 					<view v-for="(item, index) in items" :key="item.value" style="margin: 10upx;">
-						<label :style="{ color: index == delCurrent ? '#ff8402' : '#000000' }">
-							<radio color="#ff8402" :value="item.value" :checked="index === delCurrent" />
+						<label :style="{ color: index == delCurrent ? '#ffcf5a' : '#000000' }">
+							<radio color="#ffcf5a" :value="item.value" :checked="index === delCurrent" />
 							{{ item.text }}
 						</label>
 					</view>
@@ -33,7 +33,7 @@
 										<br />
 										{{ item.tel }}
 									</view>
-									<radio class="uni-margin-top-40" color="#ff8402" :value="index" :checked="index === personCurrent" />
+									<radio class="uni-margin-top-40" color="#ffcf5a" :value="index" :checked="index === personCurrent" />
 								</view>
 							</view>
 						</view>
@@ -55,7 +55,7 @@
 			:current="true"
 			@confirm="onConfirm"
 			ref="limit"
-			themeColor="#f00"
+			themeColor="#ffcf5a"
 		></w-picker>
 		<view class="uni-flex-center tenance-foot"><button class="foot-btn bg-gradient-btn" @click="sub">提交</button></view>
 	</view>

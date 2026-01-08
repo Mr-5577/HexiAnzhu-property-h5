@@ -4,7 +4,7 @@
 			<text class="uni-cell-lineheight-100 uni-font-40">{{ detail.table_type }}</text>
 		</view>
 		<view class="uni-flex-center">
-			<text class="uni-cell-lineheight-100 uni-font-60" style="color: #ec4040;">¥ {{ detail.allmoney }}</text>
+			<text class="uni-cell-lineheight-100 uni-font-60" style="color: #ffcf5a;">¥ {{ detail.allmoney }}</text>
 		</view>
 		<view class="bill-type-detail-head">
 			<view class="user-list">

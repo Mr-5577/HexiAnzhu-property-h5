@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'uni-simple-router'
 import store from '@/store/index.js'
-
+import api from '@/common/js/api.js'
 Vue.use(Router)
 const router = new Router({
 	routes: [{
@@ -89,7 +89,7 @@ const router = new Router({
 		}, {
 			name: "message",
 			path: "/pages/message/message"
-		},  {
+		}, {
 			name: "notice",
 			path: "/pages/main/notice/notice"
 		}, {
@@ -106,7 +106,7 @@ const router = new Router({
 		{
 			name: "my-house",
 			path: "/pages/user/my-house/my-house"
-		},  {
+		}, {
 			name: "choose-type",
 			path: "/pages/main/est-pay/choose-type"
 		}, {
@@ -133,7 +133,7 @@ const router = new Router({
 			name: "repair-order-detail",
 			path: "/pages/user/repair-order/detail"
 		},
-		
+
 		{
 			name: "my-car",
 			path: "/pages/user/my-car/my-car"
@@ -151,12 +151,8 @@ const router = new Router({
 			path: "/pages/user/service-explain/service-explain"
 		},
 		{
-			name: "appointment",
-			path: "/pages/main/appointment/appointment"
-		},
-		{
-			name: "pro-select",
-			path: "/pages/main/appointment/project-select"
+			name: "my-key",
+			path: "/pages/main/my-key/my-key"
 		},
 		{
 			name: "housekeeper",
@@ -167,33 +163,47 @@ const router = new Router({
 			path: "/pages/main/housekeeper/add-review"
 		},
 		{
-			name:"electronic_invoice",
+			name: "electronic_invoice",
 			path: "/pages/main/electronic_invoice/electronic_invoice"
 		},
 		{
-			name:"electronic_invoice_detail",
+			name: "electronic_invoice_detail",
 			path: "/pages/main/electronic_invoice/detail"
 		},
 		{
-			name:"evaluate",
+			name: "evaluate",
 			path: "/pages/user/repair-order/evaluate"
 		},
 		{
-			name:"est-oweAndpre-pay",
+			name: "est-oweAndpre-pay",
 			path: "/pages/main/est-pay/est-oweAndpre-pay/est-oweAndpre-pay"
 		},
 		{
-			name:"est-car-oweAndpre-pay",
+			name: "est-car-oweAndpre-pay",
 			path: "/pages/main/car/est-car-oweAndpre-pay"
+		},
+		{
+			name: "author",
+			path: "/pages/author/author"
+		},
+		{
+			name: "appointment",
+			path: "/pages/main/appointment/appointment"
+		},
+		{
+			name: "akeyhall",
+			path: "/pages/main/akeyhall/akeyhall"
+		},
+		{
+			name: "akeyhall-success",
+			path: "/pages/main/akeyhall/success"
 		}
-		
 	]
 })
-router.beforeEach((to, from, next) => {
-
+router.beforeEach(async (to, from, next) => {
 	//进入主页路由不用验证是否绑定房产和登录
 	switch (to.name) {
-		case 'index':
+		case 'author':
 			next();
 			return;
 			break;
@@ -217,7 +227,7 @@ router.beforeEach((to, from, next) => {
 			next();
 			return;
 			break;
-		
+
 		case 'add-tower':
 			next();
 			return;
@@ -238,51 +248,63 @@ router.beforeEach((to, from, next) => {
 			next();
 			return;
 			break;
-		default:
-			;
+		case 'order-detail':
+			next();
+			return;
+			break;
+		case 'choose-type':
+			next();
+			return;
+			break;
+		case 'car-pay':
+			next();
+			return;
+			break;
+		case 'est-pay':
+			next();
+			return;
+			break;
+		default: ;
 	}
-
-
 	if (!store.state.hasLogin) { //验证是否登录
 		if (to.name === 'login') {
 			next();
 			return;
 		}
-		uni.showModal({
-			content: '请先登录',
-			confirmColor: '#ec4040',
-			success(res) {
-				if (res.confirm) {
-					next({
-						name: 'login',
-						NAVTYPE: 'push'
-					});
-				}
+		let codeRes = await uni.login()
+		await api.getUserOpenid({
+			code: codeRes[1].code
+		}, res => {
+			if (res.code == 1) {
+				api.login_by_openid_xcx({
+					cache_name: res.data
+				},res =>{
+					if(res.code == 1){
+						store.commit('loginToken', res.data);
+						next();
+					}else{
+						uni.showModal({
+							content: '请先登录',
+							confirmColor: '#ffcf5a',
+							success(res) {
+								if (res.confirm) {
+									next({
+										name: 'login',
+										NAVTYPE: 'push'
+									});
+								}
+							}
+						});
+					}
+				})
 			}
-		});
+		})
 		return;
+	}else{
+		next();
 	}
-	if (!store.state.hasBoundHouse) { //验证是否绑定房产
-		if (to.name === 'bound-house') {
-			next();
-			return;
-		}
-		uni.showModal({
-			content: '请先绑定房产',
-			confirmColor: '#ec4040',
-			success(res) {
-				if (res.confirm) {
-					next({
-						name: 'bound-house',
-						NAVTYPE: 'push'
-					});
-				}
-			}
-		});
-		return;
-	}
-	next();
-
-
+})
+router.afterEach((to,from,next) =>{
+	
 })
 export default router

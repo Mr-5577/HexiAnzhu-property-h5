@@ -76,7 +76,7 @@ export default {
 		return {
 			items: ['充值记录', '支出记录'],
 			current: 0,
-			activeColor: '#ff913b',
+			activeColor: '#ffcf5a',
 			styleType: 'text',
 			expendRecords: [] ,//支出记录
 			chargeRecords:[], //充值记录
@@ -153,7 +153,7 @@ page{
 }
 .list-right-1 {
 	float: right;
-	color: #ED7A30;
+	color: #ffcf5a;
 }
 .list-title {
 	width: 350upx;

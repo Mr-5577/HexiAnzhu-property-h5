@@ -9,7 +9,7 @@
 				</view>
 				<view class="uni-flex-center">
 					<view class="balance">
-						<view class="uni-font-64" style="color: #ec4040;">
+						<view class="uni-font-64" style="color: #ffcf5a;">
 							<text>￥{{ accountData.balance === null ? '0' : accountData.balance  }}</text>
 						</view>
 						<view class="color89">账户余额</view>
@@ -28,7 +28,7 @@
 				</view>
 				<view class="uni-flex-center uni-margin-top-80">
 					<view class="balance">
-						<view class="uni-font-32 charge-btn" style="color: #ec4040;" @click="payment"><text>充值</text></view>
+						<view class="uni-font-32 charge-btn" style="color: #ffcf5a;" @click="payment"><text>充值</text></view>
 						<view class="uni-flex-center uni-margin-top-20">
 							<view class="color89" style="display: flex;" @click="getNav('charge-explain')">
 								<icon type="warn uni-margin-top-20"></icon>
@@ -138,11 +138,11 @@ export default {
 }
 
 ._active{
-	background: #ec4040;
+	background: #ffcf5a;
 	color: #FFFFFF;
 }
 .charge-btn {
-	border: 1upx solid #ec4040;
+	border: 1upx solid #ffcf5a;
 	border-radius: 50upx;
 	padding: 0upx 160upx 0upx;
 	height: 80upx;

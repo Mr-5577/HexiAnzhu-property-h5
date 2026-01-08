@@ -1,59 +1,61 @@
 <template>
 	<view class="order-detail">
-		<!-- 基本信息部分 -->
-		<view class="basic-info">
-			<view class="title">{{ repairData.typename ? repairData.typename : ''}}</view>
-			<view class="name-addr">
-				<text class="name">{{ repairData.name ? repairData.name : '' }}</text>
-				<text class="addr">{{ (repairData.villagename ? repairData.villagename : '') + ' ' }}{{ repairData.room ? repairData.room : '' }}</text>
-			</view>
-			<view class="name-addr">
-				<text class="name">{{ repairData.tel ? repairData.tel : '' }}</text>
-				<text class="addr">{{ repairData.yuyuetime ? repairData.yuyuetime : '' }}</text>
-			</view>
-		</view>
-		<!-- 问题描述部分 -->
-		<view class="describe">
-			<view class="title">问题描述</view>
-			<view class="content">{{ repairData.content }}</view>
-			<!-- 图片部分 -->
-			<view class="img-wrapper"><image v-for="(item, index) in imgs" :key="index" @click="showImgs(item)" :src="baseImgUrls + item" mode="aspectFit"></image></view>
-		</view>
-		<!-- 评价部分 -->
-		<view class="evaluate">
-			<view class="title">工单进度</view>
-			<timeline>
-				<timelineItem
-					:class="[item.type != 1 && index != 0 ? 'finish' : '']"
-					:leftTime="item.ctime"
-					:color="item.type != 1 && index != 0 ? '#ccc' : '#ec4040'"
-					v-for="(item, index) in repairData.followRecord"
-					:key="index"
-				>
-					<view class="tripItem">
-						<view class="title">{{ item.status }}</view>
-						<view class="tips">{{ item.content ? item.content : '' }}</view>
-						<!-- 图片部分 -->
-						<view class="img-wrapper" v-if="item.imgs && item.imgs.length > 0">
-							<image v-for="(itm, i) in item.imgs" :key="i" @click="showImgs(itm)" :src="baseImgUrls + itm" mode="aspectFit"></image>
-						</view>
-					</view>
-				</timelineItem>
-			</timeline>
-		</view>
-		<!-- 评价按钮部分 -->
-		<!-- (repairData.status == '1' || repairData.status =='4') && repairData.score == null -->
-		<view class="btn-wrapper1" v-if="(repairData.status == '1' || repairData.status =='4') && repairData.score == null">
-			<button type="warn" @click="evaluate">评价服务</button>
-		</view>
-
-		<!-- 图片放大 -->
-		<view class="uni-common-mark uni-flex-center" v-show="mark" @touchmove.stop.prevent="moveHandle">
-			<view class="uni-cell-100">
-				<view class="uni-flex-center">
-					<view class="uni-common-mark-content uni-flex-center"><image :src="showImg" mode="aspectFit"></image></view>
+		<view v-if="true">
+			<!-- 基本信息部分 -->
+			<view class="basic-info">
+				<view class="title">{{ repairData.typename ? repairData.typename : ''}}</view>
+				<view class="name-addr">
+					<text class="name">{{ repairData.name ? repairData.name : '' }}</text>
+					<text class="addr">{{ (repairData.villagename ? repairData.villagename : '') + ' ' }}{{ repairData.room ? repairData.room : '' }}</text>
 				</view>
-				<view class="uni-flex-center" @click="closeMark"><view class="uni-common-mark-close">X</view></view>
+				<view class="name-addr">
+					<text class="name">{{ repairData.tel ? repairData.tel : '' }}</text>
+					<text class="addr">{{ repairData.yuyuetime ? repairData.yuyuetime : '' }}</text>
+				</view>
+			</view>
+			<!-- 问题描述部分 -->
+			<view class="describe">
+				<view class="title">问题描述</view>
+				<view class="content">{{ repairData.content }}</view>
+				<!-- 图片部分 -->
+				<view class="img-wrapper"><image v-for="(item, index) in imgs" :key="index" @click="showImgs(item)" :src="baseImgUrls + item" mode="aspectFit"></image></view>
+			</view>
+			<!-- 评价部分 -->
+			<view class="evaluate">
+				<view class="title">工单进度</view>
+				<timeline>
+					<timelineItem
+						:class="[item.type != 1 && index != 0 ? 'finish' : '']"
+						:leftTime="item.ctime"
+						:color="item.type != 1 && index != 0 ? '#ccc' : '#ffcf5a'"
+						v-for="(item, index) in repairData.followRecord"
+						:key="index"
+					>
+						<view class="tripItem">
+							<view class="title">{{ item.status }}</view>
+							<view class="tips">{{ item.content ? item.content : '' }}</view>
+							<!-- 图片部分 -->
+							<view class="img-wrapper" v-if="item.imgs && item.imgs.length > 0">
+								<image v-for="(itm, i) in item.imgs" :key="i" @click="showImgs(itm)" :src="baseImgUrls + itm" mode="aspectFit"></image>
+							</view>
+						</view>
+					</timelineItem>
+				</timeline>
+			</view>
+			<!-- 评价按钮部分 -->
+			<!-- (repairData.status == '1' || repairData.status =='4') && repairData.score == null -->
+			<view class="btn-wrapper1" v-if="(repairData.status == '1' || repairData.status =='4') && repairData.score == null">
+				<button class="foot-btn" plain @click="evaluate">评价服务</button>
+			</view>
+
+			<!-- 图片放大 -->
+			<view class="uni-common-mark uni-flex-center" v-show="mark" @touchmove.stop.prevent="moveHandle">
+				<view class="uni-cell-100">
+					<view class="uni-flex-center">
+						<view class="uni-common-mark-content uni-flex-center"><image :src="showImg" mode="aspectFit"></image></view>
+					</view>
+					<view class="uni-flex-center" @click="closeMark"><view class="uni-common-mark-close">X</view></view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -69,6 +71,39 @@ export default {
 	},
 	data() {
 		return {
+			// 时间进度数据列表
+			timeList: [
+				{
+					time: '2020-04-23 14:00',
+					title: '已评价',
+					content: '您好，工单已完成，欢迎您对阳光慧生活的服务进行评价，祝您生活愉快！',
+					status: 0
+				},
+				{
+					time: '2020-04-23 14:00',
+					title: '待评价',
+					content: '您好，工单已完成，正在等待你的评价！',
+					status: 0
+				},
+				{
+					time: '2020-04-23 14:00',
+					title: '已处理',
+					content: '您好，工单已完成，欢迎您对阳光慧生活的服务进行评价，祝您生活愉快！',
+					status: 1
+				},
+				{
+					time: '2020-04-23 14:00',
+					title: '处理中',
+					content: '专属管家王芳将为您提供服务',
+					status: 1
+				},
+				{
+					time: '2020-04-23 14:00',
+					title: '待接单',
+					content: '系统正在为您分配工作人员',
+					status: 1
+				}
+			],
 			key: '',
 			mark: false,
 			showImg: '',
@@ -269,21 +304,28 @@ export default {
 			}
 		}
 	}
-	.btn-wrapper1 {
-		padding: 30upx 24upx 60upx;
+	.btn-wrapper1{
 		width: 100%;
+		height: 180upx;
+		background-color: #fff;
+		padding: 40upx 24upx;
 		box-sizing: border-box;
-		button {
-			color: #fff;
-			font-size: 28upx;
-			line-height: 40upx;
-			padding: 24upx 0;
-			border-radius: 8upx;
-		}
+	}
+	.foot-btn {
+		width: 100%;
+		height: 90upx;
+		line-height: 90upx;
+		border-radius: 8upx;
+		color: #ffffff;
+		margin-left: 0;
+		background: #ffcf5a;
+		border: none!important;
+		font-size: 30upx;
+	}
+	.foot-btn:active {
+		opacity: 0.8;
 	}
 }
-
-
 
 page {
 	background: #ffffff;

@@ -1,17 +1,17 @@
 <template>
-	<view class="est-pay"  v-if="roomsMaterial">
+	<view class="est-pay" v-if="roomsMaterial">
 		<view class="est-name uni-ellipsis">{{ myRoom.room.roomnum }}</view>
 		<view class="uni-flex-center">
 			<view class="uni-cell-95 est-content uni-flex-center" style="padding-bottom: 30upx;">
 				<view v-if="roomsMaterial.summoney">
-					<view class="uni-font-64 uni-text-center" style="color: #ec3e3e;">¥{{ roomsMaterial.summoney }}</view>
+					<view class="uni-font-64 uni-text-center" style="color: #ffcf5a;">¥{{ roomsMaterial.summoney }}</view>
 					<view class="color-font-gray uni-text-center" style="margin-bottom: 20upx">待缴金额</view>
-					<button class="jf-btn" type="warn" plain @click="toPay" :disabled="disabled">立即缴费</button>
+					<button class="jf-btn" plain @click="toPay" :disabled="disabled">立即缴费</button>
 				</view>
 				<view v-else>
 					<view class="uni-flex-center"><image src="/static/images/jqing.png" mode="aspectFit" class="est-img"></image></view>
 					<view class="clear-bill" style="margin-bottom: 20upx">账单已经缴清啦~</view>
-					<button class="jf-btn" type="warn" plain @click="toPay" :class="{'po-event-none':disabled ==true}" :disabled="disabled">立即预缴</button>
+					<button class="jf-btn" plain @click="toPay" :class="{ 'po-event-none': disabled == true }" :disabled="disabled">立即预缴</button>
 				</view>
 			</view>
 		</view>
@@ -51,7 +51,7 @@
 					</view>
 					<view class="uni-cell-30">
 						<view class="uni-font-32 uni-font-bold">{{ parseFloat(dealPrice) }}</view>
-						<view class="color89" >待缴费</view>
+						<view class="color89">待缴费</view>
 					</view>
 				</view>
 				<view class="user-list">
@@ -110,7 +110,7 @@
 export default {
 	data() {
 		return {
-			disabled:false,
+			disabled: false,
 			payMoney: true, //是否有缴费
 			roomsMaterial: '',
 			roomOrderDetail: '',
@@ -131,16 +131,25 @@ export default {
 	},
 	onShow() {
 		this.disabled = false;
+		this.$api.userCenter({}, res => {
+			this.$store.commit('setMyHouse', res.data);
+			this.$api.getDefult({}, res => {
+				this.datas = res.data;
+				this.$store.commit('setMyRoom', res.data);
+				this.getRoomsMaterials();
+				this.getNowMonthOrder();
+			});
+		});
 	},
 	methods: {
 		invoice() {
 			this.$Router.push({ name: 'electronic_invoice' });
 		},
 		toMoreBill() {
-			let data ={
-				type:2,
-				id:this.myRoom.roomid
-			}
+			let data = {
+				type: 2,
+				id: this.myRoom.roomid
+			};
 			this.$Router.push({ name: 'more-bill', params: data });
 		},
 		pay(money, url) {
@@ -180,9 +189,8 @@ export default {
 			// 	});
 			// },1000)
 			uni.navigateTo({
-				url: '/pages/main/est-pay/est-oweAndpre-pay/est-oweAndpre-pay?data=' + JSON.stringify(this.roomsMaterial)
+				url: '/pages/main/est-pay/est-oweAndpre-pay/est-oweAndpre-pay'+'?id=' + this.roomsMaterial.id
 			});
-			
 		},
 		getRoomsMaterials() {
 			let data = {
@@ -199,45 +207,61 @@ export default {
 		},
 		getNowMonthOrder() {
 			this.$api.everyMonth({}, res => {
-				
 				this.roomOrderDetail = res.data.room;
 				this.allPrice = 0;
 				this.dealPrice = 0;
 				res.data.room.forEach(resp => {
 					if (resp.room_wg) {
 						resp.room_wg.forEach(response => {
-							if (response.statusCode == 0) {
-								this.dealPrice  = (this.dealPrice + parseFloat(response.allmoney));
+							// 新项目
+							if (res.data.new_system) {
+								if (response.status == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
+							} else {
+								if (response.statusCode == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
 							}
-							this.allPrice = (this.allPrice + parseFloat(response.allmoney));
+							this.allPrice = this.allPrice + parseFloat(response.allmoney);
 						});
 					}
 					if (resp.room_water) {
 						resp.room_water.forEach(response => {
-							if (response.statusCode == 0) {
-								this.dealPrice  = (this.dealPrice + parseFloat(response.allmoney));
+							// 新项目
+							if (res.data.new_system) {
+								if (response.status == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
+							} else {
+								if (response.statusCode == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
 							}
-							this.allPrice = (this.allPrice + parseFloat(response.allmoney));
+							this.allPrice = this.allPrice + parseFloat(response.allmoney);
 						});
 					}
 					if (resp.room_ele) {
 						resp.room_ele.forEach(response => {
-							if (response.statusCode == 0) {
-								this.dealPrice  = (this.dealPrice + parseFloat(response.allmoney));
+							// 新项目
+							if (res.data.new_system) {
+								if (response.status == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
+							} else {
+								if (response.statusCode == 0) {
+									this.dealPrice = this.dealPrice + parseFloat(response.allmoney);
+								}
 							}
-							this.allPrice = (this.allPrice + parseFloat(response.allmoney));
+							this.allPrice = this.allPrice + parseFloat(response.allmoney);
 						});
 					}
 				});
-				this.allPrice = this.allPrice.toFixed(2)
-				this.dealPrice = this.dealPrice.toFixed(2)
+				this.allPrice = this.allPrice.toFixed(2);
+				this.dealPrice = this.dealPrice.toFixed(2);
 			});
 		}
 	},
-	onLoad() {
-		this.getRoomsMaterials();
-		this.getNowMonthOrder();
-	}
 };
 </script>
 
@@ -252,13 +276,15 @@ export default {
 	font-weight: 600;
 }
 .jf-btn {
-	background-color: rgba(236, 64, 64, 0.1);
-	color: #ec3e3e;
-	border: 1px solid #ec3e3e;
+	color: #ffcf5a !important;
+	border: 1px solid #ffcf5a !important;
 	padding: 16upx 40upx;
 	border-radius: 72upx;
 	font-size: 28upx;
 	line-height: 40upx;
+}
+.jf-btn:active {
+	opacity: 0.6;
 }
 .icon-wra {
 	flex-direction: column;
@@ -308,7 +334,7 @@ export default {
 	width: 75%;
 }
 .more-bill {
-	color: #ec3e3e;
+	color: #ffcf5a;
 	margin-top: 10upx;
 }
 .est-balance-text {
@@ -335,8 +361,8 @@ export default {
 
 .pay-cost {
 	background: #ffead7;
-	border: 1upx solid #ec3e3e;
-	color: #ec3e3e;
+	border: 1upx solid #ffcf5a;
+	color: #ffcf5a;
 	border-radius: 10upx;
 	padding: 5upx 20upx 5upx;
 }

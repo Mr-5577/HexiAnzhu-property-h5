@@ -1,0 +1,1 @@
+<block wx:if="{{showMask}}"><view class="data-v-032d4a7e"><view class="li-mask data-v-032d4a7e">{{test}}</view></view></block>

@@ -1,0 +1,145 @@
+
+.content {
+	padding: 0 24rpx;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	height: 100vh;
+}
+.wx-btn {
+	border-radius: 44rpx;
+	height: 84rpx;
+	line-height: 84rpx;
+}
+.wx-btn ._i {
+	height: 80rpx;
+	line-height: 80rpx;
+}
+.verify-left {
+	width: calc(100% - 260rpx);
+}
+.verify-right {
+	padding-left: 20rpx;
+	margin-top: 10rpx;
+}
+.verify-btn {
+	height: 80rpx;
+	line-height: 80rpx;
+	font-size: 28rpx;
+	width: 240rpx;
+	border-radius: 8rpx;
+	text-align: center;
+	color: #ffffff !important;
+	background-color: #ffcf5a !important;
+	border: none !important;
+}
+.verify-btn:active {
+	opacity: 0.6;
+}
+.verify-btn-active {
+	height: 80rpx;
+	line-height: 80rpx;
+	font-size: 28rpx;
+	width: 240rpx;
+	border-radius: 8rpx;
+	text-align: center;
+	color: #ffffff;
+	background: #898989;
+}
+.verify-left,
+.verify-right {
+	float: left;
+}
+.landing {
+	height: 84rpx;
+	line-height: 84rpx;
+	border-radius: 44rpx;
+	font-size: 32rpx;
+	background-color: #ffcf5a !important;
+	color: #fff !important;
+	border: none !important;
+}
+.landing:active {
+	opacity: 0.6;
+}
+.landing[aria-disabled='true'] {
+	opacity: 0.6;
+}
+.forget-btn {
+	padding: 10rpx 20rpx;
+	margin-bottom: 30rpx;
+}
+.forget-btn:last-child {
+	margin-bottom: 80rpx;
+}
+.forget-input input {
+	background: #f2f5f6;
+	font-size: 28rpx;
+	padding: 10rpx 25rpx;
+	height: 82rpx;
+	line-height: 68rpx;
+	border-radius: 2.5rem;
+}
+.forget-margin-b {
+	margin-bottom: 25rpx;
+}
+.forget-input {
+	padding: 10rpx 20rpx;
+	overflow: auto;
+}
+.forget-card {
+	background: #fff;
+	border-radius: 12rpx;
+	padding: 60rpx 25rpx;
+	box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.12);
+	position: relative;
+	margin-top: 20rpx;
+}
+.action-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+.action-row navigator {
+	color: #007aff;
+	padding: 0 20rpx;
+}
+.oauth-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+.oauth-image {
+	width: 100rpx;
+	height: 100rpx;
+	border: 1rpx solid #dddddd;
+	border-radius: 100rpx;
+	margin: 0 40rpx;
+	background-color: #ffffff;
+}
+.oauth-image image {
+	width: 60rpx;
+	height: 60rpx;
+	margin: 20rpx;
+}
+.btn-wrapper {
+	width: 100%;
+}
+.iconfont {
+	margin: 0;
+	height: 84rpx !important;
+	line-height: 84rpx !important;
+}
+.text {
+	padding-left: 10rpx;
+	font-size: 30rpx;
+	display: inline-block;
+	vertical-align: top;
+	line-height: 84rpx;
+}
+

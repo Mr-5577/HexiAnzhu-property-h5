@@ -34,7 +34,7 @@
 				<view class="uni-flex-btw est-content-header">
 					<view class="uni-cell-40">{{ preCarData.yjmonth }}</view>
 					<view class="uni-cell-20">{{ preCarData.fee }}</view>
-					<view class="uni-cell-20 yearMonth uni-flex-btw">
+					<view class="uni-cell-20 uni-flex-btw">
 						<view class="minus colorOrange" @click="minus">-</view>
 					
 						<text style="padding-left: 20upx;padding-right: 20upx;">{{ monthNum }}</text>
@@ -299,8 +299,8 @@ export default {
 		padding: 2upx;
 		border-radius: 50%;
 		font-weight: 700;
-		color: #ed7130;
-		border: 1upx solid #ed7130;
+		color: #ffcf5a;
+		border: 1upx solid #ffcf5a;
 		position: absolute;
 	}
 	.icon-rights {
@@ -311,8 +311,8 @@ export default {
 		padding: 2upx;
 		border-radius: 50%;
 		font-weight: 700;
-		color: #ed7130;
-		border: 1upx solid #ed7130;
+		color: #ffcf5a;
+		border: 1upx solid #ffcf5a;
 	}
 .pay {
 }
@@ -341,13 +341,10 @@ export default {
 }
 .pay-cost {
 	background: #ffead7;
-	border: 1upx solid #ff913b;
-	color: #ff913b;
+	border: 1upx solid #ffcf5a;
+	color: #ffcf5a;
 	border-radius: 10upx;
 	padding: 5upx 20upx 5upx;
-}
-.yearMonth {
-	color: #007aff;
 }
 .foot-pays {
 	position: fixed;
