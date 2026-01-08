@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "个人中心",
-  "navigationBarBackgroundColor": "#f9f9f9",
-  "usingComponents": {
-    "uni-icons": "/components/uni-icons/uni-icons"
-  }
-}

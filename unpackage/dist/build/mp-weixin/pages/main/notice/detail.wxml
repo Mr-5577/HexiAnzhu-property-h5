@@ -1,1 +1,0 @@
-<view class="detail-wrapper"><block wx:if="{{strings!=''}}"><view class="content"><view class="title">{{strings.name}}</view><rich-text class="text" nodes="{{strings.content}}"></rich-text><view class="time">{{strings.c_time}}</view></view></block></view>

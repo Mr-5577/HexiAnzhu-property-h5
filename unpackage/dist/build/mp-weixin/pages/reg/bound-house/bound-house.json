@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "绑定房产信息",
-  "usingComponents": {
-    "cat-label": "/components/cat-label/cat-label"
-  }
-}

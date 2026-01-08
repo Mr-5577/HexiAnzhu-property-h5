@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "评价管家",
-  "usingComponents": {
-    "uni-rate": "/components/uni-rate/uni-rate"
-  }
-}

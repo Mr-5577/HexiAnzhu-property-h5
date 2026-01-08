@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "访客预约",
-  "usingComponents": {
-    "uni-icons": "/components/uni-icons/uni-icons",
-    "biaofun-datetime-picker": "/components/biaofun-datetime-picker/biaofun-datetime-picker"
-  }
-}

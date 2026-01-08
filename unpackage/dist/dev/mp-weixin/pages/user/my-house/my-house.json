@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "我的房产",
-  "usingComponents": {
-    "uni-swipe-action": "/components/uni-swipe-action/uni-swipe-action"
-  }
-}
