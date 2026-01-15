@@ -1,5 +1,9 @@
 <template>
 	<view class="content">
+		<!-- 背景图片 -->
+		<image v-show="showBgImage" class="page-bg" src="/static/images/login-bg.jpg" mode="aspectFill" />
+
+		<image src="/static/images/logo-login.png" class="logo-icon" />
 		<!-- <template>
 			<view class="forget-bg">
 				<view class="forget-card">
@@ -24,14 +28,27 @@
 		<view class="btn-wrapper">
 			<!-- <view class="forget-btn"><button class="landing" plain :disabled="code === ''"
 					@click="bindLogin">登录</button></view> -->
-			<!-- #ifdef MP-WEIXIN -->
 			<view class="forget-btn">
-				<button class="wx-btn" type="primary" :disabled="!allowLogin" open-type="getPhoneNumber"
-					@getphonenumber="getphonenumber">
-					<span class="text">用户快速登录</span>
+				<button class="wx-btn" type="primary" @click="handleLogin" v-show="!checkedRadio">
+					<span class="text">一键登录</span>
 				</button>
+				<button class="wx-btn" type="primary" :disabled="!allowLogin" open-type="getPhoneNumber"
+					@getphonenumber="getphonenumber" v-show="checkedRadio">
+					<span class="text">一键登录</span>
+				</button>
+				<text class="login-text">ONE-CLICK LOGIN</text>
+				<view class="radio-privacy">
+					<!-- <radio value="radioVal" :color="'#ff9f6f'" :borderColor="'#979291'" :activeBorderColor="'#ff9f6f'"
+						:checked="checkedRadio" style="transform:scale(0.6)"/> -->
+						<checkbox 
+							:checked="checkedRadio" 
+							color="#ff9f6f" 
+							style="transform:scale(0.6)"
+							@tap="testCheckboxClick"
+						/>
+					<text class="privacy-text" @click="toUserAgreement">查看《和喜物业小程序隐私保护指引》</text>
+				</view>
 			</view>
-			<!-- #endif -->
 		</view>
 	</view>
 </template>
@@ -58,10 +75,12 @@
 				count: 0,
 				m_cid: '',
 				allowLogin: true,
+				checkedRadio: false,
+				showBgImage: false
 			};
 		},
 		async onLoad() {
-			this.allowLogin = false;
+			// this.allowLogin = false;
 			let _this = this;
 			this.timestamp = new Date().getTime();
 			// #ifdef MP-WEIXIN
@@ -77,80 +96,114 @@
 				fail(e) {}
 			});
 			// #endif
-			let codeRes = await uni.login()
-			await this.$api.getUserOpenid({
-				code: codeRes[1].code
-			}, res => {
-				if (res.code == 1) {
-					_this.$api.login_by_openid_xcx({
-						cache_name: res.data
-					}, res => {
-						if (res.code == 1) {
-							uni.setStorageSync('loginToken', res.data);
-							_this.$store.commit('loginToken', res.data);
-							_this.$api.userCenter({}, res => {
-								_this.myHouse = res.data;
-								_this.$store.commit('setMyHouse', res.data);
-								let pages = getCurrentPages();
-								if (pages[pages.length - 2]) {
-									uni.navigateBack()
-								} else {
-									if (_this.$store.state.hasLogin) {
-										_this.$Router.replaceAll({
-											name: 'index'
-										});
-									}
-								}
-							});
-						}
-					})
-				}
-			})
-			setTimeout(() => {
-				this.allowLogin = true;
-			}, 1000)
+			// let codeRes = await uni.login()
+			// await this.$api.getUserOpenid({
+			// 	code: codeRes[1].code
+			// }, res => {
+			// 	if (res.code == 1) {
+			// 		_this.$api.login_by_openid_xcx({
+			// 			cache_name: res.data
+			// 		}, res => {
+			// 			if (res.code == 1) {
+			// 				uni.setStorageSync('loginToken', res.data);
+			// 				_this.$store.commit('loginToken', res.data);
+			// 				_this.$api.userCenter({}, res => {
+			// 					_this.myHouse = res.data;
+			// 					_this.$store.commit('setMyHouse', res.data);
+			// 					let pages = getCurrentPages();
+			// 					if (pages[pages.length - 2]) {
+			// 						uni.navigateBack()
+			// 					} else {
+			// 						if (_this.$store.state.hasLogin) {
+			// 							_this.$Router.replaceAll({
+			// 								name: 'index'
+			// 							});
+			// 						}
+			// 					}
+			// 				});
+			// 			}
+			// 		})
+			// 	}
+			// })
+			// setTimeout(() => {
+			// 	this.allowLogin = true;
+			// }, 1000)
 		},
 		methods: {
+			// 去用户协议
+			toUserAgreement() {
+				this.$Router.push({
+					name: 'user-agreement'
+				});
+			},
+			testCheckboxClick() {
+				this.checkedRadio = !this.checkedRadio;
+				// console.log('当前 checkedRadio:', this.checkedRadio);
+			},
+			handleLogin() {
+				// 判断是否选中隐私协议
+				if (!this.checkedRadio) {
+					uni.showToast({
+						title: '请先阅读并同意隐私协议',
+						icon: 'none'
+					});
+					return;
+				}
+			},
 			//获取手机号
 			async getphonenumber(e) {
+				// console.log('getphonenumber事件：',e)
+				if (!this.allowLogin) return
+				// 拒绝获取用户信息
+				if (e.detail.errMsg === 'getPhoneNumber:fail user deny') return
 				this.allowLogin = false;
 				let _this = this;
-				let cache_name = ''
 				let codeRes = await uni.login()
 				await this.$api.getUserOpenid({
 					code: codeRes[1].code
 				}, res => {
+					console.log('login-getUserOpenid', res)
 					if (res.code == 1) {
-						cache_name = res.data
 						let data = {
 							code: e.detail.code,
-							cache_name: cache_name
+							cache_name: res.data
 						};
 						_this.$api.login_xcx(data, res => {
-							try {
-								uni.setStorageSync('loginToken', res.data);
-								_this.$store.commit('loginToken', res.data);
-							} catch (e) {
-								//TODO handle the exception
-							}
-							uni.showLoading({
-								title: '正在登录'
-							})
-
-							setTimeout(() => {
-								uni.hideLoading();
-								let pages = getCurrentPages();
-								if (pages[pages.length - 2]) {
-									uni.navigateBack()
-								} else {
-									if (_this.$store.state.hasLogin) {
-										_this.$Router.replaceAll({
-											name: 'index'
-										});
-									}
+							console.log('loginxcx:', res)
+							if (res.code == 1) {
+								try {
+									_this.$store.commit('loginToken', res.data);
+									uni.setStorageSync('loginToken', res.data);
+								} catch (e) {
+									//TODO handle the exception
 								}
-								this.allowLogin = true;
-							}, 1000)
+								uni.showLoading({
+									title: '正在登录'
+								})
+								// 自动绑定用户的房产信息
+								if (res.data.tel) {
+									_this.$api.autoBind({
+										tel: res.data.tel
+									}, res => {
+										console.log('autoBind', res)
+									});
+								}
+								setTimeout(() => {
+									uni.hideLoading();
+									let pages = getCurrentPages();
+									if (pages[pages.length - 2]) {
+										uni.navigateBack()
+									} else {
+										if (_this.$store.state.hasLogin) {
+											_this.$Router.replaceAll({
+												name: 'index'
+											});
+										}
+									}
+									_this.allowLogin = true;
+								}, 1000)
+
+							}
 
 						});
 					}
@@ -412,7 +465,12 @@
 				});
 			}
 		},
-
+		onHide() {
+			this.showBgImage = false
+		},
+		onShow() {
+			this.showBgImage = true
+		},
 		onReady() {
 			// #ifdef APP-PLUS
 			this.initPosition();
@@ -425,17 +483,40 @@
 <style>
 	.content {
 		padding: 0 24upx;
-		display: flex;
+		/* display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: center; */
 		position: relative;
 		height: 100vh;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.logo-icon {
+		width: 160upx;
+		height: 46upx;
+		position: absolute;
+		top: 110upx;
+		left: 20upx;
+		z-index: 99;
+	}
+
+	.page-bg {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		z-index: 1;
+		/* 放在最底层 */
 	}
 
 	.wx-btn {
 		border-radius: 44upx;
 		height: 84upx;
 		line-height: 84upx;
+		background-color: #fe8a62 !important;
+		width: 65%;
 	}
 
 	.wx-btn i {
@@ -504,11 +585,31 @@
 
 	.forget-btn {
 		padding: 10upx 20upx;
-		margin-bottom: 30upx;
+		/* margin-bottom: 30upx; */
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.forget-btn:last-child {
-		margin-bottom: 80upx;
+		/* margin-bottom: 80upx; */
+	}
+
+	.login-text {
+		font-size: 30upx;
+		color: #f8a28a;
+	}
+
+	.radio-privacy {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.privacy-text {
+		font-size: 22upx;
+		color: #474444;
 	}
 
 	.forget-input input {
@@ -576,6 +677,11 @@
 
 	.btn-wrapper {
 		width: 100%;
+		z-index: 99;
+		position: absolute;
+		top: 38%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 
 	.iconfont {
@@ -586,9 +692,11 @@
 
 	.text {
 		padding-left: 10upx;
-		font-size: 30upx;
+		font-size: 36upx;
 		display: inline-block;
 		vertical-align: top;
 		line-height: 84upx;
+		color: #fefefe;
+		font-weight: 600;
 	}
 </style>

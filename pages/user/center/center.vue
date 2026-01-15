@@ -52,11 +52,17 @@
 			四川和喜物业服务有限公司--版权所有
 			<text class="text2"></text>
 		</view>
+		<!-- 底部自定义tabbar -->
+		<mini-tabbar :active-index="1" />
 	</view>
 </template>
 
 <script>
+	import MiniTabbar from '@/components/mini-tabbar/mini-tabbar.vue';
 	export default {
+		components: {
+			MiniTabbar
+		},
 		data() {
 			return {
 				defaultImg: '/static/img/header-img.png',
@@ -117,10 +123,10 @@
 			getData() {
 				let data = {};
 				this.$api.userCenter(data, res => {
-					if(res.code == 1){
+					if (res.code == 1) {
 						this.$store.commit('setMyHouse', res.data);
 					}
-					
+
 				});
 			},
 			logout() {

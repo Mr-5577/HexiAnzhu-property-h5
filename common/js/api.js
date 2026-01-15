@@ -2,6 +2,14 @@ import store from '@/store/index.js';
 import uniRequest from './request.js';
 
 let apis = {}
+// 测试接口
+apis.test = () => {
+	return uniRequest.post('/api/test')
+}
+// 自动绑定房产信息
+apis.autoBind = (data, callback) => {
+	uniRequest.post('/api/autoBind', data).then(callback)
+}
 //登录
 apis.logins = (data, callback) => {
 	uniRequest.post('/api/login', data).then(callback)
@@ -200,6 +208,7 @@ apis.circularInfo = (data, callback) => {
 	uniRequest.post('/api/circularInfo', data).then(callback)
 }
 
+// 获取openid
 apis.getUserOpenid = (data, callback) => {
 	uniRequest.post('/api/get_user_openid', data).then(callback)
 }
