@@ -154,7 +154,8 @@
 				// })
 				this.$api.repairStart({}, res => {
 					this.type1 = res.data.family;
-					this.type2 = res.data.public;
+					// this.type2 = res.data.public;
+					this.type2 = res.data.complaint;
 					this.person = res.data.contacts;
 					this.contact = this.person[this.personCurrent].id;
 					this.$store.commit('setContacts', res.data.contacts);
