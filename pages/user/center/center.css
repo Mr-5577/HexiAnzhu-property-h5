@@ -87,6 +87,12 @@ page {
 	letter-spacing: 0.5px;
 	display: flex;
 	flex-direction: column;
+	position: relative;
+}
+.badge-num {
+	position: absolute;
+	top: -30upx;
+	right: 0;
 }
 .icon {
 	width: 60upx;

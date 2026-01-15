@@ -37,6 +37,7 @@
 				<view class="status" v-for="(item, index) in status" :key="index" @click="getNav(item.url)">
 					<image class="icon" :src="item.icon" mode="aspectFit"></image>
 					<text>{{ item.name }}</text>
+					<uni-badge v-if="item.id === 2 && evaluateNum > 0" :text="evaluateNum" type="error" size="small" class="badge-num" />
 				</view>
 			</view>
 			<view class="center_menu">
@@ -69,22 +70,26 @@
 				status: [{
 						name: '我的订单',
 						icon: '/static/fumou-center-template/my-order.png',
-						url: 'order'
+						url: 'order',
+						id: 1
 					},
 					{
 						name: '我的工单',
 						icon: '/static/fumou-center-template/work-order.png',
-						url: 'repair-order'
+						url: 'repair-order',
+						id: 2
 					},
 					{
 						name: '发票下载',
 						icon: '/static/fumou-center-template/download.png',
-						url: 'electronic_invoice'
+						url: 'electronic_invoice',
+						id: 3
 					},
 					{
 						name: '我的余额',
 						icon: '/static/fumou-center-template/balance.png',
-						url: 'charge-money'
+						url: 'charge-money',
+						id: 4
 					}
 				],
 				menus: [{
@@ -113,20 +118,27 @@
 						url: 'about'
 					}
 				],
-				ownerInfo: ''
+				ownerInfo: '',
+				orderList: []
 			};
 		},
 		onLoad() {
 			this.getData();
+			this.getRepairList();
 		},
 		methods: {
+			getRepairList() {
+				this.$api.repairlist({}, res => {
+					if (res.code === 1) {
+						this.orderList = res.data || [];
+					}
+				});
+			},
 			getData() {
-				let data = {};
-				this.$api.userCenter(data, res => {
+				this.$api.userCenter({}, res => {
 					if (res.code == 1) {
 						this.$store.commit('setMyHouse', res.data);
 					}
-
 				});
 			},
 			logout() {
@@ -174,6 +186,11 @@
 			},
 			hasLogin() {
 				return this.$store.state.hasLogin;
+			},
+			evaluateNum() {
+				// status：0待接单 1已处理 2处理中 1,4待评价
+				const statusToCount = [1, 4];
+				return this.orderList.filter((task) => statusToCount.includes(task.status)).length
 			}
 		}
 	};
