@@ -103,6 +103,7 @@ const store = new Vuex.Store({
 		logout(state) { //退出登陆
 			state.hasLogin = false;
 			state.myHouse = '';
+			state.hasBoundHouse = false;
 			state.login_token = null;
 			state.wxUserInfo = '';
 

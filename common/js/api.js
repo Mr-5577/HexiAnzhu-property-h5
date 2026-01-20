@@ -6,6 +6,10 @@ let apis = {}
 apis.test = () => {
 	return uniRequest.post('/api/test')
 }
+// 综合服务留言
+apis.comprehensive = (data, callback) => {
+	uniRequest.post('/api/comprehensive', data).then(callback)
+}
 // 自动绑定房产信息
 apis.autoBind = (data, callback) => {
 	uniRequest.post('/api/autoBind', data).then(callback)

@@ -1,6 +1,5 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页,
-
 		{
 			"path": "pages/main/index/index",
 			"style": {
@@ -361,7 +360,12 @@
 				"navigationBarTitleText": "优惠详情",
 				"enablePullDownRefresh": false
 			}
-
+		},
+		{
+			"path": "pages/main/service/integrated-service",
+			"style": {
+				"navigationBarTitleText": "综合服务办理"
+			}
 		}
 	],
 	"globalStyle": {
