@@ -6,6 +6,10 @@ let apis = {}
 apis.test = () => {
 	return uniRequest.post('/api/test')
 }
+// 获取活动列表
+apis.getActivityList = (data, callback) => {
+	uniRequest.post('/api/getActivityList', data).then(callback)
+}
 // 综合服务留言
 apis.comprehensive = (data, callback) => {
 	uniRequest.post('/api/comprehensive', data).then(callback)

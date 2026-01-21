@@ -366,6 +366,12 @@
 			"style": {
 				"navigationBarTitleText": "综合服务办理"
 			}
+		},
+		{
+			"path": "pages/main/activity/activity-detail",
+			"style": {
+				"navigationBarTitleText": "活动详情"
+			}
 		}
 	],
 	"globalStyle": {

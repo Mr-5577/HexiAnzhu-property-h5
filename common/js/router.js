@@ -197,114 +197,119 @@ const router = new Router({
 		{
 			name: "akeyhall-success",
 			path: "/pages/main/akeyhall/success"
+		},
+		{
+			name: "integrated-service",
+			path: "/pages/main/service/integrated-service"
+		},
+		{
+			name: "activity-detail",
+			path: "/pages/main/activity/activity-detail"
 		}
 	]
 })
 router.beforeEach(async (to, from, next) => {
 	//进入主页路由不用验证是否绑定房产和登录
-	switch (to.name) {
-		case 'author':
-			next();
-			return;
-			break;
-		case 'center':
-			next();
-			return;
-			break;
-		case 'shopping':
-			next();
-			return;
-			break;
-		case 'about':
-			next();
-			return;
-			break;
-		case 'user-agreement':
-			next();
-			return;
-			break;
-		case 'service-explain':
-			next();
-			return;
-			break;
 
-		case 'add-tower':
-			next();
-			return;
-			break;
-		case 'add-project':
-			next();
-			return;
-			break;
-		case 'add-unit':
-			next();
-			return;
-			break;
-		case 'add-room':
-			next();
-			return;
-			break;
-		case 'add-city':
-			next();
-			return;
-			break;
-		case 'order-detail':
-			next();
-			return;
-			break;
-		case 'choose-type':
-			next();
-			return;
-			break;
-		case 'car-pay':
-			next();
-			return;
-			break;
-		case 'est-pay':
-			next();
-			return;
-			break;
-		default: ;
+	// 配置化白名单
+	const WHITE_ROUTES = [
+		'index',
+		'center',
+		'author',
+		'shopping',
+		'about',
+		'user-agreement',
+		'service-explain',
+		'add-tower',
+		'add-project',
+		'add-unit',
+		'add-room',
+		'add-city',
+		'order-detail',
+		'choose-type',
+		'car-pay',
+		'est-pay'
+	]
+	if (WHITE_ROUTES.includes(to.name)) {
+		next()
+		return
 	}
 	if (!store.state.hasLogin) { //验证是否登录
 		if (to.name === 'login') {
 			next();
 			return;
 		}
-		let codeRes = await uni.login()
-		await api.getUserOpenid({
-			code: codeRes[1].code
-		}, res => {
-			if (res.code == 1) {
-				api.login_by_openid_xcx({
-					cache_name: res.data
-				},res =>{
-					if(res.code == 1){
-						store.commit('loginToken', res.data);
-						next();
-					}else{
-						uni.showModal({
-							content: '请先登录',
-							confirmColor: '#ffcf5a',
-							success(res) {
-								if (res.confirm) {
-									next({
-										name: 'login',
-										NAVTYPE: 'push'
-									});
-								}
-							}
-						});
-					}
-				})
+		// let codeRes = await uni.login()
+		// await api.getUserOpenid({
+		// 	code: codeRes[1].code
+		// }, res => {
+		// 	if (res.code == 1) {
+		// 		api.login_by_openid_xcx({
+		// 			cache_name: res.data
+		// 		},res =>{
+		// 			if(res.code == 1){
+		// 				store.commit('loginToken', res.data);
+		// 				next();
+		// 			}else{
+		// 				uni.showModal({
+		// 					content: '请先登录',
+		// 					confirmColor: '#ffcf5a',
+		// 					success(res) {
+		// 						if (res.confirm) {
+		// 							next({
+		// 								name: 'login',
+		// 								NAVTYPE: 'push'
+		// 							});
+		// 						}
+		// 					}
+		// 				});
+		// 			}
+		// 		})
+		// 	}
+		// })
+		uni.showModal({
+			content: '请先登录',
+			cancelColor: '#898989',
+			cancelText: '不去了',
+			confirmColor: '#fe845e',
+			confirmText: '去登录',
+			success(res) {
+				if (res.confirm) {
+					next({
+						name: 'login',
+						NAVTYPE: 'push'
+					});
+				}
+			}
+		});
+		return;
+	}
+	if (!store.state.hasBoundHouse) { //验证是否绑定房产
+		if (to.name === 'bound-house') {
+			next();
+			return;
+		}
+		uni.showModal({
+			title: '未绑定房产',
+			cancelColor: '#898989',
+			cancelText: '取消',
+			confirmColor: '#fe845e',
+			confirmText: '去绑定',
+			content: '是否前往绑定房产？',
+			success(resp) {
+				if (resp.confirm) {
+					next({
+						name: 'bound-house',
+						NAVTYPE: 'push'
+					});
+				}
 			}
 		})
 		return;
-	}else{
-		next();
 	}
+	next();
 })
-router.afterEach((to,from,next) =>{
-	
+router.afterEach((to, from, next) => {
+
 })
 export default router

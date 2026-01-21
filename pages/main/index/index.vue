@@ -1,16 +1,18 @@
 <template>
-	<view>
-		<!-- 顶部 -->
+	<view class="home-page">
+		<!-- 背景图片 -->
+		<image v-show="showBgImage" class="page-bg" src="/static/img/main/page-bg.jpg" mode="aspectFill" />
+		<!-- 自定义导航栏顶部 -->
 		<view class="main-header">
 			<view class="main-project  uni-ellipsis">
-				<view class="uni-font-32" @click="getNav('my-house')">
-					<text v-show="hasLogin === false">请登录</text>
-					<text v-show="hasLogin === true && hasBoundHouse === false">请绑定房产</text>
+				<view class="uni-font-32" @click="toTagetPage">
+					<text style="color: #fae6d7ff" v-show="hasLogin === false">请登录</text>
+					<text style="color: #fae6d7ff" v-show="hasLogin === true && hasBoundHouse === false">请绑定房产</text>
 					<view v-show="hasLogin === true && hasBoundHouse === true && myHouse.ownerInfo.villagename">
-						<image src="/static/images/addr.png" mode="aspectFit"
-							style="width: 30upx;height: 30upx;margin-right: 10upx;vertical-align: middle;"></image>
+						<image src="/static/img/main/community.png" mode="aspectFit"
+							style="width: 35upx;height: 40upx;margin-right: 10upx;vertical-align: middle;"></image>
 						<text
-							style="vertical-align: middle;font-weight: 600;">{{ myHouse.ownerInfo.villagename }}</text>
+							style="vertical-align: middle;font-weight: 600;color: #fae6d7ff;font-size: 26upx;">{{ myHouse.ownerInfo.villagename }}</text>
 					</view>
 				</view>
 			</view>
@@ -27,55 +29,90 @@
 						<!-- 轮播图 -->
 						<view class="main-banner">
 							<swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay"
-								:interval="interval" :duration="duration">
+								:interval="interval" :duration="duration" :circular="true">
 								<swiper-item v-for="(item, index) in banners" :key="index">
 									<image :src="item" mode="widthFix"></image>
 								</swiper-item>
 							</swiper>
 						</view>
-						<!-- 菜单按钮 -->
-						<view class="main-grad-8">
-							<uni-grid :column="4" :highlight="true">
-								<uni-grid-item v-for="(item, index) in list" :key="index" style="margin-top: 20upx;">
-									<view @click="getItemNav(item)">
-										<view class="uni-flex-center">
-											<image :src="item.image" class="image" mode="aspectFill" />
-										</view>
-										<view class="text" style="text-align: center;">{{ item.name }}</view>
+						<!-- 通知公告 -->
+						<view class="notice-wrapper">
+							<view class="notice-title">通知公告</view>
+							<view class="notice-content">
+								<view class="notice-list">
+									<view class="notice-item" v-if="noticeList.length > 0" :key="currentIndex"
+										:class="{ sliding: isSliding }" @click="noticeDetail">
+										<text class="notice-text">{{ currentNotice.name || '' }}</text>
 									</view>
-								</uni-grid-item>
-							</uni-grid>
+									<text class="notice-text" v-else>暂无新的通知公告</text>
+								</view>
+								<view class="more-notice" @click="toNoticeList">
+									<uni-badge v-if="noticeList.length > 1" :text="noticeList.length.toString()"
+										type="error" size="small"></uni-badge>
+									<uni-icons type="arrowright" size="20" style="line-height: 1.3;"></uni-icons>
+								</view>
+							</view>
+						</view>
+						<!-- 缴费、报修 -->
+						<view class="fast-card">
+							<view class="card-content" @click="toPay">
+								<view class="card-left">
+									<text class="amount">￥9999.9</text>
+									<text class="pending-pay">待缴金额</text>
+									<text class="pay-now">立即缴费</text>
+								</view>
+								<image src="/static/img/main/payment.png" class="right-img" mode="aspectFill" />
+							</view>
+							<view class="card-content" @click="toRepair">
+								<view class="card-right">
+									<text class="repair-text">报事报修</text>
+									<text class="online-repair">线上快速报</text>
+								</view>
+								<image src="/static/img/main/repair.png" class="right-img" mode="aspectFill" />
+							</view>
 						</view>
 					</view>
 				</view>
-				<!-- 通知公告 -->
-				<view class="notice-wrapper">
-					<view class="notice-title">通知公告</view>
-					<view class="notice-content">
-						<view class="notice-item">
-							<text class="text" v-if="noticeList" @click="noticeDetail">{{ noticeList.name }}</text>
-							<text class="text" v-else>暂无新的通知公告</text>
+				<!-- 菜单按钮 -->
+				<view class="main-grad-8">
+					<view class="custom-grid">
+						<view class="custom-grid-item" v-for="(item, index) in gridList" :key="index"
+							@click="getItemNav(item)">
+							<view class="grid-item-content">
+								<image :src="item.image" class="grid-item-image" mode="aspectFill" />
+								<view class="grid-item-text">{{ item.name }}</view>
+							</view>
 						</view>
 					</view>
 				</view>
 				<!-- 我的管家 -->
-				<view class="uni-flex-center" style="margin: 20upx;background-color: #fff;border-radius: 10upx;"
-					v-if="housekeeper">
+				<view class="my-butler" v-if="housekeeper">
+					<text class="butler-title">呼叫管家</text>
 					<view class="housekeeper uni-cell-90 uni-flex-btw" @click="toHousekeeper">
 						<view class="uni-cell-20 uni-flex-center">
-							<image :src="housekeeprImg" mode="aspectFit" class="housekeeper-header"></image>
+							<image src="/static/img/main/avatar.png" mode="aspectFit" class="housekeeper-header"></image>
 						</view>
 						<view class="uni-cell-30 uni-flex-center" style="text-align: left">
 							<view style="height: 100upx;">
 								<view class="uni-font-36" style="color: #333;font-weight: 500;">
-									{{ housekeeper.realname }}
+									{{ housekeeper.realname || '' }}
 								</view>
-								<view class="uni-font-28" style="color: #ccc;">您的专属管家</view>
+								<view class="uni-font-28" style="color: #c6bebd;">您的专属管家</view>
 							</view>
 						</view>
 						<view class="uni-cell-20"></view>
 						<view class="uni-cell-30 uni-flex-center">
 							<view class="housekeeper-btn">呼叫管家</view>
+						</view>
+					</view>
+				</view>
+				<!-- 热门活动 -->
+				<view class="promotion">
+					<test class="promotion-title">热门活动</test>
+					<view class="promotion-list">
+						<view class="promotion-item" v-for="(item,index) in activityList" :key="index" @click="toActivityDetail(item)">
+							<image :src="item.head_pic" mode="aspectFit" class="promotion-img"></image>
+							<text class="promotion-description">{{ item.title }}</text>
 						</view>
 					</view>
 				</view>
@@ -111,6 +148,23 @@
 				<li-toast :showToast="showToast"></li-toast>
 			</view>
 		</s-pull-scroll>
+		<!-- 广告弹窗 -->
+		<view v-if="showAdPopup && adData" class="ad-popup-mask">
+			<view class="ad-popup-content">
+				<view class="ad-image-container">
+					<!-- mode="aspectFit" 自动保持比例并完整显示 -->
+					<image 
+						:src="adData.window_pic" 
+						mode="aspectFit" 
+						@click="handleAdClick"
+						class="ad-image"
+					/>
+				</view>
+				<view class="ad-close" @click="closeAd">我知道了</view>
+			</view>
+		</view>
+		<!-- 底部自定义tabbar -->
+		<mini-tabbar :active-index="0" />
 	</view>
 </template>
 <script>
@@ -119,6 +173,7 @@
 	import yomolUpgrade from '@/components/yomol-upgrade/yomol-upgrade.vue';
 	import liToast from '@/components/li-toast/li-toast.vue';
 	import sPullScroll from '@/components/s-pull-scroll';
+	import MiniTabbar from '@/components/mini-tabbar/mini-tabbar.vue';
 
 	export default {
 		components: {
@@ -126,7 +181,8 @@
 			uniGridItem,
 			yomolUpgrade,
 			liToast,
-			sPullScroll
+			sPullScroll,
+			MiniTabbar
 		},
 		data() {
 			return {
@@ -136,30 +192,38 @@
 				autoplay: true,
 				interval: 5000,
 				duration: 500,
-				noticeList: '',
-				banners: ['/static/img/main/banner.jpg'],
-				service: [{
-						img: '/static/img/main/78761498124328542.png',
-						title: '电子礼品卡',
-						mark: '家乐福9折'
-					},
-					{
-						img: '/static/img/main/78761498124328542.png',
-						title: '手机维修',
-						mark: '手机维修'
-					},
-					{
-						img: '/static/img/main/72581498124372327.png',
-						title: '滴滴出行',
-						mark: '滴滴出行3.0'
-					}
-				],
-				list: [],
+				banners: ['/static/img/main/banner1.jpg', '/static/img/main/banner2.jpg'],
+				gridList: [{
+					appid: "wx045946249448b4a9",
+					id: 34,
+					image: "/static/img/main/complaint.png",
+					is_outside: 0,
+					name: "投诉建议",
+					url: "pages/main/maintenance/complaint",
+					vid: 1001
+				}, {
+					id: 15,
+					image: "/static/img/main/renovation.png",
+					is_outside: 0,
+					name: "装修办理",
+					url: "pages/main/service/integrated-service",
+				}, {
+					id: 2003,
+					image: "/static/img/main/convenience.png",
+					is_outside: 0,
+					name: "便民服务",
+					url: "pages/main/maintenance/complaint",
+				}, {
+					id: 16,
+					image: "/static/img/main/service.png",
+					is_outside: 0,
+					name: "综合服务",
+					url: "pages/main/service/integrated-service",
+				}, ],
 				upgradeType: 'pkg', //pkg 整包 wgt 升级包
 				upgradeContent: '', //更新内容
 				upgradeUrl: '', //更新地址
-				housekeeprImg: '/static/img/header-img.png',
-				housekeeper: '',
+				housekeeper: '', // 管家信息
 				myHouse: {
 					ownerInfo: {
 						villagename: ''
@@ -168,26 +232,77 @@
 				// 是否显示商品列表
 				showGoods: false,
 				// 推荐商品数据列表
-				recommendList: []
+				recommendList: [],
+				showBgImage: true, // 是否显示首页背景图
+				noticeList: [], // 通知公告列表
+				currentIndex: 0, // 当前显示的通知公告索引
+				timer: null, // 定时器
+				isSliding: false, // 动画状态
+				activityList: [], // 热门活动列表
+				showAdPopup: false, // 广告弹窗显示状态
+      			adData: null, // 广告数据
 			};
 		},
 		methods: {
+			// 开始滚动
+			startScroll() {
+				if (this.noticeList.length <= 1) return
+
+				// 清除现有定时器
+				this.stopScroll()
+
+				// 设置新定时器
+				this.timer = setInterval(() => {
+					this.nextNotice()
+				}, 3000)
+			},
+
+			// 切换到下一条
+			nextNotice() {
+				this.isSliding = true
+
+				setTimeout(() => {
+					this.currentIndex = (this.currentIndex + 1) % this.noticeList.length
+					this.isSliding = false
+				}, 300)
+			},
+
+			// 停止滚动
+			stopScroll() {
+				if (this.timer) {
+					clearInterval(this.timer)
+					this.timer = null
+				}
+			},
+			async toTagetPage() {
+				if (this.hasLogin) {
+					this.$Router.push({
+						name: 'my-house'
+					});
+				} else {
+					this.$Router.push({
+						name: 'login'
+					});
+				}
+			},
 			// 刷新
 			refresh() {
 				this.$nextTick(() => {
 					this.$refs.pullScroll.refresh();
 				});
 			},
+			// 应用模块
 			getSetting() {
-				if (!this.list.length) {
+				if (!this.gridList.length) {
 					this.$api.setting({}, res => {
 						if (res.code == 1) {
 							// 按照后端返回sort大小排序
-							for (let i = 0; i < res.data.length; i++) {
-								for (let p = 0; p < res.data.length; p++) {
-									res.data[p].sort == i + 1 ? this.list.push(res.data[p]) : ''
-								}
-							}
+							const data = res.data || []
+							this.gridList = data.sort((a, b) => {
+								const sortA = Number(a.sort) || 0;
+								const sortB = Number(b.sort) || 0;
+								return sortA - sortB; // 升序排序
+							});
 						}
 					});
 				}
@@ -195,8 +310,8 @@
 
 			// 下拉刷新
 			pullDown(pullScroll) {
-				this.getData(pullScroll);
-				this.getIndex();
+				this.getUserCenter(pullScroll);
+				this.getHomeData();
 				// 获取商品数据
 				this.$api.getGoods({}, res => {
 					this.recommendList = res.data;
@@ -210,47 +325,61 @@
 				});
 			},
 			getItemNav(item) {
-				let _this = this;
 				if (item.is_outside == 1) {
+					// 打开另一个小程序
 					uni.navigateToMiniProgram({
-						appId: item.appid,
-						path: item.url,
+						appId: item.appid, // 必填，要打开的小程序 appId
+						path: item.url, // 打开的页面路径，如果为空则打开首页
 						success(res) {
 							console.log('跳转成功！');
 						}
 					});
 					return;
 				} else if (item.url) {
-
-					// uni.navigateTo({
-					// 	url: '/' + item.url
-					// })
 					this.$Router.push({
 						path: '/' + item.url,
 						query: {
 							id: item.id
 						}
 					});
-
-
 				} else {
 					uni.showToast({
 						icon: 'none',
 						title: '熬夜开发中，请耐心等待！'
 					});
-					return;
 				}
-
 			},
 			noticeDetail() {
-				if (this.noticeList.id) {
+				if (this.currentNotice.id) {
 					this.$Router.push({
 						name: 'notice-detail',
 						params: {
-							id: this.noticeList.id
+							id: this.currentNotice.id
 						}
 					});
 				}
+			},
+			toNoticeList() {
+				this.$Router.push({
+					name: 'notice',
+					params: {}
+				});
+			},
+			toPay() {
+				this.$Router.push({
+					name: 'choose-type',
+					params: {
+						id: 100
+					}
+				});
+			},
+			toRepair() {
+				this.$Router.push({
+					name: 'maintenance',
+					params: {
+						id: 12
+					}
+				});
 			},
 			toHousekeeper() {
 				this.$Router.push({
@@ -260,10 +389,20 @@
 					}
 				});
 			},
-			getData(pullScroll) {
+			toActivityDetail(item) {
+				uni.setStorageSync('activityData', item);
+				// 传递ID用于标识
+				this.$Router.push({
+					name: 'activity-detail',
+					params: {
+						id: item.id
+					}
+				});
+			},
+			getUserCenter(pullScroll) {
 				let data = {};
 				this.$api.userCenter(data, res => {
-					if(res.code == 1){
+					if (res.code == 1) {
 						this.myHouse = res.data;
 						this.$store.commit('setMyHouse', res.data);
 					}
@@ -302,13 +441,89 @@
 					}
 				});
 			},
-			getIndex() {
-				let data = {};
-				this.$api.homeIndex(data, res => {
+			// 通知公告、物业管家信息
+			getHomeData() {
+				// 物业管家
+				this.$api.homeIndex({}, res => {
 					this.housekeeper = res.data.stewards && res.data.stewards.length > 0 ? res.data.stewards[0] :
 						'';
-					this.noticeList = res.data.circular;
 				});
+				// 通知公告列表
+				this.$api.circularList({}, res => {
+					if (res.code == 1) {
+						this.noticeList = res.data || [];
+						if (this.noticeList.length > 1) {
+							this.startScroll()
+						}
+					}
+				});
+				// 热门活动列表
+				this.$api.getActivityList({}, res => {
+					if (res.code === 1) {
+						const dataList = res.data || []
+						const domain = this.qiniuDatas?.http_domain || '';
+						this.activityList = dataList.map((item) => {
+							return {
+								...item,
+								head_pic: domain ? `${domain}${item.head_pic}` : item.head_pic,
+								window_pic: domain ? `${domain}${item.window_pic}` : item.window_pic,
+							}
+						})
+						// 广告展示逻辑，每日只展示一次广告（通过本地存储记录）
+						// 数据后端处理，会把要展示的弹窗数据放在第一条，如果第一条数据的is_popup值不为1则没有弹窗广告
+						const [firstData] = this.activityList || []
+						// 检查并展示广告弹窗
+						if (firstData && firstData.is_popup === 1 && this.shouldShowAd()) {
+							this.adData = firstData;
+							// 延迟展示，页面先渲染
+							setTimeout(() => {
+								this.showAdPopup = true;
+								// 记录本次展示
+								this.recordAdShow();
+							}, 1000);
+						}
+					}
+				});
+			},
+			// 检查是否应该展示广告
+			shouldShowAd() {
+				// 如果用户未登录，不展示广告
+				if (!this.$store.state.login_token) return false;
+				
+				const today = new Date().toDateString();
+				const lastShow = uni.getStorageSync('last_ad_show_date');
+				
+				// 今日未展示过广告
+				return lastShow !== today;
+			},
+			// 记录广告展示，标记今天已展示
+			recordAdShow() {
+				const today = new Date().toDateString();
+				uni.setStorageSync('last_ad_show_date', today);
+			},
+			// 关闭广告
+			closeAd() {
+				this.showAdPopup = false;
+			},
+			// 点击广告跳转
+			handleAdClick() {
+				if (!this.adData || !this.adData.link_url) return;
+				
+				// 跳转到广告链接
+				uni.navigateTo({
+					url: this.adData.link_url
+				});
+
+				// 打开另一个小程序
+				// uni.navigateToMiniProgram({
+				// 	appId: '', // 必填，要打开的小程序 appId
+				// 	path: '', // 打开的页面路径，如果为空则打开首页
+				// 	success(res) {
+				// 		console.log('跳转成功！');
+				// 	}
+				// });
+				// 关闭弹窗
+				this.closeAd();
 			},
 			// 点击商品跳转惠选商品页
 			goodsClick(good) {
@@ -319,47 +534,59 @@
 						console.log('跳转成功！');
 					}
 				});
-			}
+			},
+			// 获取七牛云凭证
+			getUpToken() {
+				this.$api.upToken({}, (res) => {
+					this.$store.commit("setQiniuData", res.data);
+				});
+			},
 		},
 		async onShow() {
-			let _this = this;
+			this.showBgImage = true
 			if (this.$store.state.login_token) {
 				// 获取商品数据
 				this.$api.getGoods({}, res => {
 					this.recommendList = res.data;
 					this.showGoods = res.is_show == 1 ? true : false;
 				});
+				// 用户信息、房产信息
 				this.$api.userCenter({}, res => {
 					if (res.code == 1) {
 						this.myHouse = res.data;
 						this.$store.commit('setMyHouse', res.data);
-						this.getIndex();
+						// 获取七牛云凭证
+						if (!this.qiniuDatas) {
+							this.getUpToken();
+						}
+						this.getHomeData();
 						this.getSetting();
 					}
 				});
 			} else {
-				let codeRes = await uni.login()
-				await this.$api.getUserOpenid({
-					code: codeRes[1].code
-				}, res => {
-					if (res.code == 1) {
-						_this.$api.login_by_openid_xcx({
-							cache_name: res.data
-						}, res => {
-							if (res.code == 1) {
-								uni.setStorageSync('loginToken', res.data);
-								_this.$store.commit('loginToken', res.data);
-								_this.$api.userCenter({}, res => {
-									_this.myHouse = res.data;
-									_this.$store.commit('setMyHouse', res.data);
-									_this.getIndex();
-									_this.getSetting();
-									//检测更新
-								});
-							} 
-						})
-					}
-				})
+				// let _this = this;
+				// let codeRes = await uni.login()
+				// await this.$api.getUserOpenid({
+				// 	code: codeRes[1].code
+				// }, res => {
+				// 	if (res.code == 1) {
+				// 		_this.$api.login_by_openid_xcx({
+				// 			cache_name: res.data
+				// 		}, res => {
+				// 			if (res.code == 1) {
+				// 				uni.setStorageSync('loginToken', res.data);
+				// 				_this.$store.commit('loginToken', res.data);
+				// 				_this.$api.userCenter({}, res => {
+				// 					_this.myHouse = res.data;
+				// 					_this.$store.commit('setMyHouse', res.data);
+				// 					_this.getHomeData();
+				// 					_this.getSetting();
+				// 					//检测更新
+				// 				});
+				// 			}
+				// 		})
+				// 	}
+				// })
 			}
 			// #ifdef APP-PLUS
 			this.checkVersionClick();
@@ -372,7 +599,7 @@
 				if (loginToken) {
 					this.$store.commit('loginToken', loginToken);
 					//首页数据
-					// this.getIndex();
+					// this.getHomeData();
 				}
 				const userInfo = uni.getStorageSync('userInfo');
 				if (userInfo) {
@@ -381,6 +608,13 @@
 			} catch (e) {
 				// error
 			}
+		},
+		onHide() {
+			this.showBgImage = false
+			this.stopScroll()
+		},
+		onUnload() {
+			this.stopScroll()
 		},
 		computed: {
 			// myHouse() {
@@ -405,7 +639,13 @@
 				} else {
 					return '/static/img/message.png';
 				}
-			}
+			},
+			currentNotice() {
+				return this.noticeList[this.currentIndex] || null
+			},
+			qiniuDatas() {
+				return this.$store.state.qiniuData;
+			},
 		}
 	};
 </script>
