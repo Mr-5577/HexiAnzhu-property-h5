@@ -1,6 +1,9 @@
 <script>
 	export default {
 		onLaunch: async function() {
+			// 小程序启动时设置广告状态为false
+  			this.$store.commit('setHasShownAd', false);
+
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager();
 				updateManager.onCheckForUpdate(function(res) {

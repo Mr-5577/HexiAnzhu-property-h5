@@ -6,7 +6,6 @@
 			<view class="content" v-else>
 				<view class="code">房号：{{ datas.room.roomnum ? datas.room.roomnum : '' }}</view>
 				<view class="area">面积：{{ datas.room.buildareas ? datas.room.buildareas : '' }}㎡</view>
-				<!-- <view class="btn" @click="estPay">缴费</view> -->
 				<button class="btn" @click="estPay" plain>缴费</button>
 			</view>
 		</view>
@@ -17,7 +16,6 @@
 				<view class="content" v-for="(item, index) in datas.cars" :key="index">
 					<view class="code">车位编号：{{ item.plates ? item.plates : '' }}</view>
 					<view class="area">面积：{{ item.area ? item.area : '' }}㎡</view>
-					<!-- <view class="btn" @click="carPay(item)">缴费</view> -->
 					<button class="btn" @click="carPay(item)" plain>缴费</button>
 				</view>
 			</view>
@@ -29,7 +27,6 @@
 	export default {
 		data() {
 			return {
-				key: '',
 				datas: {}
 			};
 		},
@@ -41,8 +38,10 @@
 				this.$api.userCenter({}, res => {
 					this.$store.commit('setMyHouse', res.data);
 					this.$api.getDefult({}, res => {
-						this.datas = res.data;
-						this.$store.commit('setMyRoom', res.data);
+						if (res.code === 1) {
+							this.datas = res.data;
+							this.$store.commit('setMyRoom', res.data);
+						}
 					});
 				});
 			},

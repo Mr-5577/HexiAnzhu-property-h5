@@ -19,6 +19,7 @@ const store = new Vuex.Store({
 		myHouse: '', //个人中心数据
 		hasAuthorized: false, //是否微信授权
 		wxUserInfo: '', //微信登录信息
+		hasShownAdInThisSession: false, // 本次小程序会话是否展示过广告
 
 		city: {}, //绑定城市
 		village: {}, //绑定楼盘
@@ -168,6 +169,10 @@ const store = new Vuex.Store({
 		},
 		setOrderData(state, data) {
 			state.orderData = data;
+		},
+		// 设置 是否展示广告的状态，false为没有展示，true为已展示
+		setHasShownAd(state, value) {
+			state.hasShownAdInThisSession = value;
 		}
 	},
 	actions: {

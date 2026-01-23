@@ -212,7 +212,7 @@
 					image: "/static/img/main/convenience.png",
 					is_outside: 0,
 					name: "便民服务",
-					url: "pages/main/maintenance/complaint",
+					url: "",
 				}, {
 					id: 16,
 					image: "/static/img/main/service.png",
@@ -311,12 +311,12 @@
 			// 下拉刷新
 			pullDown(pullScroll) {
 				this.getUserCenter(pullScroll);
-				this.getHomeData();
 				// 获取商品数据
 				this.$api.getGoods({}, res => {
 					this.recommendList = res.data;
 					this.showGoods = res.is_show == 1 ? true : false;
 				});
+				this.getHomeData();
 			},
 			moveHandle() {},
 			getNav(url) {
@@ -400,8 +400,7 @@
 				});
 			},
 			getUserCenter(pullScroll) {
-				let data = {};
-				this.$api.userCenter(data, res => {
+				this.$api.userCenter({}, res => {
 					if (res.code == 1) {
 						this.myHouse = res.data;
 						this.$store.commit('setMyHouse', res.data);
@@ -441,7 +440,7 @@
 					}
 				});
 			},
-			// 通知公告、物业管家信息
+			// 通知公告、物业管家、热门活动信息
 			getHomeData() {
 				// 物业管家
 				this.$api.homeIndex({}, res => {
@@ -469,37 +468,28 @@
 								window_pic: domain ? `${domain}${item.window_pic}` : item.window_pic,
 							}
 						})
-						// 广告展示逻辑，每日只展示一次广告（通过本地存储记录）
-						// 数据后端处理，会把要展示的弹窗数据放在第一条，如果第一条数据的is_popup值不为1则没有弹窗广告
-						const [firstData] = this.activityList || []
-						// 检查并展示广告弹窗
-						if (firstData && firstData.is_popup === 1 && this.shouldShowAd()) {
-							this.adData = firstData;
-							// 延迟展示，页面先渲染
-							setTimeout(() => {
-								this.showAdPopup = true;
-								// 记录本次展示
-								this.recordAdShow();
-							}, 1000);
-						}
+			
+						// 检查广告弹窗
+        				this.checkAdPopup();
 					}
 				});
 			},
-			// 检查是否应该展示广告
-			shouldShowAd() {
-				// 如果用户未登录，不展示广告
-				if (!this.$store.state.login_token) return false;
-				
-				const today = new Date().toDateString();
-				const lastShow = uni.getStorageSync('last_ad_show_date');
-				
-				// 今日未展示过广告
-				return lastShow !== today;
-			},
-			// 记录广告展示，标记今天已展示
-			recordAdShow() {
-				const today = new Date().toDateString();
-				uni.setStorageSync('last_ad_show_date', today);
+			// 检查广告弹窗
+			checkAdPopup() {
+				// 条件检查：登录 + 未展示过广告 + 有广告数据
+				if (!this.$store.state.login_token) return;
+				if (this.$store.state.hasShownAdInThisSession) return;
+				// 数据后端处理，会把要展示的弹窗数据放在第一条，如果第一条数据的is_popup值为1则进行活动弹窗
+				const [firstData] = this.activityList || []
+				if (firstData && firstData.is_popup === 1) {
+				this.adData = firstData;
+				// 延迟展示，页面先渲染
+				setTimeout(() => {
+					this.showAdPopup = true;
+					// 标记已展示活动弹窗
+					this.$store.commit('setHasShownAd', true);
+				}, 1000);
+				}
 			},
 			// 关闭广告
 			closeAd() {
@@ -598,8 +588,6 @@
 				const loginToken = uni.getStorageSync('loginToken');
 				if (loginToken) {
 					this.$store.commit('loginToken', loginToken);
-					//首页数据
-					// this.getHomeData();
 				}
 				const userInfo = uni.getStorageSync('userInfo');
 				if (userInfo) {
