@@ -205,12 +205,15 @@ const router = new Router({
 		{
 			name: "activity-detail",
 			path: "/pages/main/activity/activity-detail"
+		},
+		{
+			name: "visitor-register",
+			path: "/pages/visitor/visitor-register"
 		}
 	]
 })
 router.beforeEach(async (to, from, next) => {
 	//进入主页路由不用验证是否绑定房产和登录
-
 	// 配置化白名单
 	const WHITE_ROUTES = [
 		'index',
@@ -228,7 +231,8 @@ router.beforeEach(async (to, from, next) => {
 		'order-detail',
 		'choose-type',
 		'car-pay',
-		'est-pay'
+		'est-pay',
+		'visitor-register'
 	]
 	if (WHITE_ROUTES.includes(to.name)) {
 		next()

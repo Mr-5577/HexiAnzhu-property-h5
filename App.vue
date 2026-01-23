@@ -2,7 +2,7 @@
 	export default {
 		onLaunch: async function() {
 			// 小程序启动时设置广告状态为false
-  			this.$store.commit('setHasShownAd', false);
+			this.$store.commit('setHasShownAd', false);
 
 			if (wx.canIUse('getUpdateManager')) {
 				const updateManager = wx.getUpdateManager();
@@ -33,7 +33,7 @@
 					content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
 				});
 			}
-			
+
 			// let codeRes = await uni.login()
 			// await this.$api.getUserOpenid({
 			// 	code: codeRes[1].code

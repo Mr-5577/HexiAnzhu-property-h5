@@ -90,7 +90,8 @@
 					<text class="butler-title">呼叫管家</text>
 					<view class="housekeeper uni-cell-90 uni-flex-btw" @click="toHousekeeper">
 						<view class="uni-cell-20 uni-flex-center">
-							<image src="/static/img/main/avatar.png" mode="aspectFit" class="housekeeper-header"></image>
+							<image src="/static/img/main/avatar.png" mode="aspectFit" class="housekeeper-header">
+							</image>
 						</view>
 						<view class="uni-cell-30 uni-flex-center" style="text-align: left">
 							<view style="height: 100upx;">
@@ -110,7 +111,8 @@
 				<view class="promotion">
 					<test class="promotion-title">热门活动</test>
 					<view class="promotion-list">
-						<view class="promotion-item" v-for="(item,index) in activityList" :key="index" @click="toActivityDetail(item)">
+						<view class="promotion-item" v-for="(item,index) in activityList" :key="index"
+							@click="toActivityDetail(item)">
 							<image :src="item.head_pic" mode="aspectFit" class="promotion-img"></image>
 							<text class="promotion-description">{{ item.title }}</text>
 						</view>
@@ -153,12 +155,7 @@
 			<view class="ad-popup-content">
 				<view class="ad-image-container">
 					<!-- mode="aspectFit" 自动保持比例并完整显示 -->
-					<image 
-						:src="adData.window_pic" 
-						mode="aspectFit" 
-						@click="handleAdClick"
-						class="ad-image"
-					/>
+					<image :src="adData.window_pic" mode="aspectFit" @click="handleAdClick" class="ad-image" />
 				</view>
 				<view class="ad-close" @click="closeAd">我知道了</view>
 			</view>
@@ -240,7 +237,7 @@
 				isSliding: false, // 动画状态
 				activityList: [], // 热门活动列表
 				showAdPopup: false, // 广告弹窗显示状态
-      			adData: null, // 广告数据
+				adData: null, // 广告数据
 			};
 		},
 		methods: {
@@ -468,9 +465,9 @@
 								window_pic: domain ? `${domain}${item.window_pic}` : item.window_pic,
 							}
 						})
-			
+
 						// 检查广告弹窗
-        				this.checkAdPopup();
+						this.checkAdPopup();
 					}
 				});
 			},
@@ -482,13 +479,13 @@
 				// 数据后端处理，会把要展示的弹窗数据放在第一条，如果第一条数据的is_popup值为1则进行活动弹窗
 				const [firstData] = this.activityList || []
 				if (firstData && firstData.is_popup === 1) {
-				this.adData = firstData;
-				// 延迟展示，页面先渲染
-				setTimeout(() => {
-					this.showAdPopup = true;
-					// 标记已展示活动弹窗
-					this.$store.commit('setHasShownAd', true);
-				}, 1000);
+					this.adData = firstData;
+					// 延迟展示，页面先渲染
+					setTimeout(() => {
+						this.showAdPopup = true;
+						// 标记已展示活动弹窗
+						this.$store.commit('setHasShownAd', true);
+					}, 1000);
 				}
 			},
 			// 关闭广告
@@ -498,7 +495,7 @@
 			// 点击广告跳转
 			handleAdClick() {
 				if (!this.adData || !this.adData.link_url) return;
-				
+
 				// 跳转到广告链接
 				uni.navigateTo({
 					url: this.adData.link_url

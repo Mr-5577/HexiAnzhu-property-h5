@@ -372,6 +372,12 @@
 			"style": {
 				"navigationBarTitleText": "活动详情"
 			}
+		},
+		{
+			"path": "pages/visitor/visitor-register",
+			"style": {
+				"navigationBarTitleText": "来访登记"
+			}
 		}
 	],
 	"globalStyle": {
