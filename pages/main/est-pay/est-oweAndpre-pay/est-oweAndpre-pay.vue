@@ -515,6 +515,9 @@
 							const firstData = this.discountData[0]
 							this.selectedGroupId = firstData.line_id;
 							this.selectedGroup = firstData;
+							// 保存当前的选中状态（用于取消时恢复）
+							this.previousSelectedGroupId = firstData.line_id;
+							this.previousSelectedGroup = firstData;
 
 							// 计算优惠，选中方案重置数据的优惠金额
 							this.roomDetailList.forEach((item) => item.disc_fee = 0);
@@ -540,7 +543,7 @@
 				// 关闭弹窗时恢复之前的选中状态
 				this.selectedGroupId = this.previousSelectedGroupId;
 				this.selectedGroup = this.previousSelectedGroup;
-
+				
 				this.$refs.popupRef.close()
 			},
 			// 处理优惠方案数据，按照折扣、赠品来组合
@@ -741,9 +744,11 @@
 
 				// 获取最新的赠品方案
 				const preRoomList = this.roomDetailList.map((item) => {
-					return {
-						month: item.key,
-						fee: item.money
+					if (item.checked) {
+						return {
+							month: item.key,
+							fee: item.money
+						}
 					}
 				})
 				const costList = this.convertMonthlyData()
