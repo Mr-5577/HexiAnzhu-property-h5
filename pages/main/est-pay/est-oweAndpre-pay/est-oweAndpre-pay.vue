@@ -183,6 +183,7 @@
 				roomDetailList: [],
 				checkIndex: [],
 				activityData: '',
+				
 				totalDiscount: 0, // 总优惠
 				discountData: [], // 优惠方案数据
 				selectedGroupId: null, // 当前选中的方案ID
@@ -406,8 +407,8 @@
 						let currentMonth = month + i;
 						// 处理月份进位
 						if (currentMonth > 12) {
-						currentYear += Math.floor((currentMonth - 1) / 12);
-						currentMonth = ((currentMonth - 1) % 12) + 1;
+							currentYear += Math.floor((currentMonth - 1) / 12);
+							currentMonth = ((currentMonth - 1) % 12) + 1;
 						}
 						// 格式化月份为两位数
 						const formattedMonth = currentMonth.toString().padStart(2, '0');
@@ -486,11 +487,13 @@
 					// 保存当前的选中状态（用于取消时恢复）
 					this.previousSelectedGroupId = this.selectedGroupId;
 					this.previousSelectedGroup = this.selectedGroup;
-
+					console.log('this.roomDetailList',this.roomDetailList)
 					const preRoomList = this.roomDetailList.map((item) => {
-						return {
-							month: item.key,
-							fee: item.money
+						if (item.checked) {
+							return {
+								month: item.key,
+								fee: item.money
+							}
 						}
 					})
 					const monthlyCostList  = this.convertMonthlyData()
@@ -507,14 +510,25 @@
 						// 处理数据
 						const newData = this.processData(list)
 						this.discountData = newData
-						// 当只有一个优惠方案时默认选中,否则打开弹窗自行选择方案
+						// 当只有一个优惠方案时默认选中并计算优惠
 						if (this.discountData && this.discountData.length === 1) {
 							const firstData = this.discountData[0]
 							this.selectedGroupId = firstData.line_id;
 							this.selectedGroup = firstData;
-						} else {
-							this.$refs.popupRef.open();
+
+							// 计算优惠，选中方案重置数据的优惠金额
+							this.roomDetailList.forEach((item) => item.disc_fee = 0);
+							this.totalDiscount = 0;
+							
+							// 通过选中的方案内的优惠计算优惠金额
+							const originData = this.roomDetailList || [];
+							const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
+							
+							const result = this.processDataSimple(originData, costList);
+							this.roomDetailList = result.data || [];
+							this.totalDiscount = result.unmatchedTotal || 0;
 						}
+						this.$refs.popupRef.open();
 						console.log(newData)
 					}
 				} catch (err) {
@@ -625,6 +639,10 @@
 			checkBoxs(w) {
 				w.checked = !w.checked
 				this.$forceUpdate();
+				// 取消优惠金额。置空优惠方案
+				this.roomDetailList.map((item) => item.disc_fee = 0)
+				this.totalDiscount = 0
+				this.clearSelection()
 			},
 			billTypeDetail(item) {
 				this.$Router.push({
