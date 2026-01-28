@@ -298,6 +298,42 @@ apis.saveDiscountsSolution = (data) => {
 apis.afterOrderPay = (data) => {
 	return uniRequest.post('/api/afterOrderPay', data)
 }
+/**
+ * @name 访客注册
+ * @param {Object} data
+ * @param {string} data.visitor_openid - 访客的微信OpenID
+ * @param {number} data.visitor_name - 访客姓名
+ * @param {number} data.visitor_type - 访客类型，普通/外卖
+ * @param {string} data.visitor_card_no - 访客身份证
+ * @param {string} data.visitor_tel - 访客电话
+ * @returns {Promise} 返回请求结果的Promise对象
+ */
+apis.visitorRegister = (data) => {
+	return uniRequest.post('/api/visitorRegister', data)
+}
+/**
+ * @name 访客到访保存
+ * @param {Object} data
+ * @param {string} data.visitor_openid - 访客的微信OpenID
+ * @param {number} data.owner_vid - 业主所属的小区ID
+ * @param {number} data.owner_roomid - 业主房间ID
+ * @param {string} data.owner_house_no - 业主房间号（格式：楼栋-单元-楼层-房号）
+ * @param {string} data.owner_tel - 业主联系电话
+ * @param {string} data.visit_time - 到访时间（格式：YYYY-MM-DD HH:mm:ss）
+ * @returns {Promise} 返回请求结果的Promise对象
+ */
+apis.visitorHistorySave = (data) => {
+	return uniRequest.post('/api/visitorHistorySave', data)
+}
+/**
+ * @name 访客到访记录
+ * @param {Object} data
+ * @param {string} data.visitor_openid - 访客的微信OpenID
+ * @returns {Promise} 返回请求结果的Promise对象
+ */
+apis.visitorHistoryList = (data) => {
+	return uniRequest.post('/api/visitorHistoryList', data)
+}
 // 通过小区ID查询小区信息
 apis.getVillageInfo = (data) => {
 	return uniRequest.post('/api/getVillageInfo', data)
