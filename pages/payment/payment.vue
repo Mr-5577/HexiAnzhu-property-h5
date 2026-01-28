@@ -159,6 +159,7 @@
 					uni.hideLoading();
 					return;
 				}
+				console.log('1111')
 				// #ifdef APP-PLUS
 				let orderInfos = orderInfo.data;
 				if (e.id === 'alipay') {
@@ -198,6 +199,15 @@
 					signType: 'MD5',
 					paySign: orderInfo.data.paySign,
 					success: e => {
+						console.log('666666',e)
+						// 实际支付成功后需要调用 修复 接口，修复接口调用成功后再进入下一步
+						_this.$api.afterOrderPay({ order_sn_app: _this.orderInfo.sn }).then((response) => {
+							if (response.code !== 1) {
+								console.log('afterOrderPay-b', afterRes)
+							}
+						}).catch((err) => {
+							console.log(err)
+						})
 						if (_this.orderInfo.type == 'car') {
 							wx.requestSubscribeMessage({
 								tmplIds: _this.$store.state.tmplIds,
@@ -260,6 +270,7 @@
 						this.disabled = false;
 					},
 					complete: () => {
+						console.log('complete-xcx')
 						this.providerList[index].loading = false;
 					}
 				});

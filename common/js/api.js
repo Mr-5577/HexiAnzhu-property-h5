@@ -286,5 +286,21 @@ apis.checkCostHasPrestoreActivity = (data) => {
 apis.getPrestoreActivity = (data) => {
 	return uniRequest.post('/api/getPrestoreActivity', data)
 }
+// 获取优惠方案
+apis.getDiscountsSolution = (data) => {
+	return uniRequest.post('/api/getDiscountsSolution', data)
+}
+// 保存优惠方案
+apis.saveDiscountsSolution = (data) => {
+	return uniRequest.post('/api/saveDiscountsSolution', data)
+}
+// 定价修复
+apis.afterOrderPay = (data) => {
+	return uniRequest.post('/api/afterOrderPay', data)
+}
+// 通过小区ID查询小区信息
+apis.getVillageInfo = (data) => {
+	return uniRequest.post('/api/getVillageInfo', data)
+}
 
 export default apis;
