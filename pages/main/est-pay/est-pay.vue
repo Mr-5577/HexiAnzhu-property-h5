@@ -4,7 +4,7 @@
 		<view class="uni-flex-center">
 			<view class="uni-cell-95 est-content uni-flex-center" style="padding-bottom: 30upx;">
 				<view v-if="roomsMaterial.summoney">
-					<view class="uni-font-64 uni-text-center" style="color: #ffcf5a;">¥{{ roomsMaterial.summoney }}</view>
+					<view class="uni-font-64 uni-text-center" style="color: #ffcf5a;">¥{{ summoney }}</view>
 					<view class="color-font-gray uni-text-center" style="margin-bottom: 20upx">待缴金额</view>
 					<button class="jf-btn" plain @click="toPay" :disabled="disabled">立即缴费</button>
 				</view>
@@ -127,6 +127,10 @@ export default {
 			var Y = date.getFullYear();
 			var M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
 			return Y + '' + M;
+		},
+		summoney() {
+			const money = this.roomsMaterial.summoney || 0
+			return money.toFixed(2)
 		}
 	},
 	onShow() {

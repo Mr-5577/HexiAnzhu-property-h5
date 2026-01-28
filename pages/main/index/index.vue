@@ -57,7 +57,7 @@
 						<view class="fast-card">
 							<view class="card-content" @click="toPay">
 								<view class="card-left">
-									<text class="amount">￥9999.9</text>
+									<text class="amount">￥{{ paymentAmount }}</text>
 									<text class="pending-pay">待缴金额</text>
 									<text class="pay-now">立即缴费</text>
 								</view>
@@ -108,7 +108,7 @@
 					</view>
 				</view>
 				<!-- 热门活动 -->
-				<view class="promotion">
+				<view class="promotion" v-if="activityList && activityList.length > 0">
 					<test class="promotion-title">热门活动</test>
 					<view class="promotion-list">
 						<view class="promotion-item" v-for="(item,index) in activityList" :key="index"
@@ -202,19 +202,19 @@
 					id: 15,
 					image: "/static/img/main/renovation.png",
 					is_outside: 0,
-					name: "装修办理",
+					name: "找装修",
 					url: "pages/main/service/integrated-service",
 				}, {
 					id: 2003,
 					image: "/static/img/main/convenience.png",
 					is_outside: 0,
-					name: "便民服务",
+					name: "便民信息",
 					url: "",
 				}, {
 					id: 16,
 					image: "/static/img/main/service.png",
 					is_outside: 0,
-					name: "综合服务",
+					name: "找服务",
 					url: "pages/main/service/integrated-service",
 				}, ],
 				upgradeType: 'pkg', //pkg 整包 wgt 升级包
@@ -238,6 +238,7 @@
 				activityList: [], // 热门活动列表
 				showAdPopup: false, // 广告弹窗显示状态
 				adData: null, // 广告数据
+				paymentAmount: 0, // 代缴金额
 			};
 		},
 		methods: {
@@ -444,6 +445,20 @@
 					this.housekeeper = res.data.stewards && res.data.stewards.length > 0 ? res.data.stewards[0] :
 						'';
 				});
+				// 代缴费用信息
+				if (this.$store.state.myHouse && this.$store.state.myHouse.ownerInfo.roomid) {
+					const params = {
+						roomid: this.$store.state.myHouse.ownerInfo.roomid
+					}
+					this.$api.getRoomsMaterial(params, res => {
+						if (res.code === 1) {
+							const money = res.data.summoney || 0;
+							this.paymentAmount = money.toFixed(2)
+						} else {
+							this.paymentAmount = 0;
+						}
+					});
+				}
 				// 通知公告列表
 				this.$api.circularList({}, res => {
 					if (res.code == 1) {
@@ -538,14 +553,14 @@
 					this.showGoods = res.is_show == 1 ? true : false;
 				});
 				// 用户信息、房产信息
-				this.$api.userCenter({}, res => {
+				this.$api.userCenter({}, async (res) => {
 					if (res.code == 1) {
 						this.myHouse = res.data;
 						this.$store.commit('setMyHouse', res.data);
 						// 获取七牛云凭证
-						if (!this.qiniuDatas) {
-							this.getUpToken();
-						}
+						this.getUpToken();
+						// 等待1.5秒
+						await new Promise(resolve => setTimeout(resolve, 1500))
 						this.getHomeData();
 						this.getSetting();
 					}
@@ -574,6 +589,21 @@
 				// 		})
 				// 	}
 				// })
+				uni.showModal({
+					title: '未登录',
+					cancelColor: '#898989',
+					cancelText: '取消',
+					confirmColor: '#fe845e',
+					confirmText: '去登录',
+					content: '是否前往登录？',
+					success(resp) {
+						if (resp.confirm) {
+							uni.navigateTo({
+								url: '/pages/login/login'
+							})
+						}
+					}
+				})
 			}
 			// #ifdef APP-PLUS
 			this.checkVersionClick();

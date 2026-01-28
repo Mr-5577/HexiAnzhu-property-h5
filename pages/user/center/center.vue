@@ -123,8 +123,10 @@
 			};
 		},
 		onLoad() {
-			this.getData();
-			this.getRepairList();
+			if (this.$store.state.login_token) {
+				this.getData();
+				this.getRepairList();
+			}
 		},
 		methods: {
 			getRepairList() {
