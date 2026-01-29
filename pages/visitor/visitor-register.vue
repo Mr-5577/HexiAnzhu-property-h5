@@ -56,9 +56,9 @@
 					</view>
 					<picker class="item-picker" @change="buildingChange" :range="buildingList" range-key="name"
 						:value="buildingIndex" :disabled="!formData.communityId">
-						<view class="picker-content" :class="{ disabled: !formData.communityId }">
+						<text class="picker-content" :class="{ disabled: !formData.communityId }">
 							{{ formData.buildingName || '请选择楼栋' }}
-						</view>
+						</text>
 					</picker>
 				</view>
 				<!-- 单元，普通来访必填，外卖来访不显示 -->
@@ -68,9 +68,9 @@
 					</view>
 					<picker class="item-picker" @change="unitChange" :range="unitList" range-key="name"
 						:value="unitIndex" :disabled="!formData.buildingId">
-						<view class="picker-content" :class="{ disabled: !formData.buildingId }">
+						<text class="picker-content" :class="{ disabled: !formData.buildingId }">
 							{{ formData.unitName || '请选择单元' }}
-						</view>
+						</text>
 					</picker>
 				</view>
 				<!-- 房号，普通来访必填，外卖来访不显示 -->
@@ -80,9 +80,9 @@
 					</view>
 					<picker class="item-picker" @change="roomChange" :range="roomList" range-key="name"
 						:value="roomIndex" :disabled="!formData.unitId">
-						<view class="picker-content" :class="{ disabled: !formData.unitId }">
+						<text class="picker-content" :class="{ disabled: !formData.unitId }">
 							{{ formData.roomName || '请选择房号' }}
-						</view>
+						</text>
 					</picker>
 				</view>
 
@@ -317,8 +317,8 @@
 					});
 					this.formData.communityId = this.villageId
 					this.formData.communityName = res.data.villagename || '未知'
-					// // 加载楼栋数据
-					// this.loadBuildingData()
+					// 加载楼栋数据
+					this.loadBuildingData()
 					// 查询历史到访记录
 					const resp = await this.$api.visitorHistoryList({
 						visitor_openid: this.openId
@@ -328,9 +328,6 @@
 						// 如果之前访问过小区，直接展示信息
 						if (this.formData.communityName == villageName) {
 							this.checkHistory()
-						} else {
-							// 加载楼栋数据
-							this.loadBuildingData()
 						}
 					}
 				} catch (error) {
@@ -695,9 +692,11 @@
 		}
 
 		.item-picker {
+			flex: 1;
 			.picker-content {
 				font-size: 29upx;
 				color: #999;
+				width: 100%;
 			}
 		}
 
