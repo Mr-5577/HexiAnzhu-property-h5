@@ -23,9 +23,11 @@
 					<view class="item-label">
 						<text class="required">*</text>访客身份证：
 					</view>
-					<input class="item-input" v-model="formData.idCard" placeholder="请输入来访人身份证" maxlength="18"
-						type="idcard" @input="validateIdCard" />
-					<view v-if="idCardError" class="error-text">{{ idCardError }}</view>
+					<view class="item-right">
+						<input class="item-input" v-model="formData.idCard" placeholder="请输入来访人身份证" maxlength="18"
+							type="idcard" @input="validateIdCard" />
+						<view v-if="idCardError" class="error-text">{{ idCardError }}</view>
+					</view>
 				</view>
 
 				<!-- 手机号 -->
@@ -33,9 +35,15 @@
 					<view class="item-label">
 						<text class="required">*</text>访客手机号：
 					</view>
-					<input class="item-input" v-model="formData.phone" placeholder="请输入来访人手机号" type="tel" maxlength="11"
-						@input="validatePhone" />
-					<view v-if="phoneError" class="error-text">{{ phoneError }}</view>
+					<view class="item-right">
+						<input class="item-input" v-model="formData.phone" placeholder="来访人手机号" type="tel" maxlength="11"
+							@input="validatePhone" disabled/>
+						<view v-if="phoneError" class="error-text">{{ phoneError }}</view>
+					</view>
+					<button class="phone-number" type="primary" :disabled="!allowLogin" open-type="getPhoneNumber"
+					@getphonenumber="getphonenumber">
+						<span class="phone-text">获取手机号</span>
+					</button>
 				</view>
 			</view>
 
@@ -91,9 +99,11 @@
 					<view class="item-label">
 						<text class="required">*</text>业主手机：
 					</view>
-					<input class="item-input" v-model="formData.ownerPhone" placeholder="请填写业主手机号" type="tel"
-						maxlength="11" @input="validateOwnerPhone" />
-					<view v-if="ownerPhoneError" class="error-text">{{ ownerPhoneError }}</view>
+					<view class="item-right">
+						<input class="item-input" v-model="formData.ownerPhone" placeholder="请填写业主手机号" type="tel"
+							maxlength="11" @input="validateOwnerPhone" />
+						<view v-if="ownerPhoneError" class="error-text">{{ ownerPhoneError }}</view>
+					</view>
 				</view>
 			</view>
 
@@ -177,8 +187,10 @@
 				// 当前时间
 				currentTime: '',
 				// 小区ID
-				villageId: '1001',
+				villageId: '',
+				// openId
 				openId: '',
+				allowLogin: true,
 				urlData: ''
 			};
 		},
@@ -288,7 +300,6 @@
 						_this.$api.login_by_openid_xcx({
 							cache_name: res.data
 						}, loginRes => {
-							console.log('loginRes', loginRes)
 							if (loginRes.code === 1) {
 								uni.setStorageSync('loginToken', loginRes.data);
 								_this.$store.commit('loginToken', loginRes.data);
@@ -523,7 +534,41 @@
 				const seconds = pad(now.getSeconds());
 				return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 			},
-
+			//获取手机号
+			async getphonenumber(e) {
+				if (!this.allowLogin) return
+				// 确定获取用户信息
+				if (e.detail.errMsg === 'getPhoneNumber:ok') {
+					this.allowLogin = false;
+					let _this = this;
+					uni.showLoading({
+						title: '正在获取手机号'
+					})
+					const codeRes = await uni.login()
+					this.$api.getUserOpenid({
+						code: codeRes[1].code
+					}, res => {
+						if (res.code == 1) {
+							const params = {
+								code: e.detail.code,
+								cache_name: res.data
+							};
+							_this.$api.login_xcx(params, loginRes => {
+								if (loginRes.code == 1) {
+									uni.setStorageSync('loginToken', loginRes.data);
+									_this.$store.commit('loginToken', loginRes.data);
+									_this.formData.phone = loginRes.data.tel
+								}
+								uni.hideLoading();
+								_this.allowLogin = true;
+							});
+						} else {
+							uni.hideLoading();
+							_this.allowLogin = true;
+						}
+					})
+				}
+			},
 			// 提交登记
 			async handleSubmit() {
 				if (!this.canSubmit) return;
@@ -657,6 +702,7 @@
 		border-radius: 16upx;
 		margin-bottom: 30upx;
 		overflow: hidden;
+		padding-bottom: 20upx;
 	}
 
 	.form-item {
@@ -666,7 +712,7 @@
 		padding: 20upx 30upx;
 		border-bottom: 1upx solid #f0f0f0;
 		box-sizing: border-box;
-
+		position: relative;
 		&:last-child {
 			border-bottom: none;
 		}
@@ -681,6 +727,9 @@
 				color: #FF3B30;
 				margin-right: 8upx;
 			}
+		}
+		.item-right {
+			position: relative;
 		}
 
 		.item-input {
@@ -703,7 +752,22 @@
 		.error-text {
 			color: #FF3B30;
 			font-size: 22upx;
-			margin-top: 10upx;
+			position: absolute;
+			bottom: -30upx;
+			left: 0;
+		}
+		.phone-number {
+			max-width: 200upx;
+			height: 56upx;
+			position: absolute;
+			right: 20upx;
+			display: flex;
+			align-items: center;
+			background: linear-gradient(to bottom, #f99372, #ffbe84);
+		}
+		.phone-text {
+			font-size: 26upx;
+			color: #fff;
 		}
 	}
 
