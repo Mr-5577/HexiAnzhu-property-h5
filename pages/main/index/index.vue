@@ -205,18 +205,18 @@
 					name: "找装修",
 					url: "pages/main/service/integrated-service",
 				}, {
-					id: 2003,
-					image: "/static/img/main/convenience.png",
-					is_outside: 0,
-					name: "便民信息",
-					url: "",
-				}, {
 					id: 16,
 					image: "/static/img/main/service.png",
 					is_outside: 0,
 					name: "找服务",
 					url: "pages/main/service/integrated-service",
-				}, ],
+				}, {
+					id: 2003,
+					image: "/static/img/main/convenience.png",
+					is_outside: 0,
+					name: "便民信息",
+					url: "",
+				},],
 				upgradeType: 'pkg', //pkg 整包 wgt 升级包
 				upgradeContent: '', //更新内容
 				upgradeUrl: '', //更新地址
@@ -472,7 +472,10 @@
 				this.$api.getActivityList({}, res => {
 					if (res.code === 1) {
 						const dataList = res.data || []
-						const domain = this.qiniuDatas?.http_domain || '';
+						let httpIp = this.qiniuDatas?.http_domain || '';
+						if (httpIp.startsWith('http://')) {
+							httpIp = httpIp.replace('http://', 'https://')
+						}
 						this.activityList = dataList.map((item) => {
 							return {
 								...item,
