@@ -3,7 +3,7 @@
 		<!-- 顶部来访类型展示 -->
 		<view class="visitor-type-card">
 			<view class="type-label">来访类型：</view>
-			<view class="type-value">{{ visitorType === 'delivery' ? '外卖人员' : '普通访客' }}</view>
+			<view class="type-value">{{ visitorType == 0 ? '外卖人员' : '普通访客' }}</view>
 		</view>
 
 		<!-- 到访信息表单 -->
@@ -50,7 +50,7 @@
 				</view>
 
 				<!-- 楼栋，普通来访必填，外卖来访不显示 -->
-				<view class="form-item" v-if="visitorType === 'normal'">
+				<view class="form-item" v-if="visitorType == 1">
 					<view class="item-label">
 						<text class="required">*</text>业主楼栋：
 					</view>
@@ -62,7 +62,7 @@
 					</picker>
 				</view>
 				<!-- 单元，普通来访必填，外卖来访不显示 -->
-				<view class="form-item" v-if="visitorType === 'normal'">
+				<view class="form-item" v-if="visitorType == 1">
 					<view class="item-label">
 						<text class="required">*</text>业主单元：
 					</view>
@@ -74,7 +74,7 @@
 					</picker>
 				</view>
 				<!-- 房号，普通来访必填，外卖来访不显示 -->
-				<view class="form-item" v-if="visitorType === 'normal'">
+				<view class="form-item" v-if="visitorType == 1">
 					<view class="item-label">
 						<text class="required">*</text>业主房号：
 					</view>
@@ -87,7 +87,7 @@
 				</view>
 
 				<!-- 业主手机，普通来访必填，外卖来访不显示 -->
-				<view class="form-item" v-if="visitorType === 'normal'">
+				<view class="form-item" v-if="visitorType == 1">
 					<view class="item-label">
 						<text class="required">*</text>业主手机：
 					</view>
@@ -125,6 +125,7 @@
 				<text class="loading-text">加载中...</text>
 			</view>
 		</view>
+		<view>{{ urlData }}</view>
 	</view>
 </template>
 
@@ -132,8 +133,8 @@
 	export default {
 		data() {
 			return {
-				// 来访类型：delivery-外卖访客，normal-普通访客
-				visitorType: 'normal',
+				// 来访类型: 0-外卖访客  1-普通访客
+				visitorType: 0,
 
 				// 表单数据
 				formData: {
@@ -178,6 +179,7 @@
 				// 小区ID
 				villageId: '1001',
 				openId: '',
+				urlData: ''
 			};
 		},
 
@@ -191,9 +193,11 @@
 				} = this.formData;
 				const baseValid = visitorName && idCard && phone && !this.idCardError && !this.phoneError;
 
-				if (this.visitorType === 'normal') {
+				// 普通访客还需要校验小区、楼栋、单元、房号、业主电话
+				if (this.visitorType == 1) {
 					return baseValid &&
 						this.formData.communityId &&
+						this.formData.buildingId &&
 						this.formData.unitId &&
 						this.formData.roomId &&
 						this.formData.ownerPhone &&
@@ -209,10 +213,11 @@
 
 		onLoad(options) {
 			console.log('来访登记页面：', options)
+			this.urlData = JSON.stringify(options)
 			this.hasHistory = false;
 			this.currentTime = this.getCurrTime();
 			/**
-			 * 普通来访二维码：不传或 type=1
+			 * 普通来访二维码：type=1
 			 * 外卖来访二维码：type=0
 			 * 在 app.vue 中根据扫码参数用 reLaunch 跳转到此页面
 			 * 携带参数如 http://api.com?villageId=123&type=0
@@ -232,9 +237,8 @@
 		methods: {
 			// 解析扫码参数
 			parseScanParams(options) {
-				// 根据二维码类型设置：路径参数：villageId=123&type=0，外卖码传递type=0，普通码不传或type=1
-				// 外卖码:delivery  普通码:normal
-				this.visitorType = options.type == 0 ? "delivery" : 'normal';
+				// 根据二维码类型设置：路径参数：villageId=123&type=0，外卖码type=0，普通码type=1
+				this.visitorType = options.type || 1;
 
 				// 获取小区ID
 				if (options.villageId) {
@@ -244,11 +248,7 @@
 				// 场景值解析（小程序码专用）
 				if (options.scene) {
 					const sceneParams = this.parseSceneParams(options.scene);
-					if (sceneParams.type == 0) {
-						this.visitorType = 'delivery';
-					} else {
-						this.visitorType = 'normal';
-					}
+					this.visitorType = sceneParams.type || 1;
 					if (sceneParams.villageId) {
 						this.villageId = sceneParams.villageId;
 					}
@@ -528,7 +528,7 @@
 			async handleSubmit() {
 				if (!this.canSubmit) return;
 				// 外卖人员访客
-				if (this.visitorType === 'delivery') {
+				if (this.visitorType == 0) {
 					this.loading = true;
 					try {
 						// 构建提交数据
@@ -565,7 +565,7 @@
 					}
 				}
 				// 普通访客
-				if (this.visitorType === 'normal') {
+				if (this.visitorType == 1) {
 					this.loading = true;
 					try {
 						// 构建提交数据
@@ -687,7 +687,7 @@
 			font-size: 28upx;
 			height: 55upx;
 			line-height: 55upx;
-			background: #fafafa;
+			background: #fff;
 			flex: 1;
 		}
 
