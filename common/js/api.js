@@ -44,7 +44,11 @@ apis.getDefult = (data, callback) => {
 }
 //获取房产物管费水电费欠费和预缴列表
 apis.getRoomsMaterial = (data, callback) => {
-	uniRequest.post('/api/getRoomsMaterial', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/getRoomsMaterial', data).then(callback)
+	} else {
+		return uniRequest.post('/api/getRoomsMaterial', data)
+	}
 }
 //资源预缴信息
 apis.advancePaymentPage = (data, callback) => {
@@ -52,7 +56,11 @@ apis.advancePaymentPage = (data, callback) => {
 }
 //资源预缴信息(新)
 apis.advancePaymentPagenew = (data, callback) => {
-	uniRequest.post('/api/advancePaymentPagenew', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/advancePaymentPagenew', data).then(callback)
+	} else {
+		return uniRequest.post('/api/advancePaymentPagenew', data)
+	}
 }
 //欠费预缴生成同一订单
 apis.generateorder = (data, callback) => {
@@ -62,7 +70,11 @@ apis.generateorder = (data, callback) => {
 
 //车位服务费的欠费，车位水电欠费详情
 apis.getCarMaterial = (data, callback) => {
-	uniRequest.post('/api/getCarMaterial', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/getCarMaterial', data).then(callback)
+	} else {
+		return uniRequest.post('/api/getCarMaterial', data)
+	}
 }
 //个人中心首页的数据
 apis.userCenter = (data, callback) => {

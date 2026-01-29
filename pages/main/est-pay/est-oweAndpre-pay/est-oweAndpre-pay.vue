@@ -487,55 +487,105 @@
 					// 保存当前的选中状态（用于取消时恢复）
 					this.previousSelectedGroupId = this.selectedGroupId;
 					this.previousSelectedGroup = this.selectedGroup;
-					console.log('this.roomDetailList',this.roomDetailList)
-					const preRoomList = this.roomDetailList.map((item) => {
-						if (item.checked) {
-							return {
-								month: item.key,
-								fee: item.money
-							}
-						}
-					})
-					const monthlyCostList  = this.convertMonthlyData()
-					const newCostList = preRoomList.concat(monthlyCostList )
-					const params = {
-						resources_type: 'house',
-						village_id: this.myRoom.vvid,
-						cost_list: JSON.stringify(newCostList),
-						total_money: this.preMoney || 0,
-					};
-					const resp = await this.$api.getDiscountsSolution(params)
-					if (resp.code === 1) {
-						const list = resp.data || []
-						// 处理数据
-						const newData = this.processData(list)
-						this.discountData = newData
-						// 当只有一个优惠方案时默认选中并计算优惠
-						if (this.discountData && this.discountData.length === 1) {
-							const firstData = this.discountData[0]
-							this.selectedGroupId = firstData.line_id;
-							this.selectedGroup = firstData;
-							// 保存当前的选中状态（用于取消时恢复）
-							this.previousSelectedGroupId = firstData.line_id;
-							this.previousSelectedGroup = firstData;
+					console.log('this.roomDetailList', this.roomDetailList)
+					// 获取优惠方案
+					await this.getDiscountScheme()
+					this.$refs.popupRef.open(); // 打开弹窗
+					// const preRoomList = this.roomDetailList.map((item) => {
+					// 	if (item.checked) {
+					// 		return {
+					// 			month: item.key,
+					// 			fee: item.money
+					// 		}
+					// 	}
+					// })
+					// const monthlyCostList  = this.convertMonthlyData()
+					// const newCostList = preRoomList.concat(monthlyCostList )
+					// const params = {
+					// 	resources_type: 'house',
+					// 	village_id: this.myRoom.vvid,
+					// 	cost_list: JSON.stringify(newCostList),
+					// 	total_money: this.preMoney || 0,
+					// };
+					// const resp = await this.$api.getDiscountsSolution(params)
+					// if (resp.code === 1) {
+					// 	const list = resp.data || []
+					// 	// 处理数据
+					// 	const newData = this.processData(list)
+					// 	this.discountData = newData
+					// 	// 当只有一个优惠方案时默认选中并计算优惠
+					// 	if (this.discountData && this.discountData.length === 1) {
+					// 		const firstData = this.discountData[0]
+					// 		this.selectedGroupId = firstData.line_id;
+					// 		this.selectedGroup = firstData;
+					// 		// 保存当前的选中状态（用于取消时恢复）
+					// 		this.previousSelectedGroupId = firstData.line_id;
+					// 		this.previousSelectedGroup = firstData;
 
-							// 计算优惠，选中方案重置数据的优惠金额
-							this.roomDetailList.forEach((item) => item.disc_fee = 0);
-							this.totalDiscount = 0;
+					// 		// 计算优惠，选中方案重置数据的优惠金额
+					// 		this.roomDetailList.forEach((item) => item.disc_fee = 0);
+					// 		this.totalDiscount = 0;
 							
-							// 通过选中的方案内的优惠计算优惠金额
-							const originData = this.roomDetailList || [];
-							const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
+					// 		// 通过选中的方案内的优惠计算优惠金额
+					// 		const originData = this.roomDetailList || [];
+					// 		const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
 							
-							const result = this.processDataSimple(originData, costList);
-							this.roomDetailList = result.data || [];
-							this.totalDiscount = result.unmatchedTotal || 0;
-						}
-						this.$refs.popupRef.open();
-						console.log(newData)
-					}
+					// 		const result = this.processDataSimple(originData, costList);
+					// 		this.roomDetailList = result.data || [];
+					// 		this.totalDiscount = result.unmatchedTotal || 0;
+					// 	}
+					// 	this.$refs.popupRef.open();
+					// 	console.log(newData)
+					// }
 				} catch (err) {
 					console.log('err', err)
+				}
+			},
+			// 请求优惠方案
+			async getDiscountScheme() {
+				const preRoomList = this.roomDetailList.map((item) => {
+					if (item.checked) {
+						return {
+							month: item.key,
+							fee: item.money
+						}
+					}
+				})
+				const monthlyCostList  = this.convertMonthlyData()
+				const newCostList = preRoomList.concat(monthlyCostList )
+				const params = {
+					resources_type: 'house',
+					village_id: this.myRoom.vvid,
+					cost_list: JSON.stringify(newCostList),
+					total_money: this.preMoney || 0,
+				};
+				const resp = await this.$api.getDiscountsSolution(params)
+				if (resp.code === 1) {
+					const list = resp.data || []
+					// 处理数据
+					const newData = this.processData(list)
+					this.discountData = newData
+					// 当只有一个优惠方案时默认选中并计算优惠
+					if (this.discountData && this.discountData.length === 1) {
+						const firstData = this.discountData[0]
+						this.selectedGroupId = firstData.line_id;
+						this.selectedGroup = firstData;
+						// 保存当前的选中状态（用于取消时恢复）
+						this.previousSelectedGroupId = firstData.line_id;
+						this.previousSelectedGroup = firstData;
+
+						// 计算优惠，选中方案重置数据的优惠金额
+						this.roomDetailList.forEach((item) => item.disc_fee = 0);
+						this.totalDiscount = 0;
+						
+						// 通过选中的方案内的优惠计算优惠金额
+						const originData = this.roomDetailList || [];
+						const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
+						
+						const result = this.processDataSimple(originData, costList);
+						this.roomDetailList = result.data || [];
+						this.totalDiscount = result.unmatchedTotal || 0;
+					}
 				}
 			},
 			// 关闭优惠弹窗
@@ -891,17 +941,17 @@
 					}
 				});
 			},
-			getRoomsMaterials() {
+			async getRoomsMaterials() {
 				let data = {
 					roomid: this.myRoom.roomid
 				};
-				this.$api.getRoomsMaterial(data, res => {
+				try {
+					const res = await this.$api.getRoomsMaterial(data)
 					this.roomData = res.data;
 					this.roomDetailList = [];
 					for (let var1 in this.roomData.qfinfo) {
 						let data = {};
 						data.key = var1.replace(/\"/g, '');
-						let vals = [];
 						if (this.roomData.qfinfo[var1].wg) {
 							//物业费id
 							data.checked = true;
@@ -936,7 +986,7 @@
 						this.monthNum = 1
 					}
 					this.getPrestoreActivity()
-				});
+				} catch (err) {}
 			},
 
 			//判断一串数字是否是连续的 并且必须选择第一个
@@ -995,15 +1045,13 @@
 				this.totalDiscount = 0
 				this.clearSelection()
 			},
-			getAdvancePaymentPage() {
+			async getAdvancePaymentPage() {
 				let data = {
 					type: 1, //1房产 2车位
 					keyid: this.id
 				};
-				this.$api.advancePaymentPagenew(data, res => {
-					this.preRoomData = res.data;
-					// this.monthNum = res.data.defult_num;
-				});
+				const res = await this.$api.advancePaymentPagenew(data)
+				this.preRoomData = res.data;
 			},
 			getPrestoreActivity() {
 				let wgids = this.$uitls.unique(this.wgids);
@@ -1023,12 +1071,13 @@
 
 		},
 
-		onLoad(option) {
+		async onLoad(option) {
 			if (option.id) {
 				this.id = option.id;
-				this.getRoomsMaterials();
-				this.getAdvancePaymentPage();
-
+				await this.getRoomsMaterials();
+				await this.getAdvancePaymentPage();
+				// 先把缴费数据加载完成再加载优惠方案
+				await this.getDiscountScheme()
 			}
 		}
 	};

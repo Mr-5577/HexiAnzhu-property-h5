@@ -489,55 +489,106 @@ export default {
 				this.previousSelectedGroupId = this.selectedGroupId;
 				this.previousSelectedGroup = this.selectedGroup;
 
-				const preCarList = this.carDetailList.map((item) => {
-					if (item.checked) {
-						return {
-							month: item.key,
-							fee: item.money
-						}
-					}
-				})
-				const monthlyCostList  = this.convertMonthlyData()
-				const newCostList = preCarList.concat(monthlyCostList )
-				console.log(this.myData)
-				const params = {
-					resources_type: 'car',
-					village_id: this.myData.vid,
-					cost_list: JSON.stringify(newCostList),
-					total_money: this.preMoney || 0,
-				};
-				const resp = await this.$api.getDiscountsSolution(params)
-				if (resp.code === 1) {
-					const list = resp.data || []
-					// 处理数据
-					const newData = this.processData(list)
-					this.discountData = newData
-					// 当只有一个优惠方案时默认选中并计算优惠
-					if (this.discountData && this.discountData.length === 1) {
-						const firstData = this.discountData[0]
-						this.selectedGroupId = firstData.line_id;
-						this.selectedGroup = firstData;
-						// 保存当前的选中状态（用于取消时恢复）
-						this.previousSelectedGroupId = firstData.line_id;
-						this.previousSelectedGroup = firstData;
+				// 获取优惠方案
+				await this.getDiscountScheme()
+				this.$refs.popupRef.open(); // 打开弹窗
+				// const preCarList = this.carDetailList.map((item) => {
+				// 	if (item.checked) {
+				// 		return {
+				// 			month: item.key,
+				// 			fee: item.money
+				// 		}
+				// 	}
+				// })
+				// const monthlyCostList  = this.convertMonthlyData()
+				// const newCostList = preCarList.concat(monthlyCostList )
+				// console.log(this.myData)
+				// const params = {
+				// 	resources_type: 'car',
+				// 	village_id: this.myData.vid,
+				// 	cost_list: JSON.stringify(newCostList),
+				// 	total_money: this.preMoney || 0,
+				// };
+				// const resp = await this.$api.getDiscountsSolution(params)
+				// if (resp.code === 1) {
+				// 	const list = resp.data || []
+				// 	// 处理数据
+				// 	const newData = this.processData(list)
+				// 	this.discountData = newData
+				// 	// 当只有一个优惠方案时默认选中并计算优惠
+				// 	if (this.discountData && this.discountData.length === 1) {
+				// 		const firstData = this.discountData[0]
+				// 		this.selectedGroupId = firstData.line_id;
+				// 		this.selectedGroup = firstData;
+				// 		// 保存当前的选中状态（用于取消时恢复）
+				// 		this.previousSelectedGroupId = firstData.line_id;
+				// 		this.previousSelectedGroup = firstData;
 
-						// 计算优惠，选中方案重置数据的优惠金额
-						this.carDetailList.forEach((item) => item.disc_fee = 0);
-						this.totalDiscount = 0;
+				// 		// 计算优惠，选中方案重置数据的优惠金额
+				// 		this.carDetailList.forEach((item) => item.disc_fee = 0);
+				// 		this.totalDiscount = 0;
 						
-						// 通过选中的方案内的优惠计算优惠金额
-						const originData = this.carDetailList || [];
-						const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
+				// 		// 通过选中的方案内的优惠计算优惠金额
+				// 		const originData = this.carDetailList || [];
+				// 		const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
 						
-						const result = this.processDataSimple(originData, costList);
-						this.carDetailList = result.data || [];
-						this.totalDiscount = result.unmatchedTotal || 0;
-					}
-					this.$refs.popupRef.open();
-					console.log(newData)
-				}
+				// 		const result = this.processDataSimple(originData, costList);
+				// 		this.carDetailList = result.data || [];
+				// 		this.totalDiscount = result.unmatchedTotal || 0;
+				// 	}
+				// 	this.$refs.popupRef.open();
+				// 	console.log(newData)
+				// }
 			} catch (err) {
 				console.log('err', err)
+			}
+		},
+		// 请求优惠方案
+		async getDiscountScheme() {
+			const preCarList = this.carDetailList.map((item) => {
+				if (item.checked) {
+					return {
+						month: item.key,
+						fee: item.money
+					}
+				}
+			})
+			const monthlyCostList  = this.convertMonthlyData()
+			const newCostList = preCarList.concat(monthlyCostList )
+			console.log(this.myData)
+			const params = {
+				resources_type: 'car',
+				village_id: this.myData.vid,
+				cost_list: JSON.stringify(newCostList),
+				total_money: this.preMoney || 0,
+			};
+			const resp = await this.$api.getDiscountsSolution(params)
+			if (resp.code === 1) {
+				const list = resp.data || []
+				// 处理数据
+				const newData = this.processData(list)
+				this.discountData = newData
+				// 当只有一个优惠方案时默认选中并计算优惠
+				if (this.discountData && this.discountData.length === 1) {
+					const firstData = this.discountData[0]
+					this.selectedGroupId = firstData.line_id;
+					this.selectedGroup = firstData;
+					// 保存当前的选中状态（用于取消时恢复）
+					this.previousSelectedGroupId = firstData.line_id;
+					this.previousSelectedGroup = firstData;
+
+					// 计算优惠，选中方案重置数据的优惠金额
+					this.carDetailList.forEach((item) => item.disc_fee = 0);
+					this.totalDiscount = 0;
+					
+					// 通过选中的方案内的优惠计算优惠金额
+					const originData = this.carDetailList || [];
+					const costList = firstData.discount ? firstData.discount.cost_list || [] : [];
+					
+					const result = this.processDataSimple(originData, costList);
+					this.carDetailList = result.data || [];
+					this.totalDiscount = result.unmatchedTotal || 0;
+				}
 			}
 		},
 		// 关闭优惠弹窗
@@ -669,12 +720,13 @@ export default {
 			})
 		},
 		//车位欠费
-		getCarMaterials() {
+		async getCarMaterials() {
 			let datas = {
 				carid: this.myData.id,
 				resourcesmodel_type: this.myData.resourcesmodel_type ? this.myData.resourcesmodel_type : ''
 			};
-			this.$api.getCarMaterial(datas, res => {
+			try {
+				const res = await this.$api.getCarMaterial(datas)
 				this.carData = res.data;
 				this.carDetailList = [];
 				for (let var1 in this.carData.qfinfo) {
@@ -715,7 +767,8 @@ export default {
 				} else {
 					this.monthNum = 1
 				}
-			});
+
+			} catch (error) {}
 		},
 		async payment() {
 			
@@ -988,23 +1041,23 @@ export default {
 			this.clearSelection()
 		},
 		//车位预缴
-		getAdvancePaymentPage() {
+		async getAdvancePaymentPage() {
 			let data = {
 				type: 2, //1房产 2车位
 				keyid: this.payCostData.id,
 				resourcesmodel_type: this.myData.resourcesmodel_type ? this.myData.resourcesmodel_type : ''
 			};
-			this.$api.advancePaymentPagenew(data, res => {
-				this.preCarData = res.data;
-				// this.monthNum = res.data.defult_num;
-			});
+			const res = await this.$api.advancePaymentPagenew(data)
+			this.preCarData = res.data;
 		}
 	},
 
-	onLoad(option) {
+	async onLoad(option) {
 		this.payCostData = JSON.parse(option.data);
-		this.getAdvancePaymentPage();
-		this.getCarMaterials();
+		await this.getCarMaterials(); 
+		await this.getAdvancePaymentPage();
+		// 先把缴费数据加载完成再加载优惠方案
+		await this.getDiscountScheme()
 	}
 };
 </script>
