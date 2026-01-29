@@ -40,7 +40,11 @@ apis.unbind = (data, callback) => {
 }
 //获取当前房产和全部车位欠费信息
 apis.getDefult = (data, callback) => {
-	uniRequest.post('/api/getDefult', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/getDefult', data).then(callback)
+	} else {
+		return uniRequest.post('/api/getDefult', data)
+	}
 }
 //获取房产物管费水电费欠费和预缴列表
 apis.getRoomsMaterial = (data, callback) => {

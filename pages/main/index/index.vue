@@ -57,7 +57,7 @@
 						<view class="fast-card">
 							<view class="card-content" @click="toPay">
 								<view class="card-left">
-									<text class="amount">￥{{ paymentAmount }}</text>
+									<text class="amount">￥{{ allPaymentAmountDisplay }}</text>
 									<text class="pending-pay">待缴金额</text>
 									<text class="pay-now">立即缴费</text>
 								</view>
@@ -238,7 +238,7 @@
 				activityList: [], // 热门活动列表
 				showAdPopup: false, // 广告弹窗显示状态
 				adData: null, // 广告数据
-				paymentAmount: 0, // 代缴金额
+				allPaymentAmount: 0, // 代缴总金额，物管和车辆
 			};
 		},
 		methods: {
@@ -308,13 +308,32 @@
 
 			// 下拉刷新
 			pullDown(pullScroll) {
-				this.getUserCenter(pullScroll);
-				// 获取商品数据
-				this.$api.getGoods({}, res => {
-					this.recommendList = res.data;
-					this.showGoods = res.is_show == 1 ? true : false;
-				});
-				this.getHomeData();
+				if (this.$store.state.login_token) {
+					this.getUserCenter(pullScroll);
+					// 获取商品数据
+					this.$api.getGoods({}, res => {
+						this.recommendList = res.data;
+						this.showGoods = res.is_show == 1 ? true : false;
+					});
+					this.getHomeData();
+				} else {
+					pullScroll.success();
+					uni.showModal({
+						title: '未登录',
+						cancelColor: '#898989',
+						cancelText: '取消',
+						confirmColor: '#fe845e',
+						confirmText: '去登录',
+						content: '是否前往登录？',
+						success(resp) {
+							if (resp.confirm) {
+								uni.navigateTo({
+									url: '/pages/login/login'
+								})
+							}
+						}
+					})
+				}
 			},
 			moveHandle() {},
 			getNav(url) {
@@ -445,20 +464,6 @@
 					this.housekeeper = res.data.stewards && res.data.stewards.length > 0 ? res.data.stewards[0] :
 						'';
 				});
-				// 代缴费用信息
-				if (this.$store.state.myHouse && this.$store.state.myHouse.ownerInfo.roomid) {
-					const params = {
-						roomid: this.$store.state.myHouse.ownerInfo.roomid
-					}
-					this.$api.getRoomsMaterial(params, res => {
-						if (res.code === 1) {
-							const money = res.data.summoney || 0;
-							this.paymentAmount = money.toFixed(2)
-						} else {
-							this.paymentAmount = 0;
-						}
-					});
-				}
 				// 通知公告列表
 				this.$api.circularList({}, res => {
 					if (res.code == 1) {
@@ -479,8 +484,8 @@
 						this.activityList = dataList.map((item) => {
 							return {
 								...item,
-								head_pic: domain ? `${domain}${item.head_pic}` : item.head_pic,
-								window_pic: domain ? `${domain}${item.window_pic}` : item.window_pic,
+								head_pic: httpIp ? `${httpIp}${item.head_pic}` : item.head_pic,
+								window_pic: httpIp ? `${httpIp}${item.window_pic}` : item.window_pic,
 							}
 						})
 
@@ -488,6 +493,53 @@
 						this.checkAdPopup();
 					}
 				});
+				// 物管/车辆待缴费用
+				this.getPaymentTotal()
+			},
+			 // 缴费总额
+			async getPaymentTotal() {
+				try {
+					let total = 0;
+					// 物管缴费
+					if (this.$store.state.myHouse && this.$store.state.myHouse.ownerInfo.roomid) {
+						const params = { roomid: this.$store.state.myHouse.ownerInfo.roomid };
+						const res = await this.$api.getRoomsMaterial(params);
+						if (res.code === 1 && res.data) {
+							total += this.calculateWgAmount(res.data.qfinfo);
+						}
+					}
+					
+					// 车辆缴费
+					const carTotal = await this.calculateCarPayment();
+					total += carTotal;
+					this.allPaymentAmount = total;
+				} catch (error) {
+					this.allPaymentAmount = 0;
+				}
+			},
+			// 车辆缴费计算
+			async calculateCarPayment() {
+				try {
+					const res = await this.$api.getDefult({});
+					if (res.code !== 1 || !res.data.cars) return 0;
+					
+					const carList = res.data.cars || [];
+					let total = 0;
+					for (const item of carList) {
+						const params = {
+							carid: item.id,
+							resourcesmodel_type: item.resourcesmodel_type || ''
+						};
+						const carRes = await this.$api.getCarMaterial(params);
+						if (carRes.code === 1 && carRes.data) {
+							const money = this.calculateWgAmount(carRes.data.qfinfo);
+							total += money;
+						}
+					}
+					return total;
+				} catch (error) {
+					return 0;
+				}
 			},
 			// 检查广告弹窗
 			checkAdPopup() {
@@ -497,7 +549,10 @@
 				// 数据后端处理，会把要展示的弹窗数据放在第一条，如果第一条数据的is_popup值为1则进行活动弹窗
 				const [firstData] = this.activityList || []
 				if (firstData && firstData.is_popup === 1) {
+					// 避免重复设置
+					if (this.showAdPopup) return;
 					this.adData = firstData;
+					
 					// 延迟展示，页面先渲染
 					setTimeout(() => {
 						this.showAdPopup = true;
@@ -546,6 +601,39 @@
 					this.$store.commit("setQiniuData", res.data);
 				});
 			},
+			/**
+			 * @name 处理数据，累加小于等于当前年月的wg/车辆金额
+			 * @param {Object} qfinfo qfinfo数据对象
+			 * @returns {number} 累加后的金额（保留两位小数）
+			 */
+			calculateWgAmount(qfinfo) {
+				if (!qfinfo || typeof qfinfo !== 'object') return 0;
+      			if (Object.keys(qfinfo).length === 0) return 0;
+				// 获取当前年月（格式：YYYYMM）
+				const now = new Date();
+				const currentYearMonth = now.getFullYear() * 100 + (now.getMonth() + 1);
+				
+				let totalAmount = 0;
+				
+				// 循环qfinfo下的所有键（年月）
+				for (const yearMonthKey in qfinfo) {
+					if (!qfinfo.hasOwnProperty(yearMonthKey)) continue;
+					// 确保是数字类型的键（年月）
+					const yearMonth = parseInt(yearMonthKey);
+
+					if (!isNaN(yearMonth) && yearMonth <= currentYearMonth) {
+						const data = qfinfo[yearMonthKey];
+						// 检查是否存在wg数据
+						if (data && data.wg && data.wg.money) {
+							// 将金额转换为数字并累加
+							const amount = parseFloat(data.wg.money) || 0;
+							totalAmount += amount;
+						}
+					}
+				}
+				// 保留两位小数并转换为数字
+				return parseFloat(totalAmount.toFixed(2));
+			}
 		},
 		async onShow() {
 			this.showBgImage = true
@@ -562,7 +650,7 @@
 						this.$store.commit('setMyHouse', res.data);
 						// 获取七牛云凭证
 						this.getUpToken();
-						// 等待1.5秒
+						// 等待1.5秒,需要等七牛云凭证加载完成再加载活动数据
 						await new Promise(resolve => setTimeout(resolve, 1500))
 						this.getHomeData();
 						this.getSetting();
@@ -663,6 +751,11 @@
 			},
 			qiniuDatas() {
 				return this.$store.state.qiniuData;
+			},
+			// 车辆/物管欠费总金额
+			allPaymentAmountDisplay() {
+				const amount = this.allPaymentAmount;
+				return isNaN(amount) || amount === 0 ? '0.00' : parseFloat(amount).toFixed(2);
 			},
 		}
 	};
