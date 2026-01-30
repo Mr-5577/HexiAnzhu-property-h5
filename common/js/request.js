@@ -14,17 +14,12 @@ function showToast(title) {
 }
 
 // 提取地址中的参数
-function getQuery(query, key) {
-	var map = query.split('&');
-	for (var i = 0; i < map.length; i++) {
-		var pair = map[i].split('=');
-		if (pair[0] == key) {
-			return pair[1];
-		}
-	}
-}
+const getQuery = (query, key) => {
+  const pair = query.split('&').find(item => item.split('=')[0] === key);
+  return pair ? pair.split('=')[1] : undefined;
+};
 
-function successState(res, data) {
+function successState(res) {
 	if (res) {
 		if (res.status === 500) {
 			showToast('500服务器访问失败');
@@ -45,7 +40,7 @@ function successState(res, data) {
 				uni.showModal({
 					title: "强制下线警告",
 					content: "您已在其他地方登录，若非您本人操作，请及时修改密码。",
-					confirmColor: '#ffcf5a',
+					confirmColor: '#fe845e',
 					success: (res) => {
 						setTimeout(() => {
 							uni.reLaunch({
@@ -69,7 +64,8 @@ function successState(res, data) {
 				showToast('ip不在白名单内');
 				break;
 			case 1004:
-				showToast('access_token失效');
+				// 状态码需要重新验证 TODO
+				// showToast('access_token失效');
 				break;
 			case 1005:
 				showToast('短信验证码错误');
@@ -83,7 +79,7 @@ function successState(res, data) {
 					title: '登录失效',
 					cancelColor: '#898989',
 					cancelText: '不去了',
-					confirmColor: '#ffcf5a',
+					confirmColor: '#fe845e',
 					confirmText: '去登录',
 					content: '是否前往登录？',
 					success(resp) {
@@ -97,10 +93,25 @@ function successState(res, data) {
 				return;
 				break;
 			case 1008:
-				showToast('未绑定房产资源');
-				uni.redirectTo({
-					url: '/pages/reg/bound-house/bound-house'
-				});
+				// showToast('未绑定房产资源');
+				// uni.redirectTo({
+				// 	url: '/userModule/bound-house/bound-house'
+				// });
+				uni.showModal({
+					title: '未绑定房产',
+					cancelColor: '#898989',
+					cancelText: '不去了',
+					confirmColor: '#fe845e',
+					confirmText: '去绑定',
+					content: '是否前往绑定房产？',
+					success(resp) {
+						if (resp.confirm) {
+							uni.navigateTo({
+								url: '/userModule/bound-house/bound-house'
+							})
+						}
+					}
+				})
 				break;
 			case 1009:
 				store.commit('logout');
@@ -108,7 +119,7 @@ function successState(res, data) {
 					title: '登录失效',
 					cancelColor: '#898989',
 					cancelText: '不去了',
-					confirmColor: '#ffcf5a',
+					confirmColor: '#fe845e',
 					confirmText: '去登录',
 					content: '是否前往登录？',
 					success(resp) {
@@ -185,6 +196,10 @@ function successState(res, data) {
 					})
 				}, 1000)
 				break;
+			case 2000:
+				console.log('res=错误处理', res)
+				showToast(res.data.msg);
+				break;
 			default:
 				if (res.data.code != 1) {
 					showToast(res.data.msg);
@@ -194,10 +209,7 @@ function successState(res, data) {
 	}
 }
 
-function errorState(error) {
-	showToast('您可能断网了，请重试！')
-	// store.commit('logout');
-}
+const errorState = () => showToast('您可能断网了，请重试！');
 
 //ascii排序
 function sort_ASCII(obj) {
@@ -215,7 +227,7 @@ function sort_ASCII(obj) {
 	return sortObj;
 }
 //对象转为字符串
-function data_toStirng(obj) {
+function data_toString(obj) {
 	let str = ''
 	let arrayData = []
 	Object.getOwnPropertyNames(obj).forEach(function(key) {
@@ -234,17 +246,17 @@ function data_toStirng(obj) {
 		}
 	}
 	return str;
-
 }
-//获取access_token
+// 获取access_token
 function accessToken(data) {
 	let asciiData = sort_ASCII(data);
-	let asciiData_toStirng = data_toStirng(asciiData);
+	let asciiData_toStirng = data_toString(asciiData);
 	let md5data = md5(asciiData_toStirng);
 	let upperCaseData = md5data.toUpperCase();
 	return upperCaseData;
 }
-
+// 来访登记页面相关接口
+const visitWhite = ['/api/visitorRegister', '/api/visitorHistorySave','/api/visitorHistoryList','/api/getVillageInfo']
 
 let requests = {}
 requests.post = (url, data) => {
@@ -262,14 +274,26 @@ requests.post = (url, data) => {
 		objData = Object.assign(data, loginToken);
 	}
 	let access_token = accessToken(objData);
+	let urlParams = `access_token=${access_token}`;
+	// 微信小程序条件编译
+	// #ifdef MP-WEIXIN
+	// const systemInfo = uni.getSystemInfoSync();
+	// 开发环境添加标识
+	// if (systemInfo.platform === 'devtools') {
+		urlParams += '&XDEBUG_SESSION=PHPSTORM';
+	// }
+	// #endif
 
 	let promise = new Promise(function(resolve, reject) {
-		uniRequest.post(url + '?access_token=' + access_token + '&XDEBUG_SESSION=XDEBUG_SESSION', objData).then((res) => {
+		uniRequest.post(url + '?' + urlParams, objData).then((res) => {
 
 			setTimeout(res => {
 				uni.hideLoading();
 			}, 1500)
-			successState(res)
+			// 来访登记页面的相关接口不显示提示信息
+			if (!visitWhite.includes(url)) {
+				successState(res)
+			}
 			// if (res.data.code === 1) {
 			resolve(res.data)
 			// }

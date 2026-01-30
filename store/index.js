@@ -6,8 +6,11 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 
-		baseUrl: 'http://192.168.20.200:8888', //请求地址
-		// baseUrl: 'https://api.hexianzhu.cn', //请求地址
+		// baseUrl: 'http://192.168.20.200:8888', // 开发-地址
+		// baseUrl: 'http://wyapina.hexianzhu.cn:8802', // 测试-地址
+		baseUrl: 'https://wyna.hexianzhu.cn', // 正式-地址
+		// baseUrl: 'https://api.hexianzhu.cn', // 请求地址
+
 		invoiceBaseUrl: 'https://f.yangguangzhiye.com', //发票地址域名
 		// baseImgUrl: 'https://p.yangguangdadi.cn/', //七牛云图片查看
 		baseImgUrl: 'http://f.hexianzhu.cn/', //七牛云图片查看
