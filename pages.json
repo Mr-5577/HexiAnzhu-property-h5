@@ -142,33 +142,6 @@
 				"navigationBarTitleText": "社区"
 			}
 		}, {
-			"path": "pages/reg/bound-house/bound-house",
-			"style": {
-				"navigationBarTitleText": "绑定房产信息"
-			}
-		}, {
-			"path": "pages/reg/bound-house/add-tower",
-			"style": {
-				"navigationBarTitleText": "选择楼栋"
-			}
-		},
-		{
-			"path": "pages/reg/bound-house/add-project",
-			"style": {
-				"navigationBarTitleText": "选择楼盘"
-			}
-		},
-		{
-			"path": "pages/reg/bound-house/add-unit",
-			"style": {
-				"navigationBarTitleText": "选择单元"
-			}
-		}, {
-			"path": "pages/reg/bound-house/add-room",
-			"style": {
-				"navigationBarTitleText": "选择房号"
-			}
-		}, {
 			"path": "pages/message/message",
 			"style": {
 				"navigationBarTitleText": "消息中心"
@@ -195,12 +168,6 @@
 			"style": {
 				"navigationBarTitleText": "个人中心",
 				"navigationBarBackgroundColor": "#f9f9f9"
-			}
-		}, 
-		{
-			"path": "pages/reg/bound-house/add-city",
-			"style": {
-				"navigationBarTitleText": "选择城市"
 			}
 		},
 		{
@@ -378,6 +345,39 @@
 								]
 							}
 						}
+					}
+				},
+				{
+					"path": "bound-house/add-city",
+					"style": {
+						"navigationBarTitleText": "选择城市"
+					}
+				},{
+					"path": "bound-house/bound-house",
+					"style": {
+						"navigationBarTitleText": "绑定房产信息"
+					}
+				}, {
+					"path": "bound-house/add-tower",
+					"style": {
+						"navigationBarTitleText": "选择楼栋"
+					}
+				},
+				{
+					"path": "bound-house/add-project",
+					"style": {
+						"navigationBarTitleText": "选择楼盘"
+					}
+				},
+				{
+					"path": "bound-house/add-unit",
+					"style": {
+						"navigationBarTitleText": "选择单元"
+					}
+				}, {
+					"path": "bound-house/add-room",
+					"style": {
+						"navigationBarTitleText": "选择房号"
 					}
 				}
 			]

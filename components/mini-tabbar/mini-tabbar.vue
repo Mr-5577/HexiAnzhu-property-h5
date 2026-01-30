@@ -99,7 +99,6 @@ export default {
       uni.navigateTo({
         url: item.pagePath,
         success: () => {
-          console.log(`切换到: ${item.text}`);
           // 发送事件通知父组件
           this.$emit("change", index);
         },

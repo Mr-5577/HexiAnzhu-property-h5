@@ -69,23 +69,23 @@ const router = new Router({
 		},
 		{
 			name: "bound-house",
-			path: "/pages/reg/bound-house/bound-house"
+			path: "/userModule/bound-house/bound-house"
 		},
 		{
 			name: "add-tower",
-			path: "/pages/reg/bound-house/add-tower"
+			path: "/userModule/bound-house/add-tower"
 		}, {
 			name: "add-project",
-			path: "/pages/reg/bound-house/add-project"
+			path: "/userModule/bound-house/add-project"
 		}, {
 			name: "add-unit",
-			path: "/pages/reg/bound-house/add-unit"
+			path: "/userModule/bound-house/add-unit"
 		}, {
 			name: "add-room",
-			path: "/pages/reg/bound-house/add-room"
+			path: "/userModule/bound-house/add-room"
 		}, {
 			name: "add-city",
-			path: "/pages/reg/bound-house/add-city"
+			path: "/userModule/bound-house/add-city"
 		}, {
 			name: "message",
 			path: "/pages/message/message"

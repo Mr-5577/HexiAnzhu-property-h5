@@ -56,7 +56,7 @@ export default {
 		// 跳转添加房产页
 		toBindHouse() {
 			uni.navigateTo({
-				url: '/pages/reg/bound-house/bound-house'
+				url: '/userModule/bound-house/bound-house'
 			});
 		},
 		getData() {
@@ -154,7 +154,7 @@ export default {
 	// #ifdef APP-PLUS
 	onNavigationBarButtonTap(res) {
 		uni.navigateTo({
-			url: '/pages/reg/bound-house/bound-house'
+			url: '/userModule/bound-house/bound-house'
 		});
 	}
 	// #endif
