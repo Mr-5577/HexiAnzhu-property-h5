@@ -148,15 +148,17 @@ function successState(res) {
 					content: '是否前往订单支付？',
 					success(resp) {
 						if (resp.confirm) {
-							uni.redirectTo({
-								url: '/pages/user/order/order?data=' + JSON.stringify(res.data)
+							// uni.redirectTo({
+							// 	url: '/userModule/order/order?data=' + JSON.stringify(res.data)
+							// })
+							uni.navigateTo({
+								url: '/userModule/order/order?data=' + JSON.stringify(res.data)
 							})
 						} else {
-							uni.navigateBack({
-								delta: 1
-							})
+							// uni.navigateBack({
+							// 	delta: 1
+							// })
 						}
-
 					}
 				})
 				return;

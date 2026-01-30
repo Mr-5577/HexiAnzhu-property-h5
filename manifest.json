@@ -153,7 +153,7 @@
     "mp-weixin" : {
         "appid" : "wx04594b249448b4a9",
         "setting" : {
-            "urlCheck" : true,
+            "urlCheck" : true, // 是否域名校验，开发设置为 false,正式环境中必须设置为 true
             "minified" : true,
             "es6" : false,
             "enhance" : true, // 增强编译
