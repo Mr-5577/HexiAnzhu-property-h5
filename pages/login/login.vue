@@ -40,12 +40,8 @@
 				<view class="radio-privacy">
 					<!-- <radio value="radioVal" :color="'#ff9f6f'" :borderColor="'#979291'" :activeBorderColor="'#ff9f6f'"
 						:checked="checkedRadio" style="transform:scale(0.6)"/> -->
-						<checkbox 
-							:checked="checkedRadio" 
-							color="#ff9f6f" 
-							style="transform:scale(0.6)"
-							@tap="testCheckboxClick"
-						/>
+					<checkbox :checked="checkedRadio" color="#ff9f6f" style="transform:scale(0.6)"
+						@tap="testCheckboxClick" />
 					<text class="privacy-text" @click="toUserAgreement">查看《和喜物业小程序隐私保护指引》</text>
 				</view>
 			</view>
@@ -54,12 +50,8 @@
 </template>
 
 <script>
-	import mInput from '@/components/m-input.vue';
-
 	export default {
-		components: {
-			mInput
-		},
+		components: {},
 		data() {
 			return {
 				providerList: [],
@@ -102,7 +94,7 @@
 			// }, res => {
 			// 	if (res.code == 1) {
 			// 		_this.$api.login_by_openid_xcx({
-			// 			cache_name: res.data
+			// 			cache_name: res.data.cache_name
 			// 		}, res => {
 			// 			if (res.code == 1) {
 			// 				uni.setStorageSync('loginToken', res.data);
@@ -161,12 +153,12 @@
 				let codeRes = await uni.login()
 				await this.$api.getUserOpenid({
 					code: codeRes[1].code
-				}, res => {
-					console.log('login-getUserOpenid', res)
-					if (res.code == 1) {
+				}, openIdRes => {
+					console.log('login-getUserOpenid', openIdRes)
+					if (openIdRes.code == 1) {
 						let data = {
 							code: e.detail.code,
-							cache_name: res.data
+							cache_name: openIdRes.data.cache_name
 						};
 						_this.$api.login_xcx(data, res => {
 							console.log('loginxcx:', res)
@@ -184,8 +176,6 @@
 								if (res.data.tel) {
 									_this.$api.autoBind({
 										tel: res.data.tel
-									}, res => {
-										console.log('autoBind', res)
 									});
 								}
 								setTimeout(() => {
@@ -202,10 +192,12 @@
 									}
 									_this.allowLogin = true;
 								}, 1000)
-
+							} else {
+								_this.allowLogin = true;
 							}
-
 						});
+					} else {
+						_this.allowLogin = true;
 					}
 				})
 			},
