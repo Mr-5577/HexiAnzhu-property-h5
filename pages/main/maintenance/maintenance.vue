@@ -72,7 +72,6 @@
 				<button class="foot-btn" plain :disabled="disabled" @tap="sub">提交报修</button>
 			</view>
 		</view>
-		<!-- <li-mask ref="showMask"></li-mask> -->
 	</view>
 </template>
 
@@ -81,13 +80,11 @@
 	import imageDragSort from '@/components/image-drag-sort/index.vue';
 	import wPicker from '@/components/w-picker/w-picker.vue';
 	import qiniuUploader from '@/common/js/qiniuUploader.js';
-	import liMask from "@/components/li-mask/li-mask.vue"
 	export default {
 		components: {
 			wPicker,
 			imageDragSort,
-			catLabel,
-			liMask
+			catLabel
 		},
 		data() {
 			return {
@@ -298,7 +295,6 @@
 						duration: 3000
 					})
 
-					// this.$refs.showMask.hide();
 					setTimeout(() => {
 						uni.hideLoading();
 						_this.disabled = !_this.disabled

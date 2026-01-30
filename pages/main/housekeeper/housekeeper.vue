@@ -59,12 +59,10 @@
 
 <script>
 	// 用户评价组件
-	import userReview from '@/components/user-review/user-review.vue';
 	import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
 	import uniRate from '@/components/uni-rate/uni-rate.vue';
 	export default {
 		components: {
-			userReview,
 			uniSegmentedControl,
 			uniRate
 		},
@@ -75,7 +73,7 @@
 				current: 0,
 				styleType: 'text',
 				mark: false,
-				housekeeprImg: '/static/img/header-img.png',
+				housekeeprImg: '/static/images/avatar.png',
 				userViews: [],
 				uid: '',
 				housekeeper: ''

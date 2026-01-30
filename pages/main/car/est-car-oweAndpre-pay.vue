@@ -706,6 +706,7 @@ export default {
 		//是否有活动
 		getPrestoreActivity(){
 			let wgids = this.$uitls.unique(this.wgids);
+			// 接口参数需要重新验证 TODO
 			this.$api.getPrestoreActivity({
 				type: 'car',
 				keyid: this.payCostData.id,

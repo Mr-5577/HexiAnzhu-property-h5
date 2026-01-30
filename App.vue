@@ -40,7 +40,7 @@
 			// }, res => {
 			// 	if (res.code == 1) {
 			// 		this.$api.login_by_openid_xcx({
-			// 			cache_name: res.data
+			// 			cache_name: res.data.cache_name
 			// 		},res =>{
 			// 			if(res.code == 1){
 			// 				this.$store.commit('loginToken', res.data);

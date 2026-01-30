@@ -1055,6 +1055,7 @@
 			},
 			getPrestoreActivity() {
 				let wgids = this.$uitls.unique(this.wgids);
+				// 接口参数需要重新验证 TODO
 				this.$api.getPrestoreActivity({
 						type: 'rooms',
 						keyid: this.preRoomData.keyid,

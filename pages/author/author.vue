@@ -3,7 +3,7 @@
 		<!-- 未登录授权页面 -->
 		<view v-if="!isLogin">
 			<view class="bd-content">
-				<image class="u-img" src="../../static/img/login.png" mode=""></image>
+				<!-- <image class="u-img" src="../../static/img/login.png" mode=""></image> -->
 				<view class="text1">和喜慧管家申请获得以下权限</view>
 				<view class="text2">获得你的微信公开信息(昵称、头像等)</view>
 				<view class="forget-btn"><button class="wx-btn" :disabled="btnDisabled" open-type="getPhoneNumber"
@@ -13,7 +13,7 @@
 		<view v-if="isLogin && !isLoading">
 			<!-- 绑定房产授权部分 -->
 			<view class="bd-content" v-if="type == 3">
-				<image class="u-img" src="../../static/img/author.png" mode=""></image>
+				<!-- <image class="u-img" src="../../static/img/author.png" mode=""></image> -->
 				<view class="text1">尊敬的{{ roomObj.villagename ? roomObj.villagename : '' }}业主</view>
 				<view class="text2">您的管家{{roomObj.housekeeper_name}}邀您绑定房产：</view>
 				<view class="text3">{{ roomObj.villagename ? roomObj.villagename : '' }}

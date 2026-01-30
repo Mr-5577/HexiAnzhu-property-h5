@@ -165,8 +165,6 @@
 	</view>
 </template>
 <script>
-	import uniGrid from '@/components/uni-grid/uni-grid.vue';
-	import uniGridItem from '@/components/uni-grid-item/uni-grid-item.vue';
 	import yomolUpgrade from '@/components/yomol-upgrade/yomol-upgrade.vue';
 	import liToast from '@/components/li-toast/li-toast.vue';
 	import sPullScroll from '@/components/s-pull-scroll';
@@ -174,8 +172,6 @@
 
 	export default {
 		components: {
-			uniGrid,
-			uniGridItem,
 			yomolUpgrade,
 			liToast,
 			sPullScroll,
@@ -192,7 +188,7 @@
 				banners: ['/static/img/main/banner1.jpg', '/static/img/main/banner2.jpg'],
 				gridList: [{
 					appid: "wx045946249448b4a9",
-					id: 34,
+					id: 12,
 					image: "/static/img/main/complaint.png",
 					is_outside: 0,
 					name: "投诉建议",
@@ -664,7 +660,7 @@
 				// }, res => {
 				// 	if (res.code == 1) {
 				// 		_this.$api.login_by_openid_xcx({
-				// 			cache_name: res.data
+				// 			cache_name: res.data.cache_name
 				// 		}, res => {
 				// 			if (res.code == 1) {
 				// 				uni.setStorageSync('loginToken', res.data);

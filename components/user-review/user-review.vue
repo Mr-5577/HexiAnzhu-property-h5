@@ -43,7 +43,7 @@ export default {
 	},
 	data() {
 		return {
-			housekeeprImg: '/static/img/header-img.png'
+			housekeeprImg: '/static/images/avatar.png'
 		};
 	}
 };

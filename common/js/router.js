@@ -105,7 +105,7 @@ const router = new Router({
 		},
 		{
 			name: "my-house",
-			path: "/pages/user/my-house/my-house"
+			path: "/userModule/my-house/my-house"
 		}, {
 			name: "choose-type",
 			path: "/pages/main/est-pay/choose-type"
@@ -120,35 +120,34 @@ const router = new Router({
 			path: "/pages/main/car/car-pay"
 		}, {
 			name: "order",
-			path: "/pages/user/order/order"
+			path: "/userModule/order/order"
 		}, {
 			name: "order-detail",
-			path: "/pages/user/order/detail"
+			path: "/userModule/order/detail"
 		},
 		{
 			name: "repair-order",
-			path: "/pages/user/repair-order/repair-order"
+			path: "/userModule/repair-order/repair-order"
 		},
 		{
 			name: "repair-order-detail",
-			path: "/pages/user/repair-order/detail"
+			path: "/userModule/repair-order/detail"
 		},
-
 		{
 			name: "my-car",
-			path: "/pages/user/my-car/my-car"
+			path: "/userModule/my-car/my-car"
 		},
 		{
 			name: "about",
-			path: "/pages/user/about/about"
+			path: "/userModule/about/about"
 		},
 		{
 			name: "user-agreement",
-			path: "/pages/user/user-agreement/user-agreement"
+			path: "/userModule/user-agreement/user-agreement"
 		},
 		{
 			name: "service-explain",
-			path: "/pages/user/service-explain/service-explain"
+			path: "/userModule/service-explain/service-explain"
 		},
 		{
 			name: "my-key",
@@ -172,7 +171,7 @@ const router = new Router({
 		},
 		{
 			name: "evaluate",
-			path: "/pages/user/repair-order/evaluate"
+			path: "/userModule/repair-order/evaluate"
 		},
 		{
 			name: "est-oweAndpre-pay",
@@ -185,10 +184,6 @@ const router = new Router({
 		{
 			name: "author",
 			path: "/pages/author/author"
-		},
-		{
-			name: "appointment",
-			path: "/pages/main/appointment/appointment"
 		},
 		{
 			name: "akeyhall",
@@ -208,7 +203,7 @@ const router = new Router({
 		},
 		{
 			name: "visitor-register",
-			path: "/pages/visitor/visitor-register"
+			path: "/visitModule/visitor/visitor-register"
 		}
 	]
 })
@@ -219,19 +214,19 @@ router.beforeEach(async (to, from, next) => {
 		'index',
 		'center',
 		'author',
-		'shopping',
+		// 'shopping',
 		'about',
 		'user-agreement',
 		'service-explain',
-		'add-tower',
-		'add-project',
-		'add-unit',
-		'add-room',
-		'add-city',
-		'order-detail',
-		'choose-type',
-		'car-pay',
-		'est-pay',
+		// 'add-tower',
+		// 'add-project',
+		// 'add-unit',
+		// 'add-room',
+		// 'add-city',
+		// 'order-detail',
+		// 'choose-type',
+		// 'car-pay',
+		// 'est-pay',
 		'visitor-register'
 	]
 	if (WHITE_ROUTES.includes(to.name)) {
@@ -249,7 +244,7 @@ router.beforeEach(async (to, from, next) => {
 		// }, res => {
 		// 	if (res.code == 1) {
 		// 		api.login_by_openid_xcx({
-		// 			cache_name: res.data
+		// 			cache_name: res.data.cache_name
 		// 		},res =>{
 		// 			if(res.code == 1){
 		// 				store.commit('loginToken', res.data);

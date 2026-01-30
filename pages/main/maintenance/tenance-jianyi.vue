@@ -64,7 +64,6 @@
 import catLabel from '@/components/cat-label/cat-label.vue';
 import imageDragSort from '@/components/image-drag-sort/index.vue';
 import wPicker from '@/components/w-picker/w-picker.vue';
-import * as qiniu from 'qiniu-js';
 import qiniuUploader from '@/common/js/qiniuUploader.js';
 export default {
 	components: {

@@ -7,21 +7,6 @@
 				"enablePullDownRefresh": false,
 				"navigationStyle": "custom"
 			}
-		}, {
-			"path": "pages/user/repair-order/repair-order",
-			"style": {
-				"navigationBarTitleText": "我的工单"
-			}
-		}, {
-			"path": "pages/user/repair-order/detail",
-			"style": {
-				"navigationBarTitleText": "我的工单"
-			}
-		}, {
-			"path": "pages/user/repair-order/evaluate",
-			"style": {
-				"navigationBarTitleText": "评价"
-			}
 		},
 		{
 			"path": "pages/main/housekeeper/housekeeper",
@@ -199,19 +184,7 @@
 			"style": {
 				"navigationBarTitleText": "通知公告详情"
 			}
-		},
-		{
-			"path": "pages/main/appointment/appointment",
-			"style": {
-				"navigationBarTitleText": "访客预约"
-			}
-		},
-		{
-			"path": "pages/main/appointment/project-select",
-			"style": {
-				"navigationBarTitleText": "地址更改"
-			}
-		}, {
+		},{
 			"path": "pages/main/call/call",
 			"style": {
 				"navigationBarTitleText": "联系物业"
@@ -223,25 +196,7 @@
 				"navigationBarTitleText": "个人中心",
 				"navigationBarBackgroundColor": "#f9f9f9"
 			}
-		}, {
-			"path": "pages/user/my-house/my-house",
-			"style": {
-				"navigationBarTitleText": "我的房产",
-				"app-plus": {
-					"bounce": "none", //关闭窗口回弹效果
-					"titleNView": {
-						"buttons": [ //原生标题栏按钮配置,
-							{
-								"text": "添加房屋", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
-								"fontSize": "12px",
-								"width": "80px",
-								"color": "#DB9444"
-							}
-						]
-					}
-				}
-			}
-		},
+		}, 
 		{
 			"path": "pages/reg/bound-house/add-city",
 			"style": {
@@ -280,44 +235,11 @@
 				"navigationBarTitleText": "车辆预缴费用"
 			}
 		}, {
-			"path": "pages/user/order/order",
-			"style": {
-				"navigationBarTitleText": "我的订单",
-				"onReachBottomDistance": 50
-			}
-		}, {
-			"path": "pages/user/order/detail",
-			"style": {
-				"navigationBarTitleText": "订单详情"
-			}
-		}, {
 			"path": "pages/h5/receipt",
 			"style": {
 				"navigationBarTitleText": "收据详情"
 			}
 		}, {
-			"path": "pages/user/my-car/my-car",
-			"style": {
-				"navigationBarTitleText": "我的车辆"
-			}
-		}, {
-			"path": "pages/user/about/about",
-			"style": {
-				"navigationBarTitleText": "关于我们"
-			}
-		}, {
-			"path": "pages/user/user-agreement/user-agreement",
-			"style": {
-				"navigationBarTitleText": "用户协议"
-			}
-		}, {
-			"path": "pages/user/service-explain/service-explain",
-			"style": {
-				"navigationBarTitleText": "服务说明"
-			}
-		}
-
-		, {
 			"path": "pages/main/my-key/my-key",
 			"style": {
 				"navigationBarTitleText": "我的钥匙"
@@ -372,12 +294,93 @@
 			"style": {
 				"navigationBarTitleText": "活动详情"
 			}
-		},
+		}
+	],
+	"subPackages": [
 		{
-			"path": "pages/visitor/visitor-register",
-			"style": {
-				"navigationBarTitleText": "来访登记"
-			}
+			"root": "visitModule",
+			"pages": [
+				{
+					"path": "visitor/visitor-register",
+					"style": {
+						"navigationBarTitleText": "来访登记",
+						"navigationStyle": "custom",  // 完全自定义导航栏
+						"disableSwipeBack": true      // 禁用右滑返回
+					}
+				}
+			]
+		},{
+			"root": "userModule",
+			"pages": [
+				{
+					"path": "user-agreement/user-agreement",
+					"style": {
+						"navigationBarTitleText": "用户协议"
+					}
+				},
+				{
+					"path": "service-explain/service-explain",
+					"style": {
+						"navigationBarTitleText": "服务说明"
+					}
+				},
+				{
+					"path": "repair-order/repair-order",
+					"style": {
+						"navigationBarTitleText": "我的工单"
+					}
+				}, {
+					"path": "repair-order/detail",
+					"style": {
+						"navigationBarTitleText": "我的工单"
+					}
+				}, {
+					"path": "repair-order/evaluate",
+					"style": {
+						"navigationBarTitleText": "评价"
+					}
+				}, {
+					"path": "order/order",
+					"style": {
+						"navigationBarTitleText": "我的订单",
+						"onReachBottomDistance": 50
+					}
+				}, {
+					"path": "order/detail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}, {
+					"path": "about/about",
+					"style": {
+						"navigationBarTitleText": "关于我们"
+					}
+				}, {
+					"path": "my-car/my-car",
+					"style": {
+						"navigationBarTitleText": "我的车辆"
+					}
+				},
+				{
+					"path": "my-house/my-house",
+					"style": {
+						"navigationBarTitleText": "我的房产",
+						"app-plus": {
+							"bounce": "none", //关闭窗口回弹效果
+							"titleNView": {
+								"buttons": [ //原生标题栏按钮配置,
+									{
+										"text": "添加房屋", //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
+										"fontSize": "12px",
+										"width": "80px",
+										"color": "#DB9444"
+									}
+								]
+							}
+						}
+					}
+				}
+			]
 		}
 	],
 	"globalStyle": {

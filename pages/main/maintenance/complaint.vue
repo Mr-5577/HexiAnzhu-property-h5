@@ -72,7 +72,6 @@
 				<button class="foot-btn" plain :disabled="disabled" @tap="sub">提交投诉</button>
 			</view>
 		</view>
-		<!-- <li-mask ref="showMask"></li-mask> -->
 	</view>
 </template>
 
@@ -81,13 +80,11 @@
 	import imageDragSort from '@/components/image-drag-sort/index.vue';
 	import wPicker from '@/components/w-picker/w-picker.vue';
 	import qiniuUploader from '@/common/js/qiniuUploader.js';
-	import liMask from '@/components/li-mask/li-mask.vue';
 	export default {
 		components: {
 			wPicker,
 			imageDragSort,
-			catLabel,
-			liMask
+			catLabel
 		},
 		data() {
 			return {
@@ -98,7 +95,7 @@
 					text: '业主投诉',
 					cls: 'icontousuyiwen'
 				}],
-				current: 34, //默认报事报修
+				current: 12, //默认报事报修
 				baoshi: '',
 				jianyi: '',
 				type1: '', //报事类型
@@ -261,7 +258,6 @@
 					this.disabled = !this.disabled
 					return;
 				}
-				// this.$refs.showMask.show();
 				uni.showLoading({
 					title: '正在上传数据...'
 				})
@@ -302,7 +298,6 @@
 						duration: 3000
 					});
 
-					// this.$refs.showMask.hide();
 					setTimeout(() => {
 						uni.hideLoading();
 						_this.disabled = !_this.disabled

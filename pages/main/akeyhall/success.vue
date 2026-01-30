@@ -2,7 +2,7 @@
 	<view class="">
 		<view style="margin-top: 100px;">
 			<view class="uni-flex-center">
-				<image class="img" src="@/static/img/main/success.png"></image>
+				<!-- <image class="img" src="@/static/img/main/success.png"></image> -->
 			</view>
 			<view class="text-blod uni-text-center">
 				电梯即将到达

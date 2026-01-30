@@ -66,55 +66,55 @@
 		},
 		data() {
 			return {
-				defaultImg: '/static/img/header-img.png',
+				defaultImg: '/static/images/avatar.png',
 				status: [{
 						name: '我的订单',
-						icon: '/static/fumou-center-template/my-order.png',
+						icon: '/static/fumou-center-template/my-order.jpg',
 						url: 'order',
 						id: 1
 					},
 					{
 						name: '我的工单',
-						icon: '/static/fumou-center-template/work-order.png',
+						icon: '/static/fumou-center-template/work-order.jpg',
 						url: 'repair-order',
 						id: 2
 					},
 					{
 						name: '发票下载',
-						icon: '/static/fumou-center-template/download.png',
+						icon: '/static/fumou-center-template/download.jpg',
 						url: 'electronic_invoice',
 						id: 3
 					},
 					{
 						name: '我的余额',
-						icon: '/static/fumou-center-template/balance.png',
+						icon: '/static/fumou-center-template/balance.jpg',
 						url: 'charge-money',
 						id: 4
 					}
 				],
 				menus: [{
 						name: '我的房产',
-						icon: '/static/fumou-center-template/house.png',
+						icon: '/static/fumou-center-template/house.jpg',
 						url: 'my-house'
 					},
 					{
 						name: '我的车辆',
-						icon: '/static/fumou-center-template/car.png',
+						icon: '/static/fumou-center-template/car.jpg',
 						url: 'my-car'
 					},
 					{
 						name: '我的工单',
-						icon: '/static/fumou-center-template/w-order.png',
+						icon: '/static/fumou-center-template/w-order.jpg',
 						url: 'repair-order'
 					},
 					{
 						name: '联系物业',
-						icon: '/static/fumou-center-template/contact.png',
+						icon: '/static/fumou-center-template/contact.jpg',
 						url: 'call'
 					},
 					{
 						name: '关于我们',
-						icon: '/static/fumou-center-template/about.png',
+						icon: '/static/fumou-center-template/about.jpg',
 						url: 'about'
 					}
 				],
@@ -122,7 +122,7 @@
 				orderList: []
 			};
 		},
-		onLoad() {
+		onShow() {
 			if (this.$store.state.login_token) {
 				this.getData();
 				this.getRepairList();
