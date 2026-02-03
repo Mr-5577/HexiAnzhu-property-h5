@@ -6,7 +6,6 @@
 		</view>
 		<!-- 来访类型展示 -->
 		<view class="visitor-type-card">
-			<text style="visibility: hidden;">*</text>
 			<view class="type-label">来访类型：</view>
 			<view class="type-value">{{ visitorType == 0 ? '外卖人员' : '普通访客' }}</view>
 		</view>
@@ -140,7 +139,7 @@
 				<text class="loading-text">加载中...</text>
 			</view>
 		</view>
-		<view style="color: #dedede;">{{ urlData }}</view>
+		<!-- <view style="color: #dedede;">{{ urlData }}</view> -->
 	</view>
 </template>
 
@@ -197,7 +196,7 @@
 				openId: '',
 				cache_name: '',
 				allowLogin: true,
-				urlData: ''
+				// urlData: ''
 			};
 		},
 
@@ -228,13 +227,12 @@
 
 		onLoad(options) {
 			console.log('来访登记页面：', options)
-			this.urlData = JSON.stringify(options)
+			// this.urlData = JSON.stringify(options)
 			this.hasHistory = false;
 			this.currentTime = this.getCurrTime();
 			/**
 			 * 普通来访二维码：type=1
 			 * 外卖来访二维码：type=0
-			 * 在 app.vue 中根据扫码参数用 reLaunch 跳转到此页面
 			 * 携带参数如 http://api.com?villageId=123&type=0
 			 */
 			// 先解析扫码参数，判断来访类型
@@ -515,9 +513,9 @@
 				this.formData.visitorName = history.visitorName || '';
 				this.formData.idCard = history.idCard || '';
 				this.formData.phone = history.phone || '';
-				this.currentTime = this.getCurrTime();
 				// 有来访记录并且是外卖访客时才能直接展示来访信息，普通访客需要重新选择 楼栋-单元-房号-访客电话等信息
 				if (this.visitorType == 0) {
+					this.currentTime = this.getCurrTime();
 					this.hasHistory = true;
 				}
 			},
@@ -597,7 +595,7 @@
 						const saveRes = await this.$api.visitorHistorySave(saveData);
 						if (saveRes.code === 1) {
 							uni.showToast({
-								title: '保存成功',
+								title: '登记成功',
 								icon: 'success'
 							});
 							// 保存访客信息到本地历史记录
