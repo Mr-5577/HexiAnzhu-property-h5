@@ -79,12 +79,12 @@
 						url: 'repair-order',
 						id: 2
 					},
-					{
-						name: '发票下载',
-						icon: '/static/fumou-center-template/download.jpg',
-						url: 'electronic_invoice',
-						id: 3
-					},
+					// {
+					// 	name: '发票下载',
+					// 	icon: '/static/fumou-center-template/download.jpg',
+					// 	url: 'electronic_invoice',
+					// 	id: 3
+					// },
 					{
 						name: '我的余额',
 						icon: '/static/fumou-center-template/balance.jpg',
