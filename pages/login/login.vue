@@ -3,6 +3,11 @@
 		<!-- 背景图片 -->
 		<image v-show="showBgImage" class="page-bg" src="/static/images/login-bg.jpg" mode="aspectFill" />
 
+		<view class="skip-login" @click="handleSkipLogin">
+			<uni-icons type="arrowleft" size="20" color="#fff"></uni-icons>
+			<text class="return-text">退出登录</text>
+		</view>
+
 		<image src="/static/images/logo-login.png" class="logo-icon" />
 		<!-- <template>
 			<view class="forget-bg">
@@ -455,6 +460,11 @@
 						});
 					}
 				});
+			},
+			handleSkipLogin() {
+				uni.navigateBack({
+					delta: 1
+				})
 			}
 		},
 		onHide() {
@@ -483,12 +493,24 @@
 		width: 100%;
 		box-sizing: border-box;
 	}
+	.skip-login {
+		display: flex;
+		align-items: center;
+		position: absolute;
+		top: 110upx;
+		left: 20upx;
+		z-index: 99;
+	}
+	.skip-login .return-text {
+		font-size: 30upx;
+		color: #fff;
+	}
 
 	.logo-icon {
 		width: 160upx;
 		height: 46upx;
 		position: absolute;
-		top: 110upx;
+		top: 220upx;
 		left: 20upx;
 		z-index: 99;
 	}

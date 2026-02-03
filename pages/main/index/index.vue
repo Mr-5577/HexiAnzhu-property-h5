@@ -206,13 +206,15 @@
 					is_outside: 0,
 					name: "找服务",
 					url: "pages/main/service/integrated-service",
-				}, {
-					id: 2003,
-					image: "/static/img/main/convenience.png",
-					is_outside: 0,
-					name: "便民信息",
-					url: "",
-				},],
+				}, 
+				// {
+				// 	id: 2003,
+				// 	image: "/static/img/main/convenience.png",
+				// 	is_outside: 0,
+				// 	name: "便民信息",
+				// 	url: "",
+				// }
+				],
 				upgradeType: 'pkg', //pkg 整包 wgt 升级包
 				upgradeContent: '', //更新内容
 				upgradeUrl: '', //更新地址
@@ -676,21 +678,22 @@
 				// 		})
 				// 	}
 				// })
-				uni.showModal({
-					title: '未登录',
-					cancelColor: '#898989',
-					cancelText: '取消',
-					confirmColor: '#fe845e',
-					confirmText: '去登录',
-					content: '是否前往登录？',
-					success(resp) {
-						if (resp.confirm) {
-							uni.navigateTo({
-								url: '/pages/login/login'
-							})
-						}
-					}
-				})
+
+				// uni.showModal({
+				// 	title: '未登录',
+				// 	cancelColor: '#898989',
+				// 	cancelText: '取消',
+				// 	confirmColor: '#fe845e',
+				// 	confirmText: '去登录',
+				// 	content: '是否前往登录？',
+				// 	success(resp) {
+				// 		if (resp.confirm) {
+				// 			uni.navigateTo({
+				// 				url: '/pages/login/login'
+				// 			})
+				// 		}
+				// 	}
+				// })
 			}
 			// #ifdef APP-PLUS
 			this.checkVersionClick();

@@ -78,7 +78,7 @@ function successState(res) {
 				uni.showModal({
 					title: '登录失效',
 					cancelColor: '#898989',
-					cancelText: '不去了',
+					cancelText: '取消',
 					confirmColor: '#fe845e',
 					confirmText: '去登录',
 					content: '是否前往登录？',
@@ -100,7 +100,7 @@ function successState(res) {
 				uni.showModal({
 					title: '未绑定房产',
 					cancelColor: '#898989',
-					cancelText: '不去了',
+					cancelText: '取消',
 					confirmColor: '#fe845e',
 					confirmText: '去绑定',
 					content: '是否前往绑定房产？',
@@ -142,7 +142,7 @@ function successState(res) {
 				uni.showModal({
 					title: '您存在有未支付的订单',
 					cancelColor: '#898989',
-					cancelText: '不去了',
+					cancelText: '取消',
 					confirmColor: '#ffcf5a',
 					confirmText: '去缴费',
 					content: '是否前往订单支付？',

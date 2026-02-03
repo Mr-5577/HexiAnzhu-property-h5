@@ -267,9 +267,10 @@ router.beforeEach(async (to, from, next) => {
 		// 	}
 		// })
 		uni.showModal({
-			content: '请先登录',
+			title: '未登录',
+			content: '是否前往登录？',
 			cancelColor: '#898989',
-			cancelText: '不去了',
+			cancelText: '取消',
 			confirmColor: '#fe845e',
 			confirmText: '去登录',
 			success(res) {
