@@ -148,6 +148,10 @@
 			<view>历史到访记录：{{ errData.visitorHistoryList }}</view>
 			<view>楼栋数据：{{ errData.loadBuildingData }}</view>
 			<view>catch错误信息：{{ errData.catchMessage }}</view>
+			<view>phoneLoginRes信息：{{ errData.phoneLoginRes }}</view>
+			<view>phoneLoginOpenIdRes信息：{{ errData.phoneLoginOpenIdRes }}</view>
+			<view>phoneNumRes信息：{{ errData.phoneNumRes }}</view>
+			<view>phoneLoginErrRes信息：{{ errData.phoneLoginErrRes }}</view>
 		</view>
 	</view>
 </template>
@@ -212,7 +216,11 @@
 					getVillageInfo: '',
 					visitorHistoryList: '',
 					loadBuildingData: '',
-					catchMessage: ''
+					catchMessage: '',
+					phoneLoginRes: '',
+					phoneLoginOpenIdRes: '',
+					phoneNumRes: '',
+					phoneLoginErrRes: '',
 				}
 			};
 		},
@@ -587,9 +595,11 @@
 					try {
 						if (!this.openId || !this.cache_name) {
 							const codeRes = await uni.login();
+							this.errData.phoneLoginRes = JSON.stringify(codeRes)
 							const openIdRes = await this.$api.getUserOpenid({
 								code: codeRes[1].code
 							})
+							this.errData.phoneLoginOpenIdRes = JSON.stringify(openIdRes)
 							if (openIdRes.code == 1 && openIdRes.data) {
 								this.openId = openIdRes.data.openid
 								this.cache_name = openIdRes.data.cache_name
@@ -598,10 +608,12 @@
 						const phoneRes = await this.$api.getPhoneNum({
 							code: e.detail.code
 						})
+						this.errData.phoneNumRes = JSON.stringify(phoneRes)
 						if (phoneRes.code == 1) {
 							this.formData.phone = phoneRes.data
 						}
 					} catch (err) {
+						this.errData.phoneLoginErrRes = JSON.stringify(err)
 						uni.showToast({
 							title: '号码获取异常，重新获取',
 							icon: 'none'
