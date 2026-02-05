@@ -132,11 +132,6 @@
 			}
 		},
 		{
-			"path": "pages/shopping/shopping",
-			"style": {
-				"navigationBarTitleText": "商城"
-			}
-		}, {
 			"path": "pages/community/community",
 			"style": {
 				"navigationBarTitleText": "社区"
@@ -378,6 +373,17 @@
 					"path": "bound-house/add-room",
 					"style": {
 						"navigationBarTitleText": "选择房号"
+					}
+				}
+			]
+		},{
+			"root": "webviewModule",
+			"pages": [
+				{
+					"path": "webview/webview",
+					"style": {
+						"navigationBarTitleText": "详情",
+						"enablePullDownRefresh": false
 					}
 				}
 			]

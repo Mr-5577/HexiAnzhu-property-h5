@@ -69,7 +69,11 @@
 		},
 		data() {
 			return {
-                comprehensive: [], // 类型列表
+                comprehensive: [
+					{ id: 15, typename: "找装修", ptype: 4 },
+					{ id: 16, typename: "找保洁", ptype: 4 },
+					{ id: 17, typename: "其他服务需求", ptype: 4 },
+				], // 类型列表
 				content: "", // 内容
 				currentId: '', // 从首页带过来的装修办理id:15,，综合服务id：16
 				complaintImages: [], //报事报修要上传的图片
@@ -95,11 +99,14 @@
                 }
             },
 		},
-        onShow() {},
+        onShow() {
+			if (this.$store.state.login_token) {
+				this.getTypeList();
+				this.getUpToken();
+			}
+		},
 		onLoad(option) {
 			this.currentId = this.$Route.query.id;
-			this.getTypeList();
-			this.getUpToken();
 		},
 		methods: {
             getTypeList() {
@@ -156,6 +163,24 @@
 				});
 			},
 			async handleSubmit() {
+				if (!this.$store.state.login_token) {
+					uni.showModal({
+						title: '提示',
+						content: '此功能需要验证您的身份，登录后使用完整综合服务。是否前往登录？',
+						cancelColor: '#898989',
+						cancelText: '取消',
+						confirmColor: '#fe845e',
+						confirmText: '去登录',
+						success(res) {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: '/pages/login/login'
+								})
+							}
+						}
+					});
+					return
+				}
 				if (!this.content) {
 					uni.showToast({
 						icon: "none",
@@ -202,24 +227,27 @@
                     tel: this.tel,
 					imgs: JSON.stringify(imgs),
 				};
-                console.log(data,'参数', this.$store.state)
-				this.$api.comprehensive(data, (res) => {
-                    if (res.code === 1) {
-                        uni.showToast({
-                            icon: "none",
-                            title: "提交成功！",
-                            duration: 3000,
-                        });
-                        setTimeout(() => {
-                            // uni.hideLoading();
-                            _this.disabled = !_this.disabled;
-                            uni.navigateBack({
-                                delta: 1,
-                            });
-                        }, 1000);
-                    }
-                    uni.hideLoading();
-				});
+				try {
+					this.$api.comprehensive(data, (res) => {
+						if (res.code === 1) {
+							uni.showToast({
+								icon: 'none',
+								title: '提交成功，我们将及时和您联系',
+								duration: 2000
+							});
+							setTimeout(() => {
+								uni.hideLoading();
+								_this.disabled = !_this.disabled;
+								uni.navigateBack({
+									delta: 1,
+								});
+							}, 1800);
+						}
+						uni.hideLoading();
+					});
+				} catch (error) {
+					uni.hideLoading();
+				}
 			},
 		},
 		

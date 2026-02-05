@@ -112,7 +112,9 @@
 			}
 		},
 		onLoad() {
-			this.getRepairlist();
+			if (this.$store.state.login_token) {
+				this.getRepairlist();
+			}
 		},
 		onReachBottom: function() {
 			// console.log('我触底了要加载数据了: ' + JSON.stringify('我触底了要加载数据了'));

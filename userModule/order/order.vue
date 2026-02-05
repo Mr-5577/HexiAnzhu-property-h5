@@ -84,7 +84,9 @@ export default {
 		// 计算主体部分高度,单位为px
 		this.recordList = [];
 		this.wfkList = [];
-		this.getList();
+		if (this.$store.state.login_token) {
+			this.getList();
+		}
 	},
 	onReachBottom() {
 		let totalPage = Math.ceil(this.totalCount / this.limit);

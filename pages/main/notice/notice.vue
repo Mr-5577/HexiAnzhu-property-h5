@@ -67,8 +67,10 @@
 				}
 			}
 		},
-		onLoad() {
-			this.getList();
+		onShow() {
+			if (this.$store.state.login_token) {
+				this.getList();
+			}
 		}
 	};
 </script>

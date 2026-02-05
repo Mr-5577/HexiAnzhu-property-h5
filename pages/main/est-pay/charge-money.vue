@@ -1,16 +1,16 @@
 <template>
-	<view class="charge-money" v-if="accountData">
+	<view class="charge-money">
 		<view class="uni-flex-center">
 			<view class="uni-cell-90 charge-content" >
 				<view style="display: flex;margin: 20upx;">
 					<!-- <image v-if="accountData" :src="userInfo.avatarUrl" mode="aspectFit" class="user-header"></image> -->
 					<image  :src="defaultImg" mode="aspectFit" class="user-header"></image>
-					<text class="user-name">{{accountData.realname }} 的账户</text>
+					<text class="user-name">{{accountData.realname || '--' }} 的账户</text>
 				</view>
 				<view class="uni-flex-center">
 					<view class="balance">
 						<view class="uni-font-64" style="color: #ffcf5a;">
-							<text>￥{{ accountData.balance === null ? '0' : accountData.balance  }}</text>
+							<text>￥{{ accountData.balance || '0' }}</text>
 						</view>
 						<view class="color89">账户余额</view>
 					</view>
@@ -72,7 +72,9 @@ export default {
 		}
 	},
 	onShow(){
-		this.getAccountInfo();
+		if (this.$store.state.login_token) {
+			this.getAccountInfo();
+		}
 	},
 	methods: {
 		//验证输入框只能输入两位小数

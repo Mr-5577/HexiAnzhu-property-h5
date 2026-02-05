@@ -49,12 +49,32 @@ export default {
 		};
 	},
 	onShow() {
-		this.currentHouse = this.$store.state.myHouse.ownerInfo;
-		this.oldHouse = this.$store.state.myHouse.ownerInfo;
+		if (this.$store.state.login_token) {
+			this.currentHouse = this.$store.state.myHouse.ownerInfo;
+			this.oldHouse = this.$store.state.myHouse.ownerInfo;
+		}
 	},
 	methods: {
 		// 跳转添加房产页
 		toBindHouse() {
+			if (!this.$store.state.login_token) {
+				uni.showModal({
+					title: '提示',
+					content: '此功能需要验证您的身份，登录后可查看房产具体信息。是否前往登录？',
+					cancelColor: '#898989',
+					cancelText: '取消',
+					confirmColor: '#fe845e',
+					confirmText: '去登录',
+					success(res) {
+						if (res.confirm) {
+							uni.navigateTo({
+								url: '/pages/login/login'
+							})
+						}
+					}
+				});
+				return
+			}
 			uni.navigateTo({
 				url: '/userModule/bound-house/bound-house'
 			});
@@ -104,9 +124,26 @@ export default {
 				this.currentHouse = item;
 			}
 		},
-
 		// 切换房源
 		changeRoom() {
+			if (!this.$store.state.login_token) {
+				uni.showModal({
+					title: '提示',
+					content: '此功能需要验证您的身份，登录后可查看房产具体信息。是否前往登录？',
+					cancelColor: '#898989',
+					cancelText: '取消',
+					confirmColor: '#fe845e',
+					confirmText: '去登录',
+					success(res) {
+						if (res.confirm) {
+							uni.navigateTo({
+								url: '/pages/login/login'
+							})
+						}
+					}
+				});
+				return
+			}
 			let _this = this;
 			//如果当前房产和点击是同一个 不执行切换操作
 			if (this.currentHouse.roomid === this.oldHouse.roomid) {

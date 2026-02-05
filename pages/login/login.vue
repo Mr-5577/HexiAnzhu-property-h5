@@ -181,7 +181,16 @@
 								if (res.data.tel) {
 									_this.$api.autoBind({
 										tel: res.data.tel
-									});
+									}, (bindRes) => {
+										if (bindRes.code === 1) {
+											// 获取房产信息并缓存下来
+											_this.$api.userCenter({}, (centerRes) => {
+												if (centerRes.code == 1) {
+													_this.$store.commit('setMyHouse', centerRes.data);
+												}
+											});
+										}
+									})
 								}
 								setTimeout(() => {
 									uni.hideLoading();

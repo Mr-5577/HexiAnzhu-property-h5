@@ -24,7 +24,9 @@
 			}
 		},
 		onLoad() {
-			this.contact();
+			if (this.$store.state.login_token) {
+				this.contact();
+			}
 		},
 		methods: {
 			numbers() {

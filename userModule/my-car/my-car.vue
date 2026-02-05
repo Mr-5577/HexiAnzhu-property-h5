@@ -5,8 +5,7 @@
 			<view class="tip">当前房产暂无车辆数据</view>
 			<button class="btn" plain @click="toMyhouse">更换房产</button>
 		</view> -->
-		<view class="uni-empty" v-if="datas.cars.length == 0">暂无车辆数据</view>
-		<view class="car-wrapper" v-else>
+		<view class="car-wrapper" v-if="datas && datas.datas && datas.cars.length > 0">
 			<view class="car-item" v-for="(item, index) in datas.cars" :key="index">
 				<view class="plate">{{ item.plates }}</view>
 				<view class="item-wrapper">
@@ -20,6 +19,7 @@
 				<view class="btn-wrapper"><view class="btn" @click="toPayment(item)">去缴费</view></view>
 			</view>
 		</view>
+		<view class="uni-empty" v-else>暂无车辆数据</view>
 	</view>
 </template>
 
@@ -57,7 +57,9 @@ export default {
 		}
 	},
 	onShow() {
-		this.getData();
+		if (this.$store.state.login_token) {
+			this.getData();
+		}
 	}
 };
 </script>

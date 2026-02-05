@@ -98,8 +98,21 @@
 				current: 12, //默认报事报修12,业主投诉34
 				baoshi: '',
 				jianyi: '',
-				type1: '', //报事类型
-				type2: '', //投诉类型
+				type1: [
+					{ id: 1, typename: "房屋维修", ptype: 1 },
+					{ id: 2, typename: "水电燃气", ptype: 1 },
+					{ id: 3, typename: "公共设施", ptype: 1 },
+					{ id: 4, typename: "其他类型", ptype: 1 },
+				], //报事类型
+				type2: [
+					{ id: 6, typename: "绿化管理类", ptype: 2 },
+					{ id: 7, typename: "设施设备类", ptype: 2 },
+					{ id: 8, typename: "秩序管理类", ptype: 2 },
+					{ id: 9, typename: "清洁管理类", ptype: 2 },
+					{ id: 10, typename: "其他类型", ptype: 2 },
+					{ id: 11, typename: "客户服务类", ptype: 2 },
+					{ id: 12, typename: "地产相关类", ptype: 2 },
+				], //投诉类型
 				items: [{
 					text: '立即处理',
 					value: '1'
@@ -150,8 +163,8 @@
 				// 	title:'正在获取数据'
 				// })
 				this.$api.repairStart({}, res => {
-					this.type1 = res.data.family;
-					this.type2 = res.data.public;
+					this.type1 = res.data.family || [];
+					this.type2 = res.data.public || [];
 					this.person = res.data.contacts;
 					if (this.person.length > 0) {
 						this.contact = this.person[this.personCurrent].id;
@@ -238,6 +251,24 @@
 				});
 			},
 			async sub() {
+				if (!this.$store.state.login_token) {
+					uni.showModal({
+						title: '提示',
+						content: '此功能需要验证您的身份，登录后可处理报修事宜。是否前往登录？',
+						cancelColor: '#898989',
+						cancelText: '取消',
+						confirmColor: '#fe845e',
+						confirmText: '去登录',
+						success(res) {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: '/pages/login/login'
+								})
+							}
+						}
+					});
+					return
+				}
 				this.disabled = !this.disabled
 				if (!this.content) {
 					uni.showToast({
@@ -324,11 +355,13 @@
 		},
 		onShow() {
 			this.getNowTime();
-			this.getRepairStart();
+			if (this.$store.state.login_token) {
+				this.getRepairStart();
+				this.getUpToken();
+			}
 		},
 		onLoad(option) {
 			this.current = this.$Route.query.id;
-			this.getUpToken();
 		}
 	};
 </script>

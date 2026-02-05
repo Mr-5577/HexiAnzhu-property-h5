@@ -61,8 +61,9 @@
 	.detail-wrapper .content {
 		background-color: #fff;
 		box-shadow: 0 0 6upx rgba(0, 0, 0, 0.05);
-		padding: 0;
+		padding: 0 20upx;
 		border-radius: 10upx;
+		box-sizing: border-box;
 	}
 
 	.detail-wrapper .content .title {
@@ -83,7 +84,7 @@
 		font-size: 30upx;
 		line-height: 42upx;
 		color: #333;
-        margin-top: 20upx;
+        margin: 20upx 0;
 	}
 
 

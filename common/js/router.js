@@ -61,9 +61,6 @@ const router = new Router({
 			path: "/pages/main/est-pay/pre-pay"
 		},
 		{
-			name: "shopping",
-			path: "/pages/shopping/shopping"
-		}, {
 			name: "community",
 			path: "/pages/community/community"
 		},
@@ -211,22 +208,34 @@ router.beforeEach(async (to, from, next) => {
 	//进入主页路由不用验证是否绑定房产和登录
 	// 配置化白名单
 	const WHITE_ROUTES = [
-		'index',
-		'center',
+		'index', // 首页
+		'center', // 个人中心
 		'author',
-		// 'shopping',
-		'about',
-		'user-agreement',
-		'service-explain',
-		// 'add-tower',
-		// 'add-project',
-		// 'add-unit',
-		// 'add-room',
-		// 'add-city',
+		'call', // 联系物业
+		'about', // 关于我们
+		'user-agreement', // 用户协议
+		'service-explain', // 服务说明
+
+		'bound-house', // 绑定房产
+		'add-city', // 添加城市
+		'add-project', // 添加楼盘
+		'add-tower', // 添加楼栋
+		'add-unit', // 添加单元
+		'add-room', // 添加房号
+		'order', // 我的订单
 		// 'order-detail',
-		// 'choose-type',
+		'my-house', // 我的房产
+		'my-car', // 我的车辆
+		'repair-order', // 我的工单
+		'charge-money', // 我的余额
+		'notice', // 通知公告
+		'choose-type', // 立即缴费
+		'maintenance', // 报事报修
+		'complaint', // 投诉建议
+		'integrated-service', // 综合服务
 		// 'car-pay',
 		// 'est-pay',
+
 		'visitor-register'
 	]
 	if (WHITE_ROUTES.includes(to.name)) {
@@ -267,8 +276,8 @@ router.beforeEach(async (to, from, next) => {
 		// 	}
 		// })
 		uni.showModal({
-			title: '未登录',
-			content: '是否前往登录？',
+			title: '提示',
+			content: '此功能需要验证您的身份，登录后可查看具体信息。是否前往登录？',
 			cancelColor: '#898989',
 			cancelText: '取消',
 			confirmColor: '#fe845e',
