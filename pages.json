@@ -382,7 +382,7 @@
 				{
 					"path": "webview/webview",
 					"style": {
-						"navigationBarTitleText": "详情",
+						"navigationBarTitleText": "活动详情",
 						"enablePullDownRefresh": false
 					}
 				}

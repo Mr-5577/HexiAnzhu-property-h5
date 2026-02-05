@@ -566,10 +566,11 @@
 			// 点击广告跳转
 			handleAdClick() {
 				if (!this.adData || !this.adData.link_url) return;
-
+				// 关闭弹窗
+				this.closeAd();
 				// 跳转到广告链接
 				uni.navigateTo({
-					url: this.adData.link_url
+					url: `/webviewModule/webview/webview?url=${encodeURIComponent(this.adData.link_url)}`
 				});
 
 				// 打开另一个小程序
@@ -580,8 +581,6 @@
 				// 		console.log('跳转成功！');
 				// 	}
 				// });
-				// 关闭弹窗
-				this.closeAd();
 			},
 			// 点击商品跳转惠选商品页
 			goodsClick(good) {
@@ -667,6 +666,8 @@
 				// 			if (res.code == 1) {
 				// 				uni.setStorageSync('loginToken', res.data);
 				// 				_this.$store.commit('loginToken', res.data);
+				// 				// 获取七牛云凭证
+				// 				_this.getUpToken();
 				// 				_this.$api.userCenter({}, res => {
 				// 					_this.myHouse = res.data;
 				// 					_this.$store.commit('setMyHouse', res.data);
