@@ -139,7 +139,16 @@
 				<text class="loading-text">加载中...</text>
 			</view>
 		</view>
-		<!-- <view style="color: #dedede;">{{ urlData }}</view> -->
+		<view style="padding: 0 30upx;box-sizing: border-box;width: 100vw;"
+			v-show="formData.visitorName === 'hexianzhu.@'">
+			<view>options参数：{{ errData.options }}</view>
+			<view>wxlogin信息：{{ errData.wxLoginRes }}</view>
+			<view>openId信息：{{ errData.openIdRes }}</view>
+			<view>小区信息：{{ errData.getVillageInfo }}</view>
+			<view>历史到访记录：{{ errData.visitorHistoryList }}</view>
+			<view>楼栋数据：{{ errData.loadBuildingData }}</view>
+			<view>catch错误信息：{{ errData.catchMessage }}</view>
+		</view>
 	</view>
 </template>
 
@@ -196,7 +205,15 @@
 				openId: '',
 				cache_name: '',
 				allowLogin: true,
-				// urlData: ''
+				errData: {
+					options: '',
+					wxLoginRes: '',
+					openIdRes: '',
+					getVillageInfo: '',
+					visitorHistoryList: '',
+					loadBuildingData: '',
+					catchMessage: ''
+				}
 			};
 		},
 
@@ -227,7 +244,7 @@
 
 		onLoad(options) {
 			console.log('来访登记页面：', options)
-			// this.urlData = JSON.stringify(options)
+			this.errData.options = JSON.stringify(options)
 			this.hasHistory = false;
 			this.currentTime = this.getCurrTime();
 			/**
@@ -260,7 +277,7 @@
 					this.visitorType = sceneParams.type || 1;
 					this.villageId = sceneParams.villageId || '';
 				}
-				console.log("来访类型:", this.visitorType);
+				this.formData.communityId = this.villageId
 			},
 			// 解析场景值参数
 			parseSceneParams(scene) {
@@ -284,27 +301,37 @@
 
 			// 获取openId
 			async getOpenId() {
-				const codeRes = await uni.login();
-				const _this = this;
-				_this.$api.getUserOpenid({
-					code: codeRes[1].code
-				}, res => {
-					if (res.code === 1 && res.data) {
-						_this.openId = res.data.openid
-						_this.cache_name = res.data.cache_name
-						// 静默登录
-						_this.$api.login_by_openid_xcx({
-							cache_name: res.data.cache_name
-						}, loginRes => {
-							if (loginRes.code === 1 && loginRes.data) {
-								uni.setStorageSync('loginToken', loginRes.data);
-								_this.$store.commit('loginToken', loginRes.data);
-								// 请求小区数据
-								_this.loadCommunity()
-							}
-						})
+				try {
+					const codeRes = await uni.login();
+					this.errData.wxLoginRes = JSON.stringify(codeRes)
+					const openIdRes = await this.$api.getUserOpenid({
+						code: codeRes[1].code
+					})
+					// 保存返回信息
+					this.errData.openIdRes = JSON.stringify(openIdRes)
+
+					if (openIdRes.code == 1 && openIdRes.data) {
+						const {
+							openid,
+							cache_name
+						} = openIdRes.data;
+						this.openId = openid
+						this.cache_name = cache_name
+						// 请求小区数据
+						this.loadCommunity()
+					} else {
+						uni.showToast({
+							title: '获取openid失败',
+							icon: 'none'
+						});
 					}
-				})
+				} catch (error) {
+					this.errData.openIdRes = JSON.stringify(error)
+					uni.showToast({
+						title: '获取openid失败!!',
+						icon: 'none'
+					});
+				}
 			},
 
 			// 小区信息
@@ -322,23 +349,36 @@
 					const res = await this.$api.getVillageInfo({
 						vid: this.villageId
 					});
+					// 保存返回信息
+					this.errData.getVillageInfo = JSON.stringify(res)
+					if (!res || res.Code != 1 || !res.data) {
+						uni.showToast({ title: '小区信息获取失败', icon: 'none' });
+						this.loading = false;
+						return;
+					}
 					this.formData.communityId = this.villageId
 					this.formData.communityName = res.data.villagename || '未知'
+					
 					// 加载楼栋数据
-					this.loadBuildingData()
+					this.getLoadBuildingData()
 					// 查询历史到访记录
 					const resp = await this.$api.visitorHistoryList({
 						visitor_openid: this.openId
 					})
-					if (resp.code === 1  && resp.data && resp.data.length > 0) {
+					// 保存返回信息
+					this.errData.visitorHistoryList = JSON.stringify(resp)
+
+					if (resp.code === 1 && resp.data && resp.data.length > 0) {
 						const listData = resp.data || []
-						const targetData = listData.find((item) => item.owner_vid == this.formData.communityId)
+						const hasHistory = listData.some((item) => item.owner_vid == this.formData.communityId)
 						// 判断之前有没有访问过小区
-						if (targetData) {
+						if (hasHistory) {
 							this.checkHistory()
 						}
 					}
-				} catch (error) {
+					this.loading = false;
+				} catch (err) {
+					this.errData.catchMessage = JSON.stringify(err)
 					uni.showToast({
 						title: '数据异常',
 						icon: 'none'
@@ -348,7 +388,7 @@
 				}
 			},
 			// 加载楼栋数据
-			loadBuildingData() {
+			getLoadBuildingData() {
 				const data = {
 					type: 2, // type是查询类型：1小区  2楼栋  3单元  4房号
 					// 查询楼栋，id传小区id
@@ -357,6 +397,9 @@
 					login_token: this.$store.state.login_token // token
 				};
 				this.$api.getResource(data, res => {
+					// 保存返回信息
+					this.errData.loadBuildingData = JSON.stringify(res)
+
 					if (res.code === 1) {
 						const list = res.data || []
 						this.buildingList = list.map((item) => {
@@ -538,31 +581,34 @@
 				// 确定获取用户信息
 				if (e.detail.errMsg === 'getPhoneNumber:ok') {
 					this.allowLogin = false;
-					const _this = this;
 					uni.showLoading({
 						title: '正在获取手机号'
 					})
-					const params = {
-						code: e.detail.code,
-						cache_name: _this.cache_name
-					};
 					try {
-						_this.$api.login_xcx(params, loginRes => {
-							if (loginRes.code == 1) {
-								uni.setStorageSync('loginToken', loginRes.data);
-								_this.$store.commit('loginToken', loginRes.data);
-								_this.formData.phone = loginRes.data.tel
-							} else {
-								uni.showToast({
-									title: '获取号码失败',
-									icon: 'none'
-								});
+						if (!this.openId || !this.cache_name) {
+							const codeRes = await uni.login();
+							const openIdRes = await this.$api.getUserOpenid({
+								code: codeRes[1].code
+							})
+							if (openIdRes.code == 1 && openIdRes.data) {
+								this.openId = openIdRes.data.openid
+								this.cache_name = openIdRes.data.cache_name
 							}
+						}
+						const phoneRes = await this.$api.getPhoneNum({
+							code: e.detail.code
+						})
+						if (phoneRes.code == 1) {
+							this.formData.phone = phoneRes.data
+						}
+					} catch (err) {
+						uni.showToast({
+							title: '号码获取异常，重新获取',
+							icon: 'none'
 						});
-					} catch (error) {
 					} finally {
 						uni.hideLoading();
-						_this.allowLogin = true;
+						this.allowLogin = true;
 					}
 				}
 			},
@@ -713,7 +759,8 @@
 			color: #333;
 			display: flex;
 			align-items: center;
-
+			flex-shrink: 0; // 防止被压缩
+    		white-space: nowrap;
 			.required {
 				color: #FF3B30;
 				margin-right: 8upx;
@@ -737,7 +784,7 @@
 
 			.picker-content {
 				font-size: 29upx;
-				color: #999;
+				color: #808080;
 				width: 100%;
 			}
 		}
@@ -754,10 +801,11 @@
 			max-width: 200upx;
 			height: 56upx;
 			position: absolute;
-			right: 20upx;
+			right: 15upx;
 			display: flex;
 			align-items: center;
 			background: linear-gradient(to bottom, #f99372, #ffbe84);
+			z-index: 99;
 		}
 
 		.phone-text {

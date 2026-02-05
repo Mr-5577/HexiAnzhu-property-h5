@@ -16,7 +16,11 @@ apis.comprehensive = (data, callback) => {
 }
 // 自动绑定房产信息
 apis.autoBind = (data, callback) => {
-	uniRequest.post('/api/autoBind', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/autoBind', data).then(callback)
+	} else {
+		return uniRequest.post('/api/autoBind', data)
+	}
 }
 //登录
 apis.logins = (data, callback) => {
@@ -82,7 +86,11 @@ apis.getCarMaterial = (data, callback) => {
 }
 //个人中心首页的数据
 apis.userCenter = (data, callback) => {
-	uniRequest.post('/api/userCenter', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/userCenter', data).then(callback)
+	} else {
+		return uniRequest.post('/api/userCenter', data)
+	}
 }
 //用户选择缴费并提交订单
 apis.payList = (data, callback) => {
@@ -234,15 +242,27 @@ apis.circularInfo = (data, callback) => {
 
 // 获取openid
 apis.getUserOpenid = (data, callback) => {
-	uniRequest.post('/api/get_user_openid', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/get_user_openid', data).then(callback)
+	} else {
+		return uniRequest.post('/api/get_user_openid', data)
+	}
 }
 //小程序登录
 apis.login_xcx = (data, callback) => {
-	uniRequest.post('/api/login_xcx', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/login_xcx', data).then(callback)
+	} else {
+		return uniRequest.post('/api/login_xcx', data)
+	}
 }
 //code 静默登录
 apis.login_by_openid_xcx = (data, callback) => {
-	uniRequest.post('/api/login_by_openid_xcx', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/login_by_openid_xcx', data).then(callback)
+	} else {
+		return uniRequest.post('/api/login_by_openid_xcx', data)
+	}
 }
 
 
@@ -353,6 +373,10 @@ apis.visitorHistoryList = (data) => {
 // 通过小区ID查询小区信息
 apis.getVillageInfo = (data) => {
 	return uniRequest.post('/api/getVillageInfo', data)
+}
+// 获取手机号码
+apis.getPhoneNum = (data) => {
+	return uniRequest.post('/api/getPhoneNum', data)
 }
 
 export default apis;

@@ -257,9 +257,19 @@ function accessToken(data) {
 	let upperCaseData = md5data.toUpperCase();
 	return upperCaseData;
 }
-// 来访登记页面相关接口
-const visitWhite = ['/api/visitorRegister', '/api/visitorHistorySave','/api/visitorHistoryList','/api/getVillageInfo']
 
+// 白名单页面
+function isInWhitePage() {
+    const pages = getCurrentPages();
+    if (pages.length === 0) return false;
+    const currentPage = pages[pages.length - 1];
+    const currentRoute = currentPage.route || '';
+    // 定义不需要提示的页面路由列表
+    const whitePages = [
+        'visitModule/visitor/visitor-register', // 来访登记页面
+    ];
+    return whitePages.some(page => currentRoute.includes(page));
+}
 let requests = {}
 requests.post = (url, data) => {
 	//公用loginToken
@@ -292,8 +302,8 @@ requests.post = (url, data) => {
 			setTimeout(res => {
 				uni.hideLoading();
 			}, 1500)
-			// 来访登记页面的相关接口不显示提示信息
-			if (!visitWhite.includes(url)) {
+			// 来访登记页面的接口不显示提示信息
+			if (!isInWhitePage()) {
 				successState(res)
 			}
 			// if (res.data.code === 1) {
