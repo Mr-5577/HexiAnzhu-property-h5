@@ -317,12 +317,12 @@
 				} else {
 					pullScroll.success();
 					uni.showModal({
-						title: '未登录',
+						title: '提示',
 						cancelColor: '#898989',
 						cancelText: '取消',
 						confirmColor: '#fe845e',
 						confirmText: '去登录',
-						content: '是否前往登录？',
+						content: '当前未登录账号，登录后可查看具体信息。是否前往登录？',
 						success(resp) {
 							if (resp.confirm) {
 								uni.navigateTo({
