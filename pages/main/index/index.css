@@ -110,6 +110,7 @@ page {
 	flex-wrap: wrap;
 	padding: 0 20upx;
 	box-sizing: border-box;
+	justify-content: space-around;
 }
 
 .custom-grid-item {
