@@ -152,70 +152,78 @@
 				// console.log('getphonenumber事件：',e)
 				if (!this.allowLogin) return
 				// 拒绝获取用户信息
-				if (e.detail.errMsg === 'getPhoneNumber:fail user deny') return
+				if (e.detail.errMsg === 'getPhoneNumber:fail user deny') {
+					console.log('用户拒绝授权');
+					return
+				}
 				this.allowLogin = false;
-				let _this = this;
-				let codeRes = await uni.login()
-				await this.$api.getUserOpenid({
-					code: codeRes[1].code
-				}, openIdRes => {
-					console.log('login-getUserOpenid', openIdRes)
-					if (openIdRes.code == 1) {
-						let data = {
-							code: e.detail.code,
-							cache_name: openIdRes.data.cache_name
-						};
-						_this.$api.login_xcx(data, res => {
-							console.log('loginxcx:', res)
-							if (res.code == 1) {
-								try {
-									_this.$store.commit('loginToken', res.data);
-									uni.setStorageSync('loginToken', res.data);
-								} catch (e) {
-									//TODO handle the exception
-								}
-								uni.showLoading({
-									title: '正在登录'
-								})
-								// 自动绑定用户的房产信息
-								if (res.data.tel) {
-									_this.$api.autoBind({
-										tel: res.data.tel
-									}, (bindRes) => {
-										if (bindRes.code === 1) {
-											// 获取房产信息并缓存下来
-											_this.$api.userCenter({}, (centerRes) => {
-												if (centerRes.code == 1) {
-													_this.$store.commit('setMyHouse', centerRes.data);
-												}
-											});
-										}
-									})
-								}
-								setTimeout(() => {
-									uni.hideLoading();
-									let pages = getCurrentPages();
-									if (pages[pages.length - 2]) {
-										uni.navigateBack()
-									} else {
-										if (_this.$store.state.hasLogin) {
-											_this.$Router.replaceAll({
-												name: 'index'
-											});
-										}
-									}
-									_this.allowLogin = true;
-								}, 1000)
-							} else {
-								_this.allowLogin = true;
-							}
-						});
-					} else {
-						_this.allowLogin = true;
+				uni.showLoading({ title: '正在登录' })
+				try {
+					// 获取 openid
+					const codeRes = await uni.login()
+					const openIdRes = await this.$api.getUserOpenid({ code: codeRes[1].code })
+					if (!openIdRes || openIdRes.code != 1) {
+						this.allowLogin = true
+						uni.hideLoading()
+						return
 					}
-				})
-			},
+					// 登录获取 token
+					const loginData = {
+						code: e.detail.code,
+						cache_name: openIdRes.data.cache_name
+					}
+					const loginRes = await this.$api.login_xcx(loginData)
+					if (!loginRes || loginRes.code != 1) {
+						this.allowLogin = true
+						uni.hideLoading()
+						return
+					}
+					// 存储登录信息
+					this.$store.commit('loginToken', loginRes.data)
+					uni.setStorageSync('loginToken', loginRes.data)
 
+					// 自动绑定房产信息
+					if (loginRes.data.tel) {
+						await this.autoBindAndCacheHouse(loginRes.data.tel)
+						uni.hideLoading()
+					}
+					uni.hideLoading()
+					// 登录成功后的页面跳转
+    				await this.handleLoginSuccess()
+				} catch (error) {
+					uni.showToast({ 
+						title: '登录失败，请重试', 
+						icon: 'none' 
+					})
+				} finally {
+					this.allowLogin = true
+					uni.hideLoading()
+				}
+			},
+			// 提取自动绑定和缓存房产信息的方法
+			async autoBindAndCacheHouse(tel) {
+				try {
+					const bindRes = await this.$api.autoBind({ tel: tel })
+					if (bindRes.code == 1) {
+						const centerRes = await this.$api.userCenter({})
+						if (centerRes.code === 1) {
+							this.$store.commit('setMyHouse', centerRes.data)
+						}
+					}
+				} catch (error) {
+					console.error('绑定房产信息失败:', error)
+				}
+			},
+			// 提取登录成功后的页面跳转逻辑
+			async handleLoginSuccess() {
+				await new Promise(resolve => setTimeout(resolve, 1000))
+				const pages = getCurrentPages()
+				if (pages.length > 1) {
+					uni.navigateBack()
+				} else if (this.$store.state.hasLogin) {
+					this.$Router.replaceAll({ name: 'index' })
+				}
+			},
 			// 获取验证码
 			getCode() {
 				if (!this.$uitls.isPhone(this.tel)) {
