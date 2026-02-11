@@ -148,8 +148,6 @@
 			<view>历史到访记录：{{ errData.visitorHistoryList }}</view>
 			<view>楼栋数据：{{ errData.loadBuildingData }}</view>
 			<view>catch错误信息：{{ errData.catchMessage }}</view>
-			<view>phoneLoginRes信息：{{ errData.phoneLoginRes }}</view>
-			<view>phoneLoginOpenIdRes信息：{{ errData.phoneLoginOpenIdRes }}</view>
 			<view>phoneNumRes信息：{{ errData.phoneNumRes }}</view>
 			<view>phoneLoginErrRes信息：{{ errData.phoneLoginErrRes }}</view>
 		</view>
@@ -207,7 +205,8 @@
 				villageId: '',
 				// openId
 				openId: '',
-				cache_name: '',
+				// 是否注册
+				isRegister: false,
 				allowLogin: true,
 				errData: {
 					options: '',
@@ -217,8 +216,6 @@
 					visitorHistoryList: '',
 					loadBuildingData: '',
 					catchMessage: '',
-					phoneLoginRes: '',
-					phoneLoginOpenIdRes: '',
 					phoneNumRes: '',
 					phoneLoginErrRes: '',
 				}
@@ -250,7 +247,7 @@
 			}
 		},
 
-		onLoad(options) {
+		async onLoad(options) {
 			console.log('来访登记页面：', options)
 			this.errData.options = JSON.stringify(options)
 			this.hasHistory = false;
@@ -263,8 +260,17 @@
 			// 先解析扫码参数，判断来访类型
 			this.parseScanParams(options);
 
-			// 再登录获取openID
-			this.getOpenId();
+			// 读取本地缓存openId
+			this.openId = uni.getStorageSync('open_id') || '';
+			if (this.openId) {
+				this.isRegister = true;
+			} else {
+				// 获取openID
+				await this.getOpenId();
+			}
+			// 请求小区数据
+			await this.loadCommunity()
+
 		},
 		// 页面卸载时（返回或跳转）触发
 		onUnload() {
@@ -319,14 +325,10 @@
 					this.errData.openIdRes = JSON.stringify(openIdRes)
 
 					if (openIdRes.code == 1 && openIdRes.data) {
-						const {
-							openid,
-							cache_name
-						} = openIdRes.data;
+						const { openid } = openIdRes.data;
 						this.openId = openid
-						this.cache_name = cache_name
-						// 请求小区数据
-						this.loadCommunity()
+						// 缓存openId
+						uni.setStorageSync('open_id', openid)
 					} else {
 						uni.showToast({
 							title: '获取openid失败',
@@ -346,7 +348,7 @@
 			async loadCommunity() {
 				if (!this.villageId) {
 					uni.showToast({
-						title: '未获取到小区ID',
+						title: '小区信息获取失败,请重新扫码！',
 						icon: 'none'
 					});
 					return
@@ -360,13 +362,16 @@
 					// 保存返回信息
 					this.errData.getVillageInfo = JSON.stringify(res)
 					if (!res || res.Code != 1 || !res.data) {
-						uni.showToast({ title: '小区信息获取失败', icon: 'none' });
+						uni.showToast({
+							title: '小区信息获取失败',
+							icon: 'none'
+						});
 						this.loading = false;
 						return;
 					}
 					this.formData.communityId = this.villageId
 					this.formData.communityName = res.data.villagename || '未知'
-					
+
 					// 加载楼栋数据
 					this.getLoadBuildingData()
 					// 查询历史到访记录
@@ -375,12 +380,16 @@
 					})
 					// 保存返回信息
 					this.errData.visitorHistoryList = JSON.stringify(resp)
-
+					
 					if (resp.code === 1 && resp.data && resp.data.length > 0) {
 						const listData = resp.data || []
-						const hasHistory = listData.some((item) => item.owner_vid == this.formData.communityId)
+						const matchedItem = listData.find((item) => item.owner_vid == this.formData.communityId)
 						// 判断之前有没有访问过小区
-						if (hasHistory) {
+						if (matchedItem) {
+							// 如果来访记录是普通访客且扫描的是外卖二维码时，页面需要展示普通访客的表单页面让用户填写
+							if (matchedItem.visit_type == 1 && this.visitorType == 0) {
+								this.visitorType = 1
+							}
 							this.checkHistory()
 						}
 					}
@@ -556,7 +565,7 @@
 				// 从本地存储获取访客历史记录
 				const history = uni.getStorageSync('visitorHistory');
 				// 无历史记录或记录无效
-				if (!history || !history.idCard) {
+				if (!history || !history.idCard || !history.phone) {
 					return false;
 				}
 
@@ -593,18 +602,6 @@
 						title: '正在获取手机号'
 					})
 					try {
-						if (!this.openId || !this.cache_name) {
-							const codeRes = await uni.login();
-							this.errData.phoneLoginRes = JSON.stringify(codeRes)
-							const openIdRes = await this.$api.getUserOpenid({
-								code: codeRes[1].code
-							})
-							this.errData.phoneLoginOpenIdRes = JSON.stringify(openIdRes)
-							if (openIdRes.code == 1 && openIdRes.data) {
-								this.openId = openIdRes.data.openid
-								this.cache_name = openIdRes.data.cache_name
-							}
-						}
 						const phoneRes = await this.$api.getPhoneNum({
 							code: e.detail.code
 						})
@@ -615,7 +612,7 @@
 					} catch (err) {
 						this.errData.phoneLoginErrRes = JSON.stringify(err)
 						uni.showToast({
-							title: '号码获取异常，重新获取',
+							title: '号码获取异常，请重新获取！',
 							icon: 'none'
 						});
 					} finally {
@@ -626,44 +623,56 @@
 			},
 			// 提交登记
 			async handleSubmit() {
+				// 提交前再次验证关键字段
+				this.validateIdCard();
+				this.validatePhone();
+				if (this.visitorType == 1) {
+					this.validateOwnerPhone();
+				}
 				if (!this.canSubmit) return;
 				this.loading = true;
 				try {
-					// 先进行注册，注册成功后再保存来访信息
-					const registerParams = {
-						visitor_openid: this.openId,
-						visitor_name: this.formData.visitorName,
-						visitor_type: Number(this.visitorType), // 0外卖  1普通
-						visitor_card_no: this.formData.idCard,
-						visitor_tel: this.formData.phone,
-					};
-					// 注册
-					const registerRes = await this.$api.visitorRegister(registerParams);
-					if (registerRes.code === 1) {
-						// 到访业主信息
-						const saveData = {
+					// 没有注册，先进行注册，注册成功后再保存来访信息
+					if (!this.isRegister) {
+						const registerParams = {
 							visitor_openid: this.openId,
-							owner_vid: this.formData.communityId,
-							owner_roomid: this.formData.roomId,
-							owner_house_no: this.formData.roomName,
-							owner_tel: this.formData.ownerPhone,
-							visit_time: this.getCurrTime()
+							visitor_name: this.formData.visitorName,
+							visitor_type: Number(this.visitorType), // 注册类型 0外卖  1普通
+							visitor_card_no: this.formData.idCard,
+							visitor_tel: this.formData.phone,
 						};
-						// 保存到访记录
-						const saveRes = await this.$api.visitorHistorySave(saveData);
-						if (saveRes.code === 1) {
+						// 注册
+						const registerRes = await this.$api.visitorRegister(registerParams);
+						if (registerRes.code !== 1) {
 							uni.showToast({
-								title: '登记成功',
-								icon: 'success'
+								title: '注册异常，请重新注册！',
+								icon: 'none'
 							});
-							// 保存访客信息到本地历史记录
-							this.saveVisitorHistory();
+							this.loading = false;
+							return
 						}
-					} else {
+						this.isRegister = true;
+					}
+
+					// 保存到访业主信息
+					const saveData = {
+						visitor_openid: this.openId,
+						owner_vid: this.formData.communityId,
+						owner_roomid: this.formData.roomId,
+						owner_house_no: this.formData.roomName,
+						owner_tel: this.formData.ownerPhone,
+						visit_type: Number(this.visitorType), // 来访类型 0外卖  1普通
+						visit_time: this.getCurrTime()
+					};
+					// 保存到访记录
+					const saveRes = await this.$api.visitorHistorySave(saveData);
+					if (saveRes.code === 1) {
 						uni.showToast({
-							title: '保存失败',
-							icon: 'none'
+							title: '登记成功',
+							icon: 'success'
 						});
+						// 保存访客信息到本地历史记录
+						this.saveVisitorHistory();
 					}
 				} catch (error) {
 					uni.showToast({
@@ -672,6 +681,7 @@
 					});
 				} finally {
 					this.loading = false;
+					uni.hideLoading()
 				}
 			},
 
@@ -690,6 +700,8 @@
 					roomId: this.formData.roomId,
 					roomName: this.formData.roomName,
 					ownerPhone: this.formData.ownerPhone,
+					// 保存来访类型
+					visit_type: Number(this.visitorType), // 0-外卖 1-普通
 					lastVisitTime: Date.now()
 				};
 				uni.setStorageSync('visitorHistory', history);
