@@ -1,6 +1,8 @@
 <template>
 	<view id="notice">
 		<view class="notice-item" v-for="(item, index) in list" :key="index" @click="detail(item)">
+			<!-- 未读红点 -->
+    		<view class="unread-dot" v-if="item.is_read != 1"></view>
 			<image src="/static/images/message.png" mode="aspectFit"></image>
 			<view class="title">{{ item.name }}</view>
 			<view class="content">
@@ -125,7 +127,17 @@
 		border-radius: 10upx;
 		margin-bottom: 30upx;
 	}
-
+	/* 未读红点 */
+	.unread-dot {
+		position: absolute;
+		top: 44upx;
+		left: 4upx;
+		width: 14upx;
+		height: 14upx;
+		background-color: #ff4d4f;
+		border-radius: 50%;
+		z-index: 1;
+	}
 	.notice-item image {
 		width: 40upx;
 		height: 34upx;
@@ -133,7 +145,6 @@
 		top: 36upx;
 		left: 32upx;
 	}
-
 	.notice-item .title {
 		font-size: 30upx;
 		color: #333;

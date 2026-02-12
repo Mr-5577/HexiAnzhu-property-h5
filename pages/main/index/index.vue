@@ -37,7 +37,7 @@
 						</view>
 						<!-- 通知公告 -->
 						<view class="notice-wrapper">
-							<view class="notice-title">通知公告</view>
+							<view class="notice-title" @click="toNoticeList">通知公告</view>
 							<view class="notice-content">
 								<view class="notice-list">
 									<view class="notice-item" v-if="noticeList.length > 0" :key="currentIndex"
@@ -47,7 +47,7 @@
 									<text class="notice-text" v-else>暂无新的通知公告</text>
 								</view>
 								<view class="more-notice" @click="toNoticeList">
-									<uni-badge v-if="noticeList.length > 1" :text="noticeList.length.toString()"
+									<uni-badge v-if="unreadNum > 0" :text="unreadNum.toString()"
 										type="error" size="small"></uni-badge>
 									<uni-icons type="arrowright" size="20" style="line-height: 1.3;"></uni-icons>
 								</view>
@@ -93,15 +93,15 @@
 							<image src="/static/img/main/avatar.png" mode="aspectFit" class="housekeeper-header">
 							</image>
 						</view>
-						<view class="uni-cell-30 uni-flex-center" style="text-align: left">
+						<view class="uni-cell-50 uni-flex-center" style="justify-content: start">
 							<view style="height: 100upx;">
-								<view class="uni-font-36" style="color: #333;font-weight: 500;">
+								<view class="uni-font-32" style="color: #333;font-weight: 500;">
 									{{ housekeeper.realname || '' }}
 								</view>
 								<view class="uni-font-28" style="color: #c6bebd;">您的专属管家</view>
 							</view>
 						</view>
-						<view class="uni-cell-20"></view>
+						<!-- <view class="uni-cell-20"></view> -->
 						<view class="uni-cell-30 uni-flex-center">
 							<view class="housekeeper-btn">呼叫管家</view>
 						</view>
@@ -745,6 +745,15 @@
 				} else {
 					return '/static/img/message.png';
 				}
+			},
+			// 未读公告数,is_read:1已读
+			unreadNum() {
+				if (!Array.isArray(this.noticeList)) return 0
+				// 筛选未读
+				const unreadItems = this.noticeList.filter(item => {
+					return item.is_read != 1
+				})
+				return unreadItems.length || 0
 			},
 			currentNotice() {
 				return this.noticeList[this.currentIndex] || null

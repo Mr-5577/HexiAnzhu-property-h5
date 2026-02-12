@@ -418,6 +418,7 @@ page {
 .housekeeper-header {
 	height: 120upx;
 	width: 120upx;
+	margin-right: 20upx;
 }
 
 .housekeeper-btn {

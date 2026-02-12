@@ -150,6 +150,8 @@
 			<view>catch错误信息：{{ errData.catchMessage }}</view>
 			<view>phoneNumRes信息：{{ errData.phoneNumRes }}</view>
 			<view>phoneLoginErrRes信息：{{ errData.phoneLoginErrRes }}</view>
+			<view>cache_open_id信息：{{ errData.cache_open_id }}</view>
+			<view>cache_visitorHistory信息：{{ errData.cache_visitorHistory }}</view>
 		</view>
 	</view>
 </template>
@@ -209,6 +211,8 @@
 				isRegister: false,
 				allowLogin: true,
 				errData: {
+					cache_open_id: '',
+					cache_visitorHistory: '',
 					options: '',
 					wxLoginRes: '',
 					openIdRes: '',
@@ -252,6 +256,8 @@
 			this.errData.options = JSON.stringify(options)
 			this.hasHistory = false;
 			this.currentTime = this.getCurrTime();
+			// 保存缓存历史记录信息
+			this.errData.cache_visitorHistory = JSON.stringify(uni.getStorageSync('visitorHistory') || null) 
 			/**
 			 * 普通来访二维码：type=1
 			 * 外卖来访二维码：type=0
@@ -262,6 +268,9 @@
 
 			// 读取本地缓存openId
 			this.openId = uni.getStorageSync('open_id') || '';
+			// 保存open_id缓存信息
+			this.errData.cache_open_id = this.openId
+
 			if (this.openId) {
 				this.isRegister = true;
 			} else {
