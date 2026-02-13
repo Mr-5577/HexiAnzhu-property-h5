@@ -32,7 +32,11 @@ apis.sendSms = (data, callback) => {
 }
 //获取房源
 apis.getResource = (data, callback) => {
-	uniRequest.post('/api/getResource', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/getResource', data).then(callback)
+	} else {
+		return uniRequest.post('/api/getResource', data)
+	}
 }
 //绑定房产
 apis.bind = (data, callback) => {
