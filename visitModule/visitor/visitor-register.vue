@@ -17,10 +17,10 @@
 				<!-- 访客昵称 -->
 				<view class="form-item">
 					<view class="item-label">
-						<text class="required">*</text>昵称：
+						<text class="required">*</text>访客姓名：
 					</view>
 					<view class="item-right">
-						<input class="item-input" type="nickname" v-model="formData.visitorName" placeholder="昵称" />
+						<input class="item-input" type="nickname" v-model="formData.visitorName" placeholder="访客姓名" />
 					</view>
 				</view>
 				<!-- 手机号 -->
@@ -320,7 +320,18 @@
 				}
 				return params;
 			},
-
+			// 日期解析方法
+			safeParseDate(dateValue) {
+				if (!dateValue) return 0;
+				// 如果是数字字符串或数字（时间戳）
+				if (/^\d+$/.test(String(dateValue))) {
+					const timestamp = Number(dateValue);
+					// 判断是秒级还是毫秒级（如果小于1e12，通常是秒级）
+					return timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+				}
+				// 如果是日期字符串，直接解析
+				return new Date(dateValue).getTime() || 0;
+			},
 			// 获取openId
 			async getOpenId() {
 				try {
@@ -365,23 +376,26 @@
 
 						// 1. 有任意记录即视为已注册
 						this.isRegistered = true;
-						// 2. 按时间正序取最早一条数据，得到第一次的注册身份
-						const sortedAsc = [...allRecords].sort((a, b) => 
-							new Date(a.visit_time) - new Date(b.visit_time)
-						);
-						this.userType = Number(sortedAsc[0].visitor_type);
-						// 3. 过滤当前小区的来访记录
+						
+						// 2. 过滤当前小区的来访记录
 						const villageRecords = allRecords.filter(
 							item => item.owner_vid == this.villageId
 						);
 						if (villageRecords && villageRecords.length > 0) {
-							// 按时间倒序取最新一条
-							const sortedDesc = villageRecords.sort((a, b) => 
-								new Date(b.visit_time) - new Date(a.visit_time)
-							);
-							this.currentVillageRecord = sortedDesc[0];
 							this.hasVillageRecord = true;
+
+							// 按时间正序取最早一条数据，得到在当前小区的第一次注册身份
+							const sortedAsc = [...villageRecords].sort((a, b) => {
+								const timeA = this.safeParseDate(a.visit_time);
+								const timeB = this.safeParseDate(b.visit_time);
+								return timeA - timeB;
+							});
+							this.userType = Number(sortedAsc[0].visitor_type);
+							// 取最新的一次来访记录信息
+							this.currentVillageRecord = sortedAsc[sortedAsc.length - 1];
 						} else {
+							// 当前小区没有记录
+							this.userType = null;  // 当前小区无身份
 							this.currentVillageRecord = null;
 							this.hasVillageRecord = false;
 						}
@@ -409,44 +423,71 @@
 					return;
 				}
 				
-				// ---------------- 已注册用户，先处理扫码类型的冲突 ----------------
-				// 场景2-3：普通访客扫外卖码
-				if (this.userType == 1 && this.visitorType == 0) {
-					this.visitorType = 1; // 强制切换为普通访客
-				}
-				// 场景2-4：外卖员扫普通码，就按照普通码登记
-				else if (this.userType == 0 && this.visitorType == 1) {
-					// this.visitorType = 0; // 强制切换为外卖员
-				} else {
-					// 无冲突，保持扫码类型
-				}
-				
-				// ---------------- 根据修正后的 visitorType 值来判断显示 ----------------
-				if (this.visitorType === 0) {
-					// 外卖访客：有记录直接显示，无记录填表
-					if (this.hasVillageRecord) {
+				// ---------------- 已注册用户，根据当前小区的记录身份处理 ----------------
+				// 判断当前小区的身份类型（如果有记录）
+				let currentVillageUserType = this.userType; // userType 就是当前小区的注册身份
+
+				// 情况1：当前小区有记录
+  				if (this.hasVillageRecord) {
+					// 1.1 当前小区注册身份是外卖员(0) + 扫码外卖码(0) -> 显示历史记录
+					if (currentVillageUserType == 0 && this.visitorType == 0) {
 						this.fillFromRecord();
 						this.hasHistory = true;
-					} else {
+						return;
+					}
+					// 1.2 当前小区注册身份是外卖员(0) + 扫码普通码(1) -> 按普通访客处理
+					if (currentVillageUserType == 0 && this.visitorType == 1) {
+						this.visitorType = 1; // 显示普通访客表单
+						this.fillVisitorInfo();
 						this.hasHistory = false;
+						return;
+					}
+					// 1.3 当前小区注册身份是普通访客(1) + 扫码普通码(1) -> 显示表单，填充姓名手机
+					if (currentVillageUserType == 1 && this.visitorType == 1) {
+						this.visitorType = 1;
+						this.fillVisitorInfo();
+						this.hasHistory = false;
+						return;
+					}
+					// 1.4 当前小区注册身份是普通访客(1) + 扫码外卖码(0) -> 按普通访客处理，显示表单，填充姓名手机
+					if (currentVillageUserType === 1 && this.visitorType === 0) {
+						this.visitorType = 1; // 普通访客
+						this.fillVisitorInfo();
+						this.hasHistory = false;
+						return;
 					}
 				} else {
-					// 普通访客：永远显示表单
+					// 情况2：当前小区没有记录,按扫码类型处理，不填充任何信息
 					this.hasHistory = false;
-					// 如果有当前小区记录，自动填充姓名和手机号,重新选择 楼栋-单元-房号-手机
-					if (this.hasVillageRecord) {
-						this.formData.visitorName = this.currentVillageRecord.visitor_name || '';
-						this.formData.phone = this.currentVillageRecord.visitor_tel || '';
-						// 清空业主信息，让用户重新选择
-						this.formData.buildingId = '';
-						this.formData.buildingName = '';
-						this.formData.unitId = '';
-						this.formData.unitName = '';
-						this.formData.roomId = '';
-						this.formData.roomName = '';
-						this.formData.ownerPhone = '';
-					}
+					this.formData.visitorName = '';
+					this.formData.phone = '';
+					this.clearOwnerInfo();
 				}
+				// 默认情况
+  				this.hasHistory = false;
+			},
+			// 填充访客信息，不清空业主信息
+			fillVisitorInfo() {
+				if (this.currentVillageRecord) {
+					this.formData.visitorName = this.currentVillageRecord.visitor_name || '';
+					this.formData.phone = this.currentVillageRecord.visitor_tel || '';
+				}
+			},
+			// 清空业主信息
+			clearOwnerInfo() {
+				this.formData.buildingId = '';
+				this.formData.buildingName = '';
+				this.formData.unitId = '';
+				this.formData.unitName = '';
+				this.formData.roomId = '';
+				this.formData.roomName = '';
+				this.formData.ownerPhone = '';
+				
+				this.buildingIndex = -1;
+				this.unitIndex = -1;
+				this.roomIndex = -1;
+				this.unitList = [];
+				this.roomList = [];
 			},
 			// 填充记录（仅外卖访客使用）
 			fillFromRecord() {
@@ -474,7 +515,7 @@
 					this.errData.getVillageInfo = JSON.stringify(res)
 					if (!res || res.Code != 1 || !res.data) {
 						uni.showToast({
-							title: '小区信息获取失败',
+							title: '未获取到小区信息,请重新扫码！',
 							icon: 'none'
 						});
 						this.loading = false;
@@ -489,7 +530,7 @@
 				} catch (err) {
 					this.errData.catchMessage = JSON.stringify(err)
 					uni.showToast({
-						title: '数据异常',
+						title: '未获取到小区信息,请重新扫码！',
 						icon: 'none'
 					});
 				} finally {
@@ -688,8 +729,9 @@
 				if (!this.canSubmit) return;
 				this.loading = true;
 				try {
-					// 1. 注册（只有无任何记录时需要注册）
-					if (!this.isRegistered) {
+					// 1.判断是否需要注册：全局无记录 或 在当前小区无记录
+        			const needRegister = !this.isRegistered || !this.hasVillageRecord;
+					if (needRegister) {
 						const registerParams = {
 							visitor_openid: this.openId,
 							visitor_name: this.formData.visitorName,
