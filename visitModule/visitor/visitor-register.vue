@@ -7,7 +7,9 @@
 		<!-- 来访类型展示 -->
 		<view class="visitor-type-card">
 			<view class="type-label">来访类型：</view>
-			<view class="type-value">{{ visitorType == 0 ? '外卖人员' : '普通访客' }}</view>
+			<view :class="{ 'type-value': true, isHasHistory: hasHistory }">
+				{{ visitorType == 0 ? '外卖' : '普通访客' }}
+			</view>
 		</view>
 
 		<!-- 到访信息表单 -->
@@ -147,12 +149,10 @@
 <script>
 	/**
 	 * 来访登记场景
-	 * 用户状态	 注册身份	扫码类型		处理逻辑
-	 * 未注册	 --	         任意	   	   显示表单，按扫码类型登记
-	 * 已注册	 外卖员	     外卖码	    	自动保存来访记录，然后显示历史记录，来访类型是外卖
-	 * 已注册	 外卖员	     普通码	        按扫描的码处理，显示普通表单进行信息填写
-	 * 已注册	 普通访客	 普通码	   	    显示表单，重新填写业主信息
-	 * 已注册	 普通访客	 外卖码	        强制切回普通表单，重新填写业主信息
+	 * 用户状态	 	扫码类型		处理逻辑
+	 * 未注册		  任意	   	   显示表单，按扫码类型登记
+	 * 已注册	     外卖码	    	自动保存来访记录，然后显示历史记录，来访类型是外卖
+	 * 已注册	 	 普通码	        按扫描的码处理，显示普通表单进行信息填写
 	 */
 	export default {
 		data() {
@@ -206,9 +206,6 @@
 
 				// 是否注册（有任意记录即注册）
 				isRegistered: false, // 是否有任意记录
-				registerType: null, // 注册身份（最早一条记录的visitor_type）
-				// 用户的所有记录（用于获取注册身份）
-				allRecords: [],
 				// 最新的一条记录（用于自动填充姓名手机）
 				latestRecord: null,
 
@@ -372,35 +369,28 @@
 					// 保存返回信息
                     this.errData.visitorHistoryList = JSON.stringify(res)
 					if (res.code === 1 && res.data && res.data.length > 0) {
-						this.allRecords = res.data || [];
+						const allRecords = res.data || [];
 
 						// 有任意记录即视为已注册
 						this.isRegistered = true;
 
-						// 按时间正序取最早一条记录，得到注册身份
-						const sortedAsc = [...this.allRecords].sort((a, b) => {
+						// 按时间倒序取最新一条记录
+						const sortedDesc = [...allRecords].sort((a, b) => {
 							const timeA = this.safeParseDate(a.visit_time);
 							const timeB = this.safeParseDate(b.visit_time);
-							return timeA - timeB;
+							return timeB - timeA;
 						});
-						this.registerType = Number(sortedAsc[0].visitor_type);
-
-						// 取最新一条记录，用于自动填充姓名手机
-						this.latestRecord = sortedAsc[sortedAsc.length - 1];
-						
+						this.latestRecord = sortedDesc[0];
+									
 					} else {
 						// 无任何记录：未注册
 						this.isRegistered = false;
-						this.registerType = null;
-						this.latestRecord = null;
-						this.allRecords = [];
+            			this.latestRecord = null;
 					}
 				} catch (e) {
 					console.error('获取来访信息失败', e);
 					this.isRegistered = false;
-					this.registerType = null;
-					this.latestRecord = null;
-					this.allRecords = [];
+            		this.latestRecord = null;
 				}
 			},
 			// 根据场景处理
@@ -412,46 +402,24 @@
 					return;
 				}
 
-				// 已注册用户，根据注册身份和扫码类型处理
-				console.log('注册身份:', this.registerType, '扫码类型:', this.visitorType);
-
-				// 场景2：已注册外卖员 + 扫码外卖码
-				if (this.registerType == 0 && this.visitorType == 0) {
-					// 自动保存来访记录，然后显示历史记录
+				// 场景2：已注册 + 扫描外卖码
+				if (this.visitorType == 0) {
+					// 自动保存来访记录，显示历史记录
 					await this.autoSaveForDelivery();
 					return;
 				}
 
-				// 场景3：已注册外卖员 + 扫码普通码
-				if (this.registerType == 0 && this.visitorType == 1) {
-					this.visitorType = 1; // 保持为普通访客
-					this.fillVisitorInfo(); // 填充姓名手机
-					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
-					this.hasHistory = false;
-					return;
-				}
-
-				// 场景4：已注册普通访客 + 扫码普通码
-				if (this.registerType == 1 && this.visitorType == 1) {
-					this.visitorType = 1; // 普通访客
-					this.fillVisitorInfo(); // 填充姓名手机
-					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
-					this.hasHistory = false;
-					return;
-				}
-
-				// 场景5：已注册普通访客 + 扫码外卖码
-				if (this.registerType === 1 && this.visitorType == 0) {
-					this.visitorType = 1; // 强制改为普通访客
-					this.fillVisitorInfo(); // 填充姓名手机
-					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
+				// 场景3：已注册 + 扫描普通码
+				if (this.visitorType == 1) {
+					// 显示普通表单，填充姓名手机
+					this.fillVisitorInfo();
+					this.clearOwnerInfo();
 					this.hasHistory = false;
 					return;
 				}
 
 				// 默认情况
 				this.hasHistory = false;
-				
 			},
 			// 外卖员自动保存记录
 			async autoSaveForDelivery() {
@@ -776,7 +744,6 @@
 						const registerRes = await this.$api.visitorRegister(registerParams);
 						if (registerRes.code === 1) {
 							this.isRegistered = true;
-							this.registerType = Number(this.visitorType)
 							// 添加最新记录
 							this.latestRecord = {
 								visitor_name: this.formData.visitorName,
@@ -797,9 +764,9 @@
 					const saveData = {
 						visitor_openid: this.openId,
 						owner_vid: this.formData.communityId,
-						owner_roomid: this.formData.roomId,
-						owner_house_no: this.formData.roomName,
-						owner_tel: this.formData.ownerPhone,
+						owner_roomid: this.formData.roomId || '',
+						owner_house_no: this.formData.roomName || '',
+						owner_tel: this.formData.ownerPhone || '',
 						visit_type: Number(this.visitorType), // 来访类型 0外卖  1普通
 						visit_time: this.getCurrTime()
 					};
@@ -870,6 +837,11 @@
 
 		.type-value {
 			font-size: 30upx;
+		}
+		.isHasHistory {
+			font-size: 40upx;
+			font-weight: 600;
+			color: #FF3B30;
 		}
 	}
 
