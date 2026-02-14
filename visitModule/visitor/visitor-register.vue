@@ -729,9 +729,8 @@
 				if (!this.canSubmit) return;
 				this.loading = true;
 				try {
-					// 1.判断是否需要注册：全局无记录 或 在当前小区无记录
-        			const needRegister = !this.isRegistered || !this.hasVillageRecord;
-					if (needRegister) {
+					// 1.判断是否需要注册：无任何记录 则需要注册
+					if (!this.isRegistered) {
 						const registerParams = {
 							visitor_openid: this.openId,
 							visitor_name: this.formData.visitorName,
