@@ -147,14 +147,12 @@
 <script>
 	/**
 	 * 来访登记场景
-	 * 用户状态	 注册身份	扫码类型	当前小区记录	处理逻辑
-	 * 未注册	 --	         任意	     任意	      显示表单，按扫码类型登记
-	 * 已注册	 外卖员	     外卖码	      有	       直接显示历史记录
-	 * 已注册	 外卖员	     外卖码	      无	       显示表单
-	 * 已注册	 外卖员	     普通码	      有/无	       按扫描的码处理
-	 * 已注册	 普通访客	 普通码	      有	       显示表单，自动填充姓名+手机
-	 * 已注册	 普通访客	 普通码	      无	       显示表单
-	 * 已注册	 普通访客	 外卖码	      有/无	       强制切回普通，按普通访客处理
+	 * 用户状态	 注册身份	扫码类型		处理逻辑
+	 * 未注册	 --	         任意	   	   显示表单，按扫码类型登记
+	 * 已注册	 外卖员	     外卖码	    	自动保存来访记录，然后显示历史记录，来访类型是外卖
+	 * 已注册	 外卖员	     普通码	        按扫描的码处理，显示普通表单进行信息填写
+	 * 已注册	 普通访客	 普通码	   	    显示表单，重新填写业主信息
+	 * 已注册	 普通访客	 外卖码	        强制切回普通表单，重新填写业主信息
 	 */
 	export default {
 		data() {
@@ -206,11 +204,13 @@
 				openId: '',
 				allowLogin: true,
 
-				// 是否注册
+				// 是否注册（有任意记录即注册）
 				isRegistered: false, // 是否有任意记录
-				userType: null, // 注册身份（最早一条记录的visitor_type）
-				currentVillageRecord: null, // 当前小区最新记录
-				hasVillageRecord: false,  // 当前小区是否有记录
+				registerType: null, // 注册身份（最早一条记录的visitor_type）
+				// 用户的所有记录（用于获取注册身份）
+				allRecords: [],
+				// 最新的一条记录（用于自动填充姓名手机）
+				latestRecord: null,
 
 				// 错误信息收集
 				errData: {
@@ -277,8 +277,8 @@
 			// 4.加载小区数据
 			await this.loadCommunity()
 
-			// 5. 最终判断
-			this.makeFinalDecision();
+			// 5. 根据来访场景处理
+			await this.handleVisitScene();
 		},
 		// 页面卸载时（返回或跳转）触发
 		onUnload() {
@@ -372,107 +372,148 @@
 					// 保存返回信息
                     this.errData.visitorHistoryList = JSON.stringify(res)
 					if (res.code === 1 && res.data && res.data.length > 0) {
-						const allRecords = res.data || [];
+						this.allRecords = res.data || [];
 
-						// 1. 有任意记录即视为已注册
+						// 有任意记录即视为已注册
 						this.isRegistered = true;
-						
-						// 2. 过滤当前小区的来访记录
-						const villageRecords = allRecords.filter(
-							item => item.owner_vid == this.villageId
-						);
-						if (villageRecords && villageRecords.length > 0) {
-							this.hasVillageRecord = true;
 
-							// 按时间正序取最早一条数据，得到在当前小区的第一次注册身份
-							const sortedAsc = [...villageRecords].sort((a, b) => {
-								const timeA = this.safeParseDate(a.visit_time);
-								const timeB = this.safeParseDate(b.visit_time);
-								return timeA - timeB;
-							});
-							this.userType = Number(sortedAsc[0].visitor_type);
-							// 取最新的一次来访记录信息
-							this.currentVillageRecord = sortedAsc[sortedAsc.length - 1];
-						} else {
-							// 当前小区没有记录
-							this.userType = null;  // 当前小区无身份
-							this.currentVillageRecord = null;
-							this.hasVillageRecord = false;
-						}
+						// 按时间正序取最早一条记录，得到注册身份
+						const sortedAsc = [...this.allRecords].sort((a, b) => {
+							const timeA = this.safeParseDate(a.visit_time);
+							const timeB = this.safeParseDate(b.visit_time);
+							return timeA - timeB;
+						});
+						this.registerType = Number(sortedAsc[0].visitor_type);
+
+						// 取最新一条记录，用于自动填充姓名手机
+						this.latestRecord = sortedAsc[sortedAsc.length - 1];
+						
 					} else {
 						// 无任何记录：未注册
 						this.isRegistered = false;
-						this.userType = null;
-						this.currentVillageRecord = null;
-						this.hasVillageRecord = false;
+						this.registerType = null;
+						this.latestRecord = null;
+						this.allRecords = [];
 					}
 				} catch (e) {
 					console.error('获取来访信息失败', e);
 					this.isRegistered = false;
-					this.userType = null;
-					this.currentVillageRecord = null;
-					this.hasVillageRecord = false;
+					this.registerType = null;
+					this.latestRecord = null;
+					this.allRecords = [];
 				}
 			},
-			// 场景最终判断
-			makeFinalDecision() {
+			// 根据场景处理
+			async handleVisitScene() {
 				// ---------------- 场景1：未注册用户 ----------------
 				if (!this.isRegistered) {
 					// 保持扫码类型，显示表单
 					this.hasHistory = false;
 					return;
 				}
-				
-				// ---------------- 已注册用户，根据当前小区的记录身份处理 ----------------
-				// 判断当前小区的身份类型（如果有记录）
-				let currentVillageUserType = this.userType; // userType 就是当前小区的注册身份
 
-				// 情况1：当前小区有记录
-  				if (this.hasVillageRecord) {
-					// 1.1 当前小区注册身份是外卖员(0) + 扫码外卖码(0) -> 显示历史记录
-					if (currentVillageUserType == 0 && this.visitorType == 0) {
-						this.fillFromRecord();
-						this.hasHistory = true;
-						return;
-					}
-					// 1.2 当前小区注册身份是外卖员(0) + 扫码普通码(1) -> 按普通访客处理
-					if (currentVillageUserType == 0 && this.visitorType == 1) {
-						this.visitorType = 1; // 显示普通访客表单
-						this.fillVisitorInfo();
-						this.hasHistory = false;
-						return;
-					}
-					// 1.3 当前小区注册身份是普通访客(1) + 扫码普通码(1) -> 显示表单，填充姓名手机
-					if (currentVillageUserType == 1 && this.visitorType == 1) {
-						this.visitorType = 1;
-						this.fillVisitorInfo();
-						this.hasHistory = false;
-						return;
-					}
-					// 1.4 当前小区注册身份是普通访客(1) + 扫码外卖码(0) -> 按普通访客处理，显示表单，填充姓名手机
-					if (currentVillageUserType === 1 && this.visitorType === 0) {
-						this.visitorType = 1; // 普通访客
-						this.fillVisitorInfo();
-						this.hasHistory = false;
-						return;
-					}
-				} else {
-					// 情况2：当前小区没有记录,按扫码类型处理，不填充任何信息
+				// 已注册用户，根据注册身份和扫码类型处理
+				console.log('注册身份:', this.registerType, '扫码类型:', this.visitorType);
+
+				// 场景2：已注册外卖员 + 扫码外卖码
+				if (this.registerType == 0 && this.visitorType == 0) {
+					// 自动保存来访记录，然后显示历史记录
+					await this.autoSaveForDelivery();
+					return;
+				}
+
+				// 场景3：已注册外卖员 + 扫码普通码
+				if (this.registerType == 0 && this.visitorType == 1) {
+					this.visitorType = 1; // 保持为普通访客
+					this.fillVisitorInfo(); // 填充姓名手机
+					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
 					this.hasHistory = false;
-					this.formData.visitorName = '';
-					this.formData.phone = '';
-					this.clearOwnerInfo();
+					return;
 				}
+
+				// 场景4：已注册普通访客 + 扫码普通码
+				if (this.registerType == 1 && this.visitorType == 1) {
+					this.visitorType = 1; // 普通访客
+					this.fillVisitorInfo(); // 填充姓名手机
+					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
+					this.hasHistory = false;
+					return;
+				}
+
+				// 场景5：已注册普通访客 + 扫码外卖码
+				if (this.registerType === 1 && this.visitorType == 0) {
+					this.visitorType = 1; // 强制改为普通访客
+					this.fillVisitorInfo(); // 填充姓名手机
+					this.clearOwnerInfo(); // 清空业主信息，让用户重新填写
+					this.hasHistory = false;
+					return;
+				}
+
 				// 默认情况
-  				this.hasHistory = false;
+				this.hasHistory = false;
+				
 			},
-			// 填充访客信息，不清空业主信息
-			fillVisitorInfo() {
-				if (this.currentVillageRecord) {
-					this.formData.visitorName = this.currentVillageRecord.visitor_name || '';
-					this.formData.phone = this.currentVillageRecord.visitor_tel || '';
+			// 外卖员自动保存记录
+			async autoSaveForDelivery() {
+				if (!this.latestRecord) return;
+				
+				this.loading = true;
+				try {
+					// 外卖员只需要保存访客信息，不需要业主信息
+					const saveData = {
+						visitor_openid: this.openId,
+						owner_vid: this.formData.communityId,
+						owner_roomid: this.formData.roomId || '',
+						owner_house_no: this.formData.roomName || '',
+						owner_tel: this.formData.ownerPhone || '',
+						visit_type: Number(this.visitorType), // 来访类型 0外卖  1普通
+						visit_time: this.getCurrTime()
+					};
+					const saveRes = await this.$api.visitorHistorySave(saveData);
+					
+					if (saveRes.code === 1) {
+						// 更新最新记录
+						this.latestRecord = {
+							...this.latestRecord,
+							visit_time: this.getCurrTime(),
+							owner_vid: this.formData.communityId
+						};
+						// 自动保存成功，显示历史记录
+						this.formData.visitorName = this.latestRecord.visitor_name || '';
+						this.formData.phone = this.latestRecord.visitor_tel || '';
+						this.currentTime = this.getCurrTime();
+						this.hasHistory = true;
+						uni.showToast({
+							title: '登记成功',
+							icon: 'success'
+						});
+					} else {
+						// 自动保存失败，回退到表单
+						this.hasHistory = false;
+						uni.showToast({
+							title: '登记失败，请手动填写',
+							icon: 'none'
+						});
+					}
+				} catch (error) {
+					console.error('自动保存失败', error);
+					this.hasHistory = false;
+					uni.showToast({
+						title: '登记失败，请手动填写',
+						icon: 'none'
+					});
+				} finally {
+					this.loading = false;
 				}
 			},
+			// 填充访客姓名和手机号（从最新记录）
+			fillVisitorInfo() {
+				if (this.latestRecord) {
+					this.formData.visitorName = this.latestRecord.visitor_name || '';
+					this.formData.phone = this.latestRecord.visitor_tel || '';
+				}
+			},
+			
 			// 清空业主信息
 			clearOwnerInfo() {
 				this.formData.buildingId = '';
@@ -488,13 +529,6 @@
 				this.roomIndex = -1;
 				this.unitList = [];
 				this.roomList = [];
-			},
-			// 填充记录（仅外卖访客使用）
-			fillFromRecord() {
-				if (!this.currentVillageRecord) return;
-				this.formData.visitorName = this.currentVillageRecord.visitor_name || '';
-				this.formData.phone = this.currentVillageRecord.visitor_tel || '';
-				this.currentTime = this.getCurrTime(); // 有记录需要显示当前时间
 			},
 			// 小区信息
 			async loadCommunity() {
@@ -725,6 +759,7 @@
 				// 提交前再次验证关键字段
 				if (this.visitorType == 1) {
 					this.validateOwnerPhone();
+					if (this.ownerPhoneError) return;
 				}
 				if (!this.canSubmit) return;
 				this.loading = true;
@@ -741,7 +776,13 @@
 						const registerRes = await this.$api.visitorRegister(registerParams);
 						if (registerRes.code === 1) {
 							this.isRegistered = true;
-							this.userType = Number(this.visitorType)
+							this.registerType = Number(this.visitorType)
+							// 添加最新记录
+							this.latestRecord = {
+								visitor_name: this.formData.visitorName,
+								visitor_tel: this.formData.phone,
+								visitor_type: Number(this.visitorType)
+							};
 						} else {
 							uni.showToast({
 								title: '注册异常，请重新注册！',
@@ -770,13 +811,10 @@
 							icon: 'success'
 						});
 
-						// 登记成功，更新当前小区的记录状态
-						this.hasVillageRecord = true;
-						this.currentVillageRecord = {
+						// 登记成功，更新最新记录
+						this.latestRecord = {
 							visitor_name: this.formData.visitorName,
 							visitor_tel: this.formData.phone,
-							owner_vid: this.formData.communityId,
-							visit_type: Number(this.visitorType),
 							visitor_type: Number(this.visitorType)
 						};
 						// 统一展示来访时间信息
