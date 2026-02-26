@@ -16,7 +16,7 @@
 					<view class="uni-flex-btw est-content-header" v-for="(item, index) in carDetailList" :key="index">
 							<checkbox style="transform:scale(0.7)" :disabled="item.disable" @click="checkBoxs(item)"
 								:checked="item.checked" :value="item.id"></checkbox>
-							<view class="uni-cell-40">{{ item.key }}</view>
+							<view class="uni-cell-30">{{ item.key }}</view>
 							<view class="uni-cell-30">{{ item.money }}</view>
 							<!-- 优惠金额 -->
 							<view class="uni-cell-30">{{ item.disc_fee || 0 }}</view>
@@ -35,13 +35,13 @@
 				<view class="uni-cell-94 est-content" v-if="preCarData.label">
 					<view class="title  uni-font-bold">车位预缴（{{ preCarData.label }}）</view>
 					<view class="uni-flex-btw est-content-header">
-						<view class="uni-cell-40">开始月份</view>
+						<view class="uni-cell-30">开始月份</view>
 						<view class="uni-cell-30">费用/月</view>
 						<view class="uni-cell-30">总优惠金额</view>
 						<view class="uni-cell-30">选择缴费</view>
 					</view>
 					<view class="uni-flex-btw est-content-header">
-						<view class="uni-cell-40">{{ preCarData.yjmonth }}</view>
+						<view class="uni-cell-30">{{ preCarData.yjmonth }}</view>
 						<view class="uni-cell-30">{{ preCarData.fee }}</view>
 						<!-- 总优惠金额 -->
 						<view class="uni-cell-30">{{ totalDiscount }}</view>
@@ -68,7 +68,7 @@
 		</view>
 
 		<view class="foot-pays" v-if="carDetailList.length > 0 || preCarData.label">
-			<view class="discount-info">
+			<view class="discount-info" v-if="hasDiscountScheme">
 				<text class="property-name">总优惠金额: {{ totalDiscountAmount }}</text>
 				<view class="selection-scheme" @click="openPopup">
 					<text class="scheme-text">{{ schemeText }}</text>
@@ -188,6 +188,7 @@ export default {
 			selectedGroup: null, // 当前选中的方案
 			previousSelectedGroupId: null,  // 保存之前选中的方案ID
 			previousSelectedGroup: null,  // 保存之前选中的方案对象
+			hasDiscountScheme: false, // 是否有优惠方案
 		};
 	},
 	onShow() {
@@ -277,10 +278,10 @@ export default {
 					// 选中的可能是discount对象或combo对象
 					return this.selectedGroup.line_group || this.selectedGroup.name || '已选择方案'
 				} else {
-					return '请选择赠品方案'
+					return '请选择优惠方案'
 				}
 			} else {
-				return '请选择赠品方案'
+				return '请选择优惠方案'
 			}
 		},
 		// 总金额（不包含优惠）
@@ -568,6 +569,14 @@ export default {
 				// 处理数据
 				const newData = this.processData(list)
 				this.discountData = newData
+
+				// 设置是否有优惠方案
+				if (newData && newData.length > 0) {
+					this.hasDiscountScheme = true
+				} else {
+					this.hasDiscountScheme = false
+				}
+
 				// 当只有一个优惠方案时默认选中并计算优惠
 				if (this.discountData && this.discountData.length === 1) {
 					const firstData = this.discountData[0]
@@ -858,14 +867,17 @@ export default {
 			const hasSelected = !!this.selectedGroupId;
 			const hasSolutions = latestData.length > 0;
 
-			// 有方案但未选择 → 需要选择
+			// 更新是否有优惠方案
+			this.hasDiscountScheme = hasSolutions;
+
+			// 情况1：有方案但没有选择 → 需要选择
 			if (hasSolutions && !hasSelected) {
-				uni.showToast({ icon: 'none', title: '请选择赠品方案' });
+				uni.showToast({ icon: 'none', title: '请选择优惠方案' });
 				this.disabled = false;
 				return;
 			}
 
-			// 有方案且已选择 → 验证有效性
+			// 情况2：有方案且已选择 → 验证有效性
 			if (hasSolutions && hasSelected) {
 				// 需要找到对应的原始数据来验证
 				const isValid = latestData.some(it => {
@@ -880,20 +892,31 @@ export default {
 				}
 			}
 
-			// 无方案但之前选择了 → 方案失效
+			// 情况3：无方案但之前选择了 → 方案失效
 			if (!hasSolutions && hasSelected) {
-				uni.showToast({ icon: 'none', title: '您选择的方案已失效' });
+				// uni.showToast({ icon: 'none', title: '优惠方案已失效' });
+
+				// // 重置优惠金额
+				// this.carDetailList.forEach((item) => item.disc_fee = 0);
+				// this.totalDiscount = 0;
+
+				// this.selectedGroup = null;
+				// this.selectedGroupId = null;
+				// this.disabled = false;
+				// return;
+
+				// 重置优惠金额和优惠方案，不return，继续执行支付流程
+				this.carDetailList.forEach((item) => item.disc_fee = 0);
+				this.totalDiscount = 0;
+
 				this.selectedGroup = null;
 				this.selectedGroupId = null;
-				this.disabled = false;
-				return;
 			}
 
-			// 无方案未选择 → 需要选择
+			// 情况4：无方案也没有选择 → 自动设置无方案状态，直接放行
 			if (!hasSolutions && !hasSelected) {
-				uni.showToast({ icon: 'none', title: '请先选择赠品方案' });
-				this.disabled = false;
-				return;
+				this.selectedGroup = null;
+				this.selectedGroupId = null;
 			}
 
 			// this.disabled = true;
