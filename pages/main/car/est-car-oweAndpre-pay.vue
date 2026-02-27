@@ -957,28 +957,39 @@ export default {
 
 					// 获取赠品列表
 					let giftList = [];
-					if (this.selectedGroup && this.selectedGroup.gift_list) {
-						// 如果selectedGroup有gift_list（来自combo对象）
-						giftList = this.selectedGroup.gift_list.map(item => ({
-							disc_gift_id: item.disc_gift_id,
-							gift_id: item.gift_id,
-							gift_num: item.gift_num,
-						}));
-					} else if (this.selectedGroup && this.selectedGroup.discount && this.selectedGroup.discount.giftData) {
-						// 如果selectedGroup是discount对象，从giftData获取
-						giftList = this.selectedGroup.giftData.flatMap(giftScheme => 
-							giftScheme.list.map(item => ({
+					let discLineId = '';
+					let lineId = '';
+
+					// 只有在选中方案时才处理优惠相关数据
+					if (this.selectedGroup) {
+						if (this.selectedGroup.gift_list && this.selectedGroup.gift_list.length > 0) {
+							// 如果selectedGroup有gift_list（来自combo对象）
+							giftList = this.selectedGroup.gift_list.map(item => ({
 								disc_gift_id: item.disc_gift_id,
 								gift_id: item.gift_id,
 								gift_num: item.gift_num,
-							}))
-						);
+							}));
+						} else if (this.selectedGroup.discount && this.selectedGroup.discount.giftData) {
+							// 如果selectedGroup是discount对象，从giftData获取
+							giftList = this.selectedGroup.giftData.flatMap(giftScheme => 
+								giftScheme.list.map(item => ({
+									disc_gift_id: item.disc_gift_id,
+									gift_id: item.gift_id,
+									gift_num: item.gift_num,
+								}))
+							);
+						}
+						// 获取折扣信息
+						const discountData = this.selectedGroup.discount;
+						if (discountData) {
+							discLineId = discountData.disc_line_id || '';
+							lineId = discountData.line_id || '';
+						}
 					}
-					const dataObj = this.selectedGroup.discount || null
 					const params = {
 						order_sn_app: orderId, // 订单ID
-						disc_line_id: dataObj ? dataObj.disc_line_id : '', // 折扣的disc_line_id
-						line_id: dataObj ? dataObj.line_id : '', // 折扣的line_id
+						disc_line_id: discLineId, // 折扣的disc_line_id
+						line_id: lineId, // 折扣的line_id
 						should_money: this.totalOriginalAmount, // 应付金额（优惠前总金额）
 						discount_money: this.totalDiscountAmount, // 总优惠金额
 						discount_desc: this.discountDescription, // 优惠描述
