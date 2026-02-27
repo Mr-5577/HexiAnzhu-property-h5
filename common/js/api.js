@@ -76,7 +76,11 @@ apis.advancePaymentPagenew = (data, callback) => {
 }
 //欠费预缴生成同一订单
 apis.generateorder = (data, callback) => {
-	uniRequest.post('/api/generateorder', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/generateorder', data).then(callback)
+	} else {
+		return uniRequest.post('/api/generateorder', data)
+	}
 }
 
 

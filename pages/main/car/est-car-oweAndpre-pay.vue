@@ -949,17 +949,22 @@ export default {
 				this.disabled = false;
 			})
 		},
-		generateorder(data){
-			this.$api.generateorder(data, async (orderRes) => {
+		async generateorder(data){
+			uni.showLoading({
+				title: '生成订单中...',
+				mask: true,
+			});
+			try {
+				const orderRes = await this.$api.generateorder(data)
 				// 生成订单后需要保存之前选择的方案
 				if (orderRes.code === 1) {
 					const orderId = orderRes.ordernum || (orderRes.data && orderRes.data.ordernum)
-
+	
 					// 获取赠品列表
 					let giftList = [];
 					let discLineId = '';
 					let lineId = '';
-
+	
 					// 只有在选中方案时才处理优惠相关数据
 					if (this.selectedGroup) {
 						if (this.selectedGroup.gift_list && this.selectedGroup.gift_list.length > 0) {
@@ -995,20 +1000,28 @@ export default {
 						discount_desc: this.discountDescription, // 优惠描述
 						gift_list: JSON.stringify(giftList)
 					}
-					const saveRes = await this.$api.saveDiscountsSolution(params)
-					if (saveRes.code === 1) {
-						let orderData = {
-							sn: orderId,
-							money: this.preMoney,
-							type: 'car',
-						};
-						this.$store.commit('setOrderData', orderData);
-						this.$Router.push({
-							name: 'payment'
-						});
+					try {
+						const saveRes = await this.$api.saveDiscountsSolution(params)
+						uni.hideLoading();
+						if (saveRes.code === 1) {
+							let orderData = {
+								sn: orderId,
+								money: this.preMoney,
+								type: 'car',
+							};
+							this.$store.commit('setOrderData', orderData);
+							this.$Router.push({
+								name: 'payment'
+							});
+						}
+					} catch (error) {
+						uni.hideLoading();
+						console.log(error)
 					}
 				}
-			});
+			} catch (error) {
+				uni.hideLoading();
+			}
 		},
 
 		//判断一串数字是否是连续的 并且必须选择第一个
