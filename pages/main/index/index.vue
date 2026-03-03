@@ -101,7 +101,6 @@
 								<view class="uni-font-28" style="color: #c6bebd;">您的专属管家</view>
 							</view>
 						</view>
-						<!-- <view class="uni-cell-20"></view> -->
 						<view class="uni-cell-30 uni-flex-center">
 							<view class="housekeeper-btn">呼叫管家</view>
 						</view>
@@ -244,10 +243,8 @@
 			// 开始滚动
 			startScroll() {
 				if (this.noticeList.length <= 1) return
-
 				// 清除现有定时器
 				this.stopScroll()
-
 				// 设置新定时器
 				this.timer = setInterval(() => {
 					this.nextNotice()
@@ -257,7 +254,6 @@
 			// 切换到下一条
 			nextNotice() {
 				this.isSliding = true
-
 				setTimeout(() => {
 					this.currentIndex = (this.currentIndex + 1) % this.noticeList.length
 					this.isSliding = false
@@ -304,7 +300,6 @@
 					});
 				}
 			},
-
 			// 下拉刷新
 			pullDown(pullScroll) {
 				if (this.$store.state.login_token) {
@@ -574,15 +569,6 @@
 				uni.navigateTo({
 					url: `/webviewModule/webview/webview?url=${encodeURIComponent(this.adData.link_url)}`
 				});
-
-				// 打开另一个小程序
-				// uni.navigateToMiniProgram({
-				// 	appId: '', // 必填，要打开的小程序 appId
-				// 	path: '', // 打开的页面路径，如果为空则打开首页
-				// 	success(res) {
-				// 		console.log('跳转成功！');
-				// 	}
-				// });
 			},
 			// 点击商品跳转惠选商品页
 			goodsClick(good) {
@@ -682,22 +668,6 @@
 				// 				});
 				// 			}
 				// 		})
-				// 	}
-				// })
-
-				// uni.showModal({
-				// 	title: '未登录',
-				// 	cancelColor: '#898989',
-				// 	cancelText: '取消',
-				// 	confirmColor: '#fe845e',
-				// 	confirmText: '去登录',
-				// 	content: '是否前往登录？',
-				// 	success(resp) {
-				// 		if (resp.confirm) {
-				// 			uni.navigateTo({
-				// 				url: '/pages/login/login'
-				// 			})
-				// 		}
 				// 	}
 				// })
 			}
