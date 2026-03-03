@@ -1,18 +1,10 @@
 <!-- 自定义tabbar -->
 <template>
   <view class="mini-tabbar" :style="tabbarStyle">
-    <view
-      v-for="(item, index) in computedTabList"
-      :key="index"
-      class="tab-item"
-      :class="{ active: currentIndex === index }"
-      @tap="handleTabClick(index, item)"
-    >
+    <view v-for="(item, index) in computedTabList" :key="index" class="tab-item"
+      :class="{ active: currentIndex === index }" @tap="handleTabClick(index, item)">
       <!-- 图标 -->
-      <image
-        :src="currentIndex === index ? item.selectedIcon : item.icon"
-        class="tab-icon"
-      />
+      <image :src="currentIndex === index ? item.selectedIcon : item.icon" class="tab-icon" />
 
       <!-- 徽章 -->
       <!-- <view v-if="item.badge > 0" class="tab-badge">
@@ -27,24 +19,6 @@
 </template>
 
 <script>
-// 默认Tab列表
-const defaultTabList = [
-  {
-    pagePath: "/pages/main/index/index",
-    text: "首页",
-    icon: "/static/img/tabBar/home.png",
-    selectedIcon: "/static/img/tabBar/home-active.png",
-    badge: 0,
-  },
-  {
-    pagePath: "/pages/user/center/center",
-    text: "我的",
-    icon: "/static/img/tabBar/mine.png",
-    selectedIcon: "/static/img/tabBar/mine-active.png",
-    badge: 0,
-  },
-];
-
 export default {
   name: "MiniTabbar",
   props: {
@@ -62,12 +36,27 @@ export default {
   data() {
     return {
       currentIndex: this.activeIndex,
+      defaultTabList: [
+        {
+          pagePath: "/pages/main/index/index",
+          text: "首页",
+          icon: "/static/img/tabBar/home.png",
+          selectedIcon: "/static/img/tabBar/home-active.png",
+          badge: 0,
+        },
+        {
+          pagePath: "/pages/user/center/center",
+          text: "我的",
+          icon: "/static/img/tabBar/mine.png",
+          selectedIcon: "/static/img/tabBar/mine-active.png",
+          badge: 0,
+        },
+      ]
     };
   },
   computed: {
-    // 计算最终的Tab列表
     computedTabList() {
-      return this.list && this.list.length > 0 ? this.list : defaultTabList;
+      return this.list && this.list.length > 0 ? this.list : this.defaultTabList;
     },
     // 安全区域适配
     tabbarStyle() {
@@ -83,9 +72,7 @@ export default {
   watch: {
     // 监听activeIndex变化
     activeIndex(newVal) {
-      if (newVal !== undefined && newVal !== this.currentIndex) {
-        this.currentIndex = newVal;
-      }
+      this.currentIndex = newVal;
     },
   },
   methods: {
@@ -93,51 +80,14 @@ export default {
     handleTabClick(index, item) {
       if (this.currentIndex === index) return; // 已经是当前页，不处理
 
-      // 更新激活状态
-      this.currentIndex = index;
-
-      uni.navigateTo({
-        url: item.pagePath,
-        success: () => {
-          // 发送事件通知父组件
-          this.$emit("change", index);
-        },
-        fail: (err) => {
-          console.error("切换失败:", err);
-          // 如果跳转失败，恢复之前的选中状态
-          this.currentIndex = this.activeIndex;
-        },
+      // 使用 uni.switchTab 跳转，保持tab页栈
+      uni.switchTab({
+        url: item.pagePath
       });
-    },
-
-    // 设置徽章
-    setBadge(index, count) {
-      if (index >= 0 && index < this.computedTabList.length) {
-        // 这里需要更新数据，但由于computedTabList是计算属性，我们需要修改源数据
-        if (this.list && this.list.length > 0) {
-          // 如果使用自定义列表，需要父组件自己管理徽章数据
-          console.warn("使用自定义列表时，徽章数据需要父组件自行管理");
-        } else {
-          // 更新默认列表的徽章数据（注意：这会直接修改defaultTabList，可能影响其他实例）
-          // 更好的做法是将徽章数据保存在组件data中
-          defaultTabList[index].badge = count;
-          // 强制更新视图
-          this.$forceUpdate();
-        }
-      }
-    },
-
-    // 设置激活索引
-    setActiveIndex(index) {
-      if (index >= 0 && index < this.computedTabList.length) {
-        this.currentIndex = index;
-      }
     },
   },
   // 生命周期
-  created() {
-    console.log("tabbar created");
-  },
+  created() { },
 };
 </script>
 
@@ -217,9 +167,11 @@ export default {
   0% {
     transform: scale(0);
   }
+
   70% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
   }

@@ -114,8 +114,13 @@
 			// 获取管家数据
 			getStewardInfo() {
 				let data = {
-					id: this.uid
+					id: this.uid,
+					unit_id: '',
 				};
+				// 传入unit_id获取管家昵称
+				if (this.$store.state.myHouse && this.$store.state.myHouse.ownerInfo.unit) {
+					data.unit_id = this.$store.state.myHouse.ownerInfo.unit
+				}
 				this.$api.keeperinfo(data, res => {
 					this.housekeeper = res.data;
 					this.getHousekeeperEvaluate();

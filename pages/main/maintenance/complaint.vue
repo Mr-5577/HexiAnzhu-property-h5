@@ -39,7 +39,7 @@
 					</radio-group>
 					<view class="color-font-orange" style="padding-left: 20upx;color: #ffcf5a;background-color: #f5f5f5;
 					border-radius: 10upx;font-size: 24upx;line-height: 60upx;">最快将在 {{ times }} -{{ nowHours + 2 }}:00 为您服务</view>
-					<view class="title" style="margin: 20upx 0 0;padding: 20upx 0;">报修联系人</view>
+					<view class="title" style="margin: 20upx 0 0;padding: 20upx 0;">投诉联系人</view>
 					<scroll-view class="scroll-view_H" scroll-x="true">
 						<radio-group style="display: flex;">
 							<view style="display: inline-block;" @click="radioChangePerson(index)"

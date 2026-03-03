@@ -237,6 +237,7 @@
 				showAdPopup: false, // 广告弹窗显示状态
 				adData: null, // 广告数据
 				allPaymentAmount: 0, // 代缴总金额，物管和车辆
+				isPageActive: true, // 页面是否激活
 			};
 		},
 		methods: {
@@ -456,41 +457,42 @@
 				});
 			},
 			// 通知公告、物业管家、热门活动信息
-			getHomeData() {
+			async getHomeData() {
 				// 物业管家
-				this.$api.homeIndex({}, res => {
-					this.housekeeper = res.data.stewards && res.data.stewards.length > 0 ? res.data.stewards[0] :
-						'';
-				});
+				const housekeeperRes = await this.$api.homeIndex({})
+				if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
+				if (housekeeperRes.code === 1 && housekeeperRes.data) {
+					this.housekeeper = housekeeperRes.data.stewards && housekeeperRes.data.stewards.length > 0 ? housekeeperRes.data.stewards[0] : '';
+				}
 				// 通知公告列表
-				this.$api.circularList({}, res => {
-					if (res.code == 1) {
-						this.noticeList = res.data || [];
-						if (this.noticeList.length > 1) {
-							this.startScroll()
-						}
+				const noticeRes = await this.$api.circularList({})
+				if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
+				if (noticeRes.code == 1) {
+					this.noticeList = noticeRes.data || [];
+					if (this.noticeList.length > 1) {
+						this.startScroll()
 					}
-				});
+				}
 				// 热门活动列表
-				this.$api.getActivityList({}, res => {
-					if (res.code === 1) {
-						const dataList = res.data || []
-						let httpIp = this.qiniuDatas?.http_domain || '';
-						if (httpIp.startsWith('http://')) {
-							httpIp = httpIp.replace('http://', 'https://')
-						}
-						this.activityList = dataList.map((item) => {
-							return {
-								...item,
-								head_pic: httpIp ? `${httpIp}${item.head_pic}` : item.head_pic,
-								window_pic: httpIp ? `${httpIp}${item.window_pic}` : item.window_pic,
-							}
-						})
-
-						// 检查广告弹窗
-						this.checkAdPopup();
+				const activityRes = await this.$api.getActivityList({})
+				if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
+				if (activityRes.code === 1) {
+					const dataList = activityRes.data || []
+					let httpIp = this.qiniuDatas?.http_domain || '';
+					if (httpIp.startsWith('http://')) {
+						httpIp = httpIp.replace('http://', 'https://')
 					}
-				});
+					this.activityList = dataList.map((item) => {
+						return {
+							...item,
+							head_pic: httpIp ? `${httpIp}${item.head_pic}` : item.head_pic,
+							window_pic: httpIp ? `${httpIp}${item.window_pic}` : item.window_pic,
+						}
+					})
+
+					// 检查广告弹窗
+					this.checkAdPopup();
+				}
 				// 物管/车辆待缴费用
 				this.getPaymentTotal()
 			},
@@ -633,15 +635,18 @@
 			}
 		},
 		async onShow() {
+			this.isPageActive = true; // 页面显示时设为true
 			this.showBgImage = true
 			if (this.$store.state.login_token) {
 				// 获取商品数据
-				this.$api.getGoods({}, res => {
-					this.recommendList = res.data;
-					this.showGoods = res.is_show == 1 ? true : false;
-				});
+				const goodsRes = await this.$api.getGoods({})
+				if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
+				this.recommendList = goodsRes.data || [];
+				this.showGoods = goodsRes.is_show == 1 ? true : false;
+
 				// 用户信息、房产信息
 				this.$api.userCenter({}, async (res) => {
+					if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
 					if (res.code == 1) {
 						this.myHouse = res.data;
 						this.$store.commit('setMyHouse', res.data);
@@ -650,7 +655,7 @@
 						// 等待1.5秒,需要等七牛云凭证加载完成再加载活动数据
 						await new Promise(resolve => setTimeout(resolve, 1500))
 						this.getHomeData();
-						this.getSetting();
+						// this.getSetting();
 					}
 				});
 			} else {
@@ -716,10 +721,12 @@
 			}
 		},
 		onHide() {
+			this.isPageActive = false; // 页面隐藏时设为false
 			this.showBgImage = false
 			this.stopScroll()
 		},
 		onUnload() {
+			this.isPageActive = false; // 页面隐藏时设为false
 			this.stopScroll()
 		},
 		computed: {

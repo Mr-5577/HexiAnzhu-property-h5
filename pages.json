@@ -394,5 +394,26 @@
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FFFFFF",
 		"navigationBarTitleText": "和喜·慧生活"
+	},
+	"tabBar": {
+		"custom": true, // 开启自定义tabbar模式
+		"color": "#666666",
+		"selectedColor": "#ff6b6b",
+		"backgroundColor": "#fedbd5",
+		"borderStyle": "black",
+		"list": [
+		{
+			"pagePath": "pages/main/index/index",
+			"text": "首页",
+			"iconPath": "static/img/tabBar/home.png",
+			"selectedIconPath": "static/img/tabBar/home-active.png"
+		},
+		{
+			"pagePath": "pages/user/center/center",
+			"text": "我的",
+			"iconPath": "static/img/tabBar/mine.png",
+			"selectedIconPath": "static/img/tabBar/mine-active.png"
+		}
+		]
 	}
 }

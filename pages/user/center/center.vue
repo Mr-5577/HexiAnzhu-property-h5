@@ -119,14 +119,23 @@
 					}
 				],
 				ownerInfo: '',
-				orderList: []
+				orderList: [],
+				isPageActive: true, // 页面是否激活
 			};
 		},
-		onShow() {
+		async onShow() {
+			this.isPageActive = true; // 页面显示时设为true
 			if (this.$store.state.login_token) {
-				this.getData();
+				await this.getData();
+				if (!this.isPageActive) return; // 页面不活跃时阻止后续请求
 				this.getRepairList();
 			}
+		},
+		onHide() {
+			this.isPageActive = false; // 页面隐藏时设为false
+		},
+		onUnload() {
+			this.isPageActive = false; // 页面隐藏时设为false
 		},
 		methods: {
 			getRepairList() {
@@ -136,12 +145,11 @@
 					}
 				});
 			},
-			getData() {
-				this.$api.userCenter({}, res => {
-					if (res.code == 1) {
-						this.$store.commit('setMyHouse', res.data);
-					}
-				});
+			async getData() {
+				const centerRes = await this.$api.userCenter({})
+				if (centerRes.code == 1) {
+					this.$store.commit('setMyHouse', centerRes.data);
+				}
 			},
 			logout() {
 				uni.showModal({

@@ -8,7 +8,11 @@ apis.test = () => {
 }
 // 获取活动列表
 apis.getActivityList = (data, callback) => {
-	uniRequest.post('/api/getActivityList', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/getActivityList', data).then(callback)
+	} else {
+		return uniRequest.post('/api/getActivityList', data)
+	}
 }
 // 综合服务留言
 apis.comprehensive = (data, callback) => {
@@ -213,7 +217,11 @@ apis.evaluate = (data, callback) => {
 
 //APP首页
 apis.homeIndex = (data, callback) => {
-	uniRequest.post('/api/index', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/index', data).then(callback)
+	} else {
+		return uniRequest.post('/api/index', data)
+	}
 }
 //楼栋管家详情
 apis.stewardInfo = (data, callback) => {
@@ -240,7 +248,11 @@ apis.downLoadApp = (data, callback) => {
 
 //通知公告的列表
 apis.circularList = (data, callback) => {
-	uniRequest.post('/api/circularList', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/circularList', data).then(callback)
+	} else {
+		return uniRequest.post('/api/circularList', data)
+	}
 }
 
 //通知公告的详情
@@ -316,7 +328,11 @@ apis.uploadRequest = (url, img) => {
 
 // 获取商品列表
 apis.getGoods = (data, callback) => {
-	uniRequest.post('/api/huixuan_goods_list', data).then(callback)
+	if (callback) {
+		uniRequest.post('/api/huixuan_goods_list', data).then(callback)
+	} else {
+		return uniRequest.post('/api/huixuan_goods_list', data)
+	}
 }
 //设置图标列表
 apis.setting = (data, callback) => {
