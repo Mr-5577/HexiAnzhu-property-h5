@@ -318,33 +318,33 @@
 				ctx.setFillStyle('#000000');
 				ctx.fillText('状态：', 560, 20);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.status_text, 610, 20, 100);
+				ctx.fillText(data.status_text || '', 610, 20, 100);
 
 				ctx.setFontSize(15);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('No', 545, 40);
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#800000');
-				ctx.fillText(data.receipt_num, 570, 40, 150);
+				ctx.fillText(data.receipt_num || '', 570, 40, 150);
 
 				// 第一排
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('小区名称：', 80, 90);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.villagename, 160, 90, 150);
+				ctx.fillText(data.villagename || '', 160, 90, 150);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('房号/姓名：', 280, 90);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.roomnum + '/' + data.owner_name, 360, 90, 180);
+				ctx.fillText((data.roomnum || '') + '/' + (data.owner_name || ''), 360, 90, 180);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('日期：', 550, 90);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.date, 590, 90, 150);
+				ctx.fillText(data.date || '', 590, 90, 150);
 
 				// 第二排
 				ctx.setFontSize(14);
@@ -362,55 +362,57 @@
 				for (let i = 0; i < data.subject_detail.length; i++) {
 					ctx.setFontSize(14);
 					ctx.setFillStyle('#0000FF');
-					ctx.fillText(data.subject_detail[i].project, 80, 160 + i * 30);
+					ctx.fillText(data.subject_detail[i].project || '', 80, 160 + i * 30);
 
 					ctx.setFontSize(14);
 					ctx.setFillStyle('#0000FF');
-					ctx.fillText(data.subject_detail[i].zy, 270, 160 + i * 30);
+					ctx.fillText(data.subject_detail[i].zy || '', 270, 160 + i * 30);
 
 					ctx.setFontSize(14);
 					ctx.setFillStyle('#0000FF');
-					ctx.fillText('￥' + data.subject_detail[i].mainmoney, 580, 160 + i * 30);
+					ctx.fillText('￥' + (data.subject_detail[i].mainmoney || '0'), 580, 160 + i * 30);
 				}
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('合计：', 90, 340);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText('￥' + data.money, 130, 340, 100);
+				ctx.fillText('￥' + (data.money || '0'), 130, 340, 100);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('人民币(大写)：', 235, 340);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.capitalization_money, 325, 340, 165);
+				ctx.fillText(data.capitalization_money || '', 325, 340, 165);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('渠道：', 490, 340);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.pay_type, 530, 340, 80);
+				ctx.fillText(data.pay_type || '', 530, 340, 80);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('收款单位：', 80, 390);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.payee, 150, 390, 170);
+				ctx.fillText(data.payee || '', 150, 390, 170);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('收款人：', 325, 390);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.creater, 380, 390, 180);
+				ctx.fillText(data.creater || '', 380, 390, 180);
 
 				ctx.setFontSize(14);
 				ctx.setFillStyle('#000000');
 				ctx.fillText('交款人：', 450, 390);
 				ctx.setFillStyle('#0000FF');
-				ctx.fillText(data.owner_name, 505, 390, 150);
+				ctx.fillText(data.owner_name || '', 505, 390, 150);
 
 				// 绘制二维码、印章
-				ctx.drawImage(data.qrCode, 610, 320, 80, 80);
+				if (data.qrCode) {
+					ctx.drawImage(data.qrCode, 610, 320, 80, 80);
+				}
 				if (data.seal_image) {
 					ctx.drawImage(data.seal_image, 210, 360, 80, 80);
 				}
