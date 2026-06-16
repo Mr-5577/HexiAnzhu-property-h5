@@ -3,7 +3,7 @@
 		<view class="content" v-if="detail">
 			<view class="title">{{ detail.title }}</view>
 			<view class="time">幸福和喜 发布日期：{{ detail.publish_time }}</view>
-			<rich-text class="text" :nodes="detail.content"></rich-text>
+			<rich-text class="text" :nodes="decodeAndFix(detail.content)"></rich-text>
 		</view>
 		<view v-else class="empty">暂无内容~</view>
 	</view>
@@ -28,6 +28,33 @@
 						}
 					}
 				});
+			},
+			/**
+			 * 通用的 HTML 实体解码
+			 * 可以处理所有常见的 HTML 实体，包括双重编码
+			 */
+			decodeAndFix(text) {
+				if (!text) return '';
+				let result = text;
+				result = result
+					.replace(/&lt;/g, '<')
+					.replace(/&gt;/g, '>')
+					.replace(/&amp;/g, '&')
+					.replace(/&quot;/g, '"')
+					.replace(/&#39;/g, "'")
+					.replace(/&ensp;/g, ' ')
+					.replace(/&emsp;/g, ' ')
+					.replace(/&mdash;/g, '—')
+					.replace(/&ldquo;/g, '“')
+					.replace(/&rdquo;/g, '”')
+					.replace(/&lsquo;/g, '‘')
+					.replace(/&rsquo;/g, '’')
+					.replace(/&middot;/g, '·')
+					.replace(/&bull;/g, '•')
+					.replace(/&hellip;/g, '...')
+				
+				console.log("result", result);
+				return result;
 			},
 		},
 		onLoad(options) {
