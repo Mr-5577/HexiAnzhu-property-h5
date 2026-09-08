@@ -2,7 +2,7 @@
 	<view class="repair">
 		<view class="uni-flex-center">
 			<view class="uni-padding-wrap">
-				<uni-segmented-control :current="current" :values="tabItems" :style-type="styleType"
+				<uni-segmented-control :current="currentIndex" :values="tabItems" :style-type="styleType"
 					:active-color="activeColor" @clickItem="onClickItem" />
 			</view>
 		</view>
@@ -16,11 +16,12 @@
 				<view class="tip">当前房产暂无工单记录</view>
 				<button class="btn" plain @click="toMyhouse">更换房产</button>
 			</view> -->
-			<view class="uni-empty" v-if="list.length == 0">{{ loadingText }}</view>
+			<view class="uni-empty" v-if="currentList.length == 0">{{ loadingText }}</view>
 			<view v-else>
-				<view class="repair-item" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
+				<view class="repair-item" v-for="(item, index) in currentList" :key="index" @click="toDetail(item)">
 					<view class="left">
-						<view class="type">{{item.label == 1 ? item.typename+'(报事)':item.typename+'(投诉)'}}</view>
+						<view class="type">{{ item.label == 1 ? item.typename + '(报事)' : item.typename + '(投诉)' }}
+						</view>
 						<view class="addr">
 							{{ item.villagename + ' ' + item.room }}
 						</view>
@@ -60,7 +61,7 @@
 				loadingText: '暂无数据',
 				items: ['全部', '待接单', '处理中', '已处理', '待评价'],
 				activeColor: '#ffcf5a',
-				current: 0,
+				currentIndex: 0, // 当前选中项索引，默认为0全部、1待接单、2处理中、3已处理、4待评价
 				styleType: 'text',
 				// 列表数据，status：0待接单 1已处理 2处理中 1,4待评价
 				list: [],
@@ -98,17 +99,45 @@
 				return stats;
 			},
 			tabItems() {
-				return [
-					{ text: '全部' },
-					{ text: '待接单' },
-					{ text: '处理中' },
-					{ text: '已处理' },
+				return [{
+						text: '全部'
+					},
+					{
+						text: '待接单'
+					},
+					{
+						text: '处理中'
+					},
+					{
+						text: '已处理'
+					},
 					{
 						text: '待评价',
 						// 待评价：有数量时显示角标
 						badge: this.repairStats.unEvaluated
 					}
 				];
+			},
+			// 当前tab索引列表
+			currentList() {
+				const currIndex = this.currentIndex;
+				if (currIndex === 0) {
+					// 全部
+					return this.list;
+				} else if (currIndex === 1) {
+					// 待接单
+					return this.list.filter(task => task.status === 0);
+				} else if (currIndex === 2) {
+					// 处理中
+					return this.list.filter(task => task.status === 2);
+				} else if (currIndex === 3) {
+					// 已处理
+					return this.list.filter(task => task.status === 1);
+				} else if (currIndex === 4) {
+					// 待评价
+					return this.list.filter(task => task.status === 1 || task.status === 4);
+				}
+				return [];
 			}
 		},
 		onLoad() {
@@ -121,8 +150,8 @@
 		},
 		methods: {
 			onClickItem(index) {
-				if (this.current !== index) {
-					this.current = index;
+				if (this.currentIndex !== index) {
+					this.currentIndex = index;
 				}
 			},
 			toDetail(item) {
@@ -138,7 +167,7 @@
 				this.loading = true;
 				this.$api.repairlist({}, res => {
 					this.loading = false;
-					if (res.code === 0) {
+					if (res.code === 1) {
 						this.list = res.data || [];
 					}
 				});
