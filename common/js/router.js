@@ -201,7 +201,23 @@ const router = new Router({
 		{
 			name: "visitor-register",
 			path: "/visitModule/visitor/visitor-register"
-		}
+		},
+		{
+			name: "invoice-title",
+			path: "/userModule/invoice/invoice-title"
+		},
+		{
+			name: "add-edit-invoice",
+			path: "/userModule/invoice/add-edit-invoice"
+		},
+		{
+			name: "invoice-issue",
+			path: "/userModule/invoice/invoice-issue"
+		},
+		{
+			name: "invoice-detail",
+			path: "/userModule/invoice/invoice-detail"
+		},
 	]
 })
 router.beforeEach(async (to, from, next) => {

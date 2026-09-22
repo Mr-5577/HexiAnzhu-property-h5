@@ -1,28 +1,24 @@
 let utils = {}
-
-utils.isPhone = (e) => {
-	let phone = e;
-	var myreg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
-	if (myreg.test(phone) === false) {
-		uni.showToast({
-			icon: 'none',
-			title: '请输入正确的手机号'
-		});
-		return false;
-	}
-	return true;
+// 校验手机号
+utils.isPhone = (phone) => {
+	var myreg = /^1[3-9]\d{9}$/;
+	return myreg.test(phone);
 }
+// 校验身份证
 utils.isIdCard = (card) => {
 	let reg =
 		/^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/;
-	if (reg.test(card) === false) {
-		uni.showToast({
-			icon: 'none',
-			title: '请输入正确的身份证号'
-		});
-		return false;
-	}
-	return true;
+	return reg.test(card);
+}
+// 校验邮箱
+utils.isEmail = (email) => {
+	let reg = /^[\w.-]+@[\w-]+(\.[\w-]+)+$/;
+	return reg.test(email);
+}
+// 校验统一社会信用代码
+utils.isUSCC = (val) => {
+	let reg = /^[0-9A-HJ-NPQRTUWXY]{18}$/i;
+	return reg.test(val);
 }
 //数组去重
 utils.unique = function(array) {
@@ -82,7 +78,7 @@ utils.yearMonth = () => {
 	var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
 	var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
 	var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-	return Y +''+ M;
+	return Y + '' + M;
 }
 //时间转时间戳（秒）
 utils.toTimesTamp = (times) => {

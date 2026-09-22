@@ -374,6 +374,26 @@
 					"style": {
 						"navigationBarTitleText": "选择房号"
 					}
+				},	{
+					"path": "invoice/invoice-title",
+					"style": {
+						"navigationBarTitleText": "发票抬头管理"
+					}
+				},	{
+					"path": "invoice/add-edit-invoice",
+					"style": {
+						"navigationBarTitleText": "发票抬头"
+					}
+				},	{
+					"path": "invoice/invoice-issue",
+					"style": {
+						"navigationBarTitleText": "开具发票"
+					}
+				},	{
+					"path": "invoice/invoice-detail",
+					"style": {
+						"navigationBarTitleText": "发票详情"
+					}
 				}
 			]
 		},{

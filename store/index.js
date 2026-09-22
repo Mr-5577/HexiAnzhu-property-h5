@@ -6,11 +6,12 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 
-		// baseUrl: 'http://192.168.1.200:8888', // 开发-地址
+		// baseUrl: 'http://192.168.20.200:8081', // 开发-地址
 		// baseUrl: 'http://wyapina.hexianzhu.cn:8802', // 测试-地址
 		baseUrl: 'https://wyna.hexianzhu.cn', // 正式-地址
 		// baseUrl: 'https://api.hexianzhu.cn', // 请求地址
 
+		invoiceDownloadUrl: 'https://wyinvc.hexianzhu.cn/invc', // 下载发票地址
 		invoiceBaseUrl: 'https://f.yangguangzhiye.com', //发票地址域名
 		// baseImgUrl: 'https://p.yangguangdadi.cn/', //七牛云图片查看
 		baseImgUrl: 'http://f.hexianzhu.cn/', //七牛云图片查看
@@ -176,6 +177,33 @@ const store = new Vuex.Store({
 		// 设置 是否展示广告的状态，false为没有展示，true为已展示
 		setHasShownAd(state, value) {
 			state.hasShownAdInThisSession = value;
+		},
+
+		// 切换业主用户数据用来获取发票列表信息
+		setMockData(state, data) {
+			state.login_token = data.login_token;
+			uni.setStorageSync('loginToken', {login_token: data.login_token});
+			if(state.myHouse) {
+				const { rooms } = data;
+				state.myHouse.ownerInfo.oid = data.oid;
+				state.myHouse.ownerInfo.app_uid = data.app_user_id;
+				state.myHouse.ownerInfo.tel = data.tel;
+				state.myHouse.ownerInfo.realname = data.realname;
+	
+				const [firstRoom] = rooms;
+				if(state.myHouse.ownerInfo && firstRoom) {
+					state.myHouse.ownerInfo.roomid = firstRoom.roomid;
+					state.myHouse.ownerInfo.roomnum = firstRoom.roomnum;
+					state.myHouse.ownerInfo.vvid = firstRoom.vvid;
+	
+					uni.setStorageSync('vid', firstRoom.vvid);
+				}
+				state.myHouse.allRooms = [{
+					roomid: firstRoom.roomid,
+					roomnum: firstRoom.roomnum,
+					vid: firstRoom.vvid,
+				}]
+			}
 		}
 	},
 	actions: {

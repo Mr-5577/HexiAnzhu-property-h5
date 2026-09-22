@@ -108,6 +108,11 @@
 						url: 'repair-order'
 					},
 					{
+						name: '发票抬头',
+						icon: '/static/fumou-center-template/w-order.jpg',
+						url: 'invoice-title'
+					},
+					{
 						name: '联系物业',
 						icon: '/static/fumou-center-template/contact.jpg',
 						url: 'call'

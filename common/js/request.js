@@ -15,8 +15,8 @@ function showToast(title) {
 
 // 提取地址中的参数
 const getQuery = (query, key) => {
-  const pair = query.split('&').find(item => item.split('=')[0] === key);
-  return pair ? pair.split('=')[1] : undefined;
+	const pair = query.split('&').find(item => item.split('=')[0] === key);
+	return pair ? pair.split('=')[1] : undefined;
 };
 
 function successState(res) {
@@ -260,18 +260,18 @@ function accessToken(data) {
 
 // 白名单页面
 function isInWhitePage() {
-    const pages = getCurrentPages();
-    if (pages.length === 0) return false;
-    const currentPage = pages[pages.length - 1];
-    const currentRoute = currentPage.route || '';
-    // 定义不需要提示的页面路由列表
-    const whitePages = [
-        'visitModule/visitor/visitor-register', // 来访登记页面
-    ];
-    return whitePages.some(page => currentRoute.includes(page));
+	const pages = getCurrentPages();
+	if (pages.length === 0) return false;
+	const currentPage = pages[pages.length - 1];
+	const currentRoute = currentPage.route || '';
+	// 定义不需要提示的页面路由列表
+	const whitePages = [
+		'visitModule/visitor/visitor-register', // 来访登记页面
+	];
+	return whitePages.some(page => currentRoute.includes(page));
 }
 let requests = {}
-requests.post = (url, data) => {
+requests.post = (url, data, config = {}) => {
 	//公用loginToken
 	let objData = {};
 	if (!store.state.login_token) {
@@ -292,12 +292,12 @@ requests.post = (url, data) => {
 	// const systemInfo = uni.getSystemInfoSync();
 	// 开发环境添加标识
 	// if (systemInfo.platform === 'devtools') {
-		urlParams += '&XDEBUG_SESSION=PHPSTORM';
+	urlParams += '&XDEBUG_SESSION=PHPSTORM';
 	// }
 	// #endif
 
 	let promise = new Promise(function(resolve, reject) {
-		uniRequest.post(url + '?' + urlParams, objData).then((res) => {
+		uniRequest.post(url + '?' + urlParams, objData, config).then((res) => {
 
 			setTimeout(res => {
 				uni.hideLoading();

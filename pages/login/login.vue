@@ -227,6 +227,10 @@
 			// 获取验证码
 			getCode() {
 				if (!this.$uitls.isPhone(this.tel)) {
+					uni.showToast({
+						icon: 'none',
+						title: '请输入正确的手机号'
+					});
 					return;
 				}
 				let data = {
@@ -300,6 +304,10 @@
 			bindLogin() {
 				let _this = this;
 				if (!this.$uitls.isPhone(this.tel)) {
+					uni.showToast({
+						icon: 'none',
+						title: '请输入正确的手机号'
+					});
 					return;
 				}
 				if (!this.code) {

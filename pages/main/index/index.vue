@@ -37,7 +37,7 @@
 						</view>
 						<!-- 通知公告 -->
 						<view class="notice-wrapper">
-							<view class="notice-title" @click="toNoticeList">通知公告</view>
+							<view class="notice-title">通知公告</view>
 							<view class="notice-content">
 								<view class="notice-list">
 									<view class="notice-item" v-if="noticeList.length > 0" :key="currentIndex"
@@ -161,6 +161,8 @@
 		</view>
 		<!-- 底部自定义tabbar -->
 		<mini-tabbar :active-index="0" />
+		<!-- 切换业主 -->
+		<InputDialog v-model="showInputDialog" @confirm="handleConfirm" />
 	</view>
 </template>
 <script>
@@ -168,13 +170,15 @@
 	import liToast from '@/components/li-toast/li-toast.vue';
 	import sPullScroll from '@/components/s-pull-scroll';
 	import MiniTabbar from '@/components/mini-tabbar/mini-tabbar.vue';
-
+	import { getMiniEnv } from "@/common/util.js";
+	import InputDialog from '@/components/input-dialog.vue';
 	export default {
 		components: {
 			yomolUpgrade,
 			liToast,
 			sPullScroll,
-			MiniTabbar
+			MiniTabbar,
+			InputDialog
 		},
 		data() {
 			return {
@@ -201,7 +205,7 @@
 					url: "pages/main/service/integrated-service",
 				}, {
 					id: 16,
-					image: "/static/img/main/service.png",
+					image: "/static/img/main/convenience.png",
 					is_outside: 0,
 					name: "找服务",
 					url: "pages/main/service/integrated-service",
@@ -212,7 +216,14 @@
 				// 	is_outside: 0,
 				// 	name: "便民信息",
 				// 	url: "",
-				// }
+				// }.
+				{
+					id: 990,
+					image: "/static/img/main/service.png",
+					is_outside: 0,
+					name: "开具发票",
+					url: "userModule/invoice/invoice-issue",
+				}
 				],
 				upgradeType: 'pkg', //pkg 整包 wgt 升级包
 				upgradeContent: '', //更新内容
@@ -237,6 +248,7 @@
 				adData: null, // 广告数据
 				allPaymentAmount: 0, // 代缴总金额，物管和车辆
 				isPageActive: true, // 页面是否激活
+				showInputDialog: false, // 是否显示切换业主弹窗
 			};
 		},
 		methods: {
@@ -618,7 +630,41 @@
 				}
 				// 保留两位小数并转换为数字
 				return parseFloat(totalAmount.toFixed(2));
-			}
+			},
+			async switchUser() {
+				console.log('切换用户', getMiniEnv(), this.$store.state);
+				// 只在非正式版调试
+				if (getMiniEnv() !== 'release') {
+					this.showInputDialog = true;
+				}
+			},
+			async handleConfirm(form) {
+				console.log("用户输入：", form);
+				// const params = { "oid": 18791, "app_user_id": 2579, }
+				uni.showLoading({ title: '切换中...' });
+				try {
+					const res = await this.$api.mockLogin(form)
+					uni.hideLoading();
+					uni.showModal({
+						title: 'res.data',
+						content: JSON.stringify(res.data, null, 2),
+						showCancel: false,
+					});
+					if (res.code === 1) {
+						uni.showToast({ title: '切换成功', icon: 'none' });
+						this.$store.commit('setMockData', res.data)
+					} else {
+						uni.showToast({ title: '切换失败', icon: 'none' });
+					}
+				} catch (error) {
+					uni.hideLoading();
+					uni.showModal({
+						title: 'error',
+						content: JSON.stringify(error, null, 2),
+						showCancel: false,
+					});
+				}
+			},
 		},
 		async onShow() {
 			this.isPageActive = true; // 页面显示时设为true
